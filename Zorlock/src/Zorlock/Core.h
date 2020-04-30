@@ -1,11 +1,15 @@
 #pragma once
 
 #ifdef ZL_PLATFORM_WINDOWS
+#if ZL_DYNAMIC_LINK
 	#ifdef ZL_BUILD_DLL
 		#define ZORLOCK_API __declspec(dllexport)
 	#else
 		#define ZORLOCK_API __declspec(dllimport)
 	#endif
+#else
+	#define ZORLOCK_API
+#endif
 #else
 	#error Zorlock only supports Windows!
 #endif
@@ -19,3 +23,5 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+#define ZL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1) 

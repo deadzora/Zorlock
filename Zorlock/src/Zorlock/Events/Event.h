@@ -1,6 +1,6 @@
 #pragma once
 #include "ZLpch.h"
-#include "Core.h"
+#include "Zorlock/Core.h"
 
 namespace Zorlock {
 
@@ -14,7 +14,7 @@ namespace Zorlock {
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 

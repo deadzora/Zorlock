@@ -1,5 +1,7 @@
 #include <Zorlock.h>
 
+#include "imgui/imgui.h"
+
 class ExampleLayer : public Zorlock::Layer
 {
 public:
@@ -11,12 +13,27 @@ public:
 
 	void OnUpdate() override
 	{
-		ZL_INFO("ExampleLayer::Update");
+		if (Zorlock::Input::IsKeyPressed(ZL_KEY_TAB))
+			ZL_TRACE("Tab key is pressed (poll)!");
 	}
+
+	virtual void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World");
+		ImGui::End();
+	}
+
 
 	void OnEvent(Zorlock::Event& event) override
 	{
-		ZL_TRACE("{0}", event);
+		if (event.GetEventType() == Zorlock::EventType::KeyPressed)
+		{
+			Zorlock::KeyPressedEvent& e = (Zorlock::KeyPressedEvent&)event;
+			if (e.GetKeyCode() == ZL_KEY_TAB)
+				ZL_TRACE("Tab Key is pressed (event)!");
+			ZL_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 
