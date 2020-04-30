@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Zorlock">
       <UniqueIdentifier>{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Zorlock\Events">
+      <UniqueIdentifier>{8DAE59B2-797C-4DB8-6210-BEDE4E7D291D}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ZLpch.h" />
     <ClInclude Include="src\Zorlock.h" />
     <ClInclude Include="src\Zorlock\Application.h">
       <Filter>Zorlock</Filter>
@@ -16,12 +29,43 @@
     <ClInclude Include="src\Zorlock\EntryPoint.h">
       <Filter>Zorlock</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Events\ApplicationEvent.h">
+      <Filter>Zorlock\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Events\Event.h">
+      <Filter>Zorlock\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Events\KeyEvent.h">
+      <Filter>Zorlock\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Events\MouseEvent.h">
+      <Filter>Zorlock\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Layer.h">
+      <Filter>Zorlock</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\LayerStack.h">
+      <Filter>Zorlock</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Log.h">
+      <Filter>Zorlock</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Window.h">
       <Filter>Zorlock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ZLpch.cpp" />
     <ClCompile Include="src\Zorlock\Application.cpp">
+      <Filter>Zorlock</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Layer.cpp">
+      <Filter>Zorlock</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\LayerStack.cpp">
       <Filter>Zorlock</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Log.cpp">
