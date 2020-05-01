@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Zorlock/Window.h"
+#include "Zorlock/Renderer/GraphicsContext.h"
 
 #include <glfw3.h>
 
@@ -28,6 +29,7 @@ namespace Zorlock {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

@@ -18,9 +18,12 @@ IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
 IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
 
-include "Zorlock/vendor/GLFW"
-include "Zorlock/vendor/Glad"
-include "Zorlock/vendor/imgui"
+group "Dependencies"
+	include "Zorlock/vendor/GLFW"
+	include "Zorlock/vendor/Glad"
+	include "Zorlock/vendor/imgui"
+
+group ""
 
 project "Zorlock"
 	location "Zorlock"

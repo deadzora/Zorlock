@@ -25,11 +25,11 @@ namespace Zorlock {
 #define ZL_CORE_INFO(...)     ::Zorlock::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define ZL_CORE_WARN(...)     ::Zorlock::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define ZL_CORE_ERROR(...)    ::Zorlock::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define ZL_CORE_FATAL(...)    ::Zorlock::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define ZL_CORE_FATAL(...)    ::Zorlock::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
 // Client log macros
 #define ZL_TRACE(...)	      ::Zorlock::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define ZL_INFO(...)	      ::Zorlock::Log::GetClientLogger()->info(__VA_ARGS__)
 #define ZL_WARN(...)	      ::Zorlock::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define ZL_ERROR(...)	      ::Zorlock::Log::GetClientLogger()->error(__VA_ARGS__)
-#define ZL_FATAL(...)	      ::Zorlock::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define ZL_FATAL(...)	      ::Zorlock::Log::GetClientLogger()->critical(__VA_ARGS__)
