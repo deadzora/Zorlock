@@ -1,3 +1,4 @@
+
 #pragma once
 
 #ifdef ZL_PLATFORM_WINDOWS
@@ -8,9 +9,11 @@ int main(int argc, char** argv)
 {
 	Zorlock::Log::Init();
 	ZL_CORE_WARN("Initialized Log!");
-	ZL_INFO("Welcome to Zorlock Engine!");
+	int a = 5;
+	ZL_INFO("Hello! Var={0}", a);
+
 	auto app = Zorlock::CreateApplication();
-	app -> Run();
+	app->Run();
 	delete app;
 }
 

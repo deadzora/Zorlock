@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Zorlock/Layer.h"
@@ -6,8 +7,8 @@
 #include "Zorlock/Events/KeyEvent.h"
 #include "Zorlock/Events/MouseEvent.h"
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	class ZORLOCK_API ImGuiLayer : public Layer
 	{
 	public:
@@ -20,6 +21,8 @@ namespace Zorlock
 
 		void Begin();
 		void End();
+	private:
 		float m_Time = 0.0f;
 	};
+
 }

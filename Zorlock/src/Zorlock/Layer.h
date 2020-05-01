@@ -1,10 +1,11 @@
+
 #pragma once
 
-#include "Core.h"
-#include "Events/Event.h"
+#include "Zorlock/Core.h"
+#include "Zorlock/Events/Event.h"
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	class ZORLOCK_API Layer
 	{
 	public:
@@ -21,4 +22,5 @@ namespace Zorlock
 	protected:
 		std::string m_DebugName;
 	};
+
 }

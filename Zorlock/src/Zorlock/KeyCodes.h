@@ -122,4 +122,4 @@
 #define ZL_KEY_RIGHT_CONTROL      345
 #define ZL_KEY_RIGHT_ALT          346
 #define ZL_KEY_RIGHT_SUPER        347
-#define ZL_KEY_MENU               348 
+#define ZL_KEY_MENU               348

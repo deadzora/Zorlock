@@ -7,13 +7,13 @@
 
 #include <glad/glad.h>
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	static bool s_GLFWInitialized = false;
 
-	static void GLFWErrorCallBack(int error, const char* description)
+	static void GLFWErrorCallback(int error, const char* description)
 	{
-		ZL_CORE_ERROR("GLFW Error ((0)): {1}", error, description);
+		ZL_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
 	Window* Window::Create(const WindowProps& props)
@@ -43,8 +43,8 @@ namespace Zorlock
 		{
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
-			ZL_CORE_ASSERT(success, "Could not initialize GLFW!");
-			glfwSetErrorCallback(GLFWErrorCallBack);
+			ZL_CORE_ASSERT(success, "Could not intialize GLFW!");
+			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
 
@@ -55,7 +55,7 @@ namespace Zorlock
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		// GLFW Callbacks
+		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -171,4 +171,5 @@ namespace Zorlock
 	{
 		return m_Data.VSync;
 	}
+
 }

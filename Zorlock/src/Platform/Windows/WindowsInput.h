@@ -2,8 +2,8 @@
 
 #include "Zorlock/Input.h"
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	class WindowsInput : public Input
 	{
 	protected:
@@ -14,4 +14,5 @@ namespace Zorlock
 		virtual float GetMouseXImpl() override;
 		virtual float GetMouseYImpl() override;
 	};
+
 }

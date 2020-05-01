@@ -1,15 +1,17 @@
+
 #pragma once
-#include "core.h"
+
+#include "Core.h"
 
 #include "Window.h"
-#include "LayerStack.h"
-#include "Events/ApplicationEvent.h"
-#include "Events/Event.h"
+#include "Zorlock/LayerStack.h"
+#include "Zorlock/Events/Event.h"
+#include "Zorlock/Events/ApplicationEvent.h"
 
 #include "Zorlock/ImGui/ImGuiLayer.h"
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	class ZORLOCK_API Application
 	{
 	public:
@@ -28,14 +30,16 @@ namespace Zorlock
 		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
+	private:
 		static Application* s_Instance;
 	};
 
-	//To be defined in client
+	// To be defined in CLIENT
 	Application* CreateApplication();
+
 }

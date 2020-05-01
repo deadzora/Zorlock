@@ -13,14 +13,14 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
-IncludeDir["GLFW"] = "Zorlock/Vendor/GLFW/include"
-IncludeDir["Glad"] = "Zorlock/Vendor/Glad/include"
-IncludeDir["ImGui"] = "Zorlock/Vendor/imgui"
-IncludeDir["glm"] = "Zorlock/Vendor/glm"
+IncludeDir["GLFW"] = "Zorlock/vendor/GLFW/include"
+IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
+IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
+IncludeDir["glm"] = "Zorlock/vendor/glm"
 
-include "Zorlock/Vendor/GLFW"
-include "Zorlock/Vendor/Glad"
-include "Zorlock/Vendor/imgui"
+include "Zorlock/vendor/GLFW"
+include "Zorlock/vendor/Glad"
+include "Zorlock/vendor/imgui"
 
 project "Zorlock"
 	location "Zorlock"
@@ -41,7 +41,6 @@ project "Zorlock"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
-
 	}
 
 	defines
@@ -59,8 +58,8 @@ project "Zorlock"
 		"%{IncludeDir.glm}"
 	}
 
-	links
-	{
+	links 
+	{ 
 		"GLFW",
 		"Glad",
 		"ImGui",
@@ -68,7 +67,6 @@ project "Zorlock"
 	}
 
 	filter "system:windows"
-		staticruntime "off"
 		systemversion "latest"
 
 		defines
@@ -111,10 +109,10 @@ project "Sandbox"
 
 	includedirs
 	{
-		"Zorlock/Vendor/spdlog/include",
+		"Zorlock/vendor/spdlog/include",
 		"Zorlock/src",
 		"Zorlock/vendor",
-		"%(includeDir.glm)"
+		"%{IncludeDir.glm}"
 	}
 
 	links
@@ -123,7 +121,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -134,7 +131,7 @@ project "Sandbox"
 	filter "configurations:Debug"
 		defines "ZL_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "ZL_RELEASE"
@@ -144,4 +141,4 @@ project "Sandbox"
 	filter "configurations:Dist"
 		defines "ZL_DIST"
 		runtime "Release"
-		optimize "on" 
+		optimize "on"

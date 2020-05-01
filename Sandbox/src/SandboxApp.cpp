@@ -1,3 +1,4 @@
+
 #include <Zorlock.h>
 
 #include "imgui/imgui.h"
@@ -8,7 +9,6 @@ public:
 	ExampleLayer()
 		: Layer("Example")
 	{
-
 	}
 
 	void OnUpdate() override
@@ -24,17 +24,17 @@ public:
 		ImGui::End();
 	}
 
-
 	void OnEvent(Zorlock::Event& event) override
 	{
 		if (event.GetEventType() == Zorlock::EventType::KeyPressed)
 		{
 			Zorlock::KeyPressedEvent& e = (Zorlock::KeyPressedEvent&)event;
 			if (e.GetKeyCode() == ZL_KEY_TAB)
-				ZL_TRACE("Tab Key is pressed (event)!");
+				ZL_TRACE("Tab key is pressed (event)!");
 			ZL_TRACE("{0}", (char)e.GetKeyCode());
 		}
 	}
+
 };
 
 class Sandbox : public Zorlock::Application
@@ -49,6 +49,7 @@ public:
 	{
 
 	}
+
 };
 
 Zorlock::Application* Zorlock::CreateApplication()
