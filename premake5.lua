@@ -17,7 +17,9 @@ IncludeDir["GLFW"] = "Zorlock/vendor/GLFW/include"
 IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
 IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
-IncludeDir["assimp"] = "ZorlockDX11/includes/assimp"
+IncludeDir["assimp"] = "Zorlock/vendor/assimp/includes"
+IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
+
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -44,6 +46,8 @@ project "Zorlock"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/DX11/src/**.h",
+		"%{prj.name}/vendor/DX11/src/**.cpp"
 	}
 
 	defines
@@ -58,7 +62,9 @@ project "Zorlock"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.DX11}"
 	}
 
 	links 
@@ -66,9 +72,15 @@ project "Zorlock"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib"
+		"opengl32.lib",
+		"d3d11.lib",
+		"d3dcompiler.lib",
+		"assimp-vc140-mt.lib",
+		"dxguid.lib",
 	}
 
+	libdirs { "%{prj.name}/vendor/assimp/lib" }
+	
 	filter "system:windows"
 		systemversion "latest"
 
@@ -145,71 +157,3 @@ project "Sandbox"
 		defines "ZL_DIST"
 		runtime "Release"
 		optimize "on"
-	
-project "ZorlockDX11"
-	location "ZorlockDX11"
-	kind "StaticLib"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
-
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/includes/noise/**.h",
-		"%{prj.name}/includes/noise/**.cpp",
-	}
-
-	defines
-	{
-		"_CRT_SECURE_NO_WARNINGS"
-	}
-
-	includedirs
-	{
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.assimp}",
-		"%{prj.name}/includes/imgui"
-
-	}
-	
-	libdirs { "%{prj.name}/vendor/assimp" }
-	
-	links 
-	{ 
-		"d3d11.lib",
-		"d3dcompiler.lib",
-		"assimp-vc140-mt.lib",
-		"dxguid.lib",
-		"ImGui"
-	}
-
-	filter "system:windows"
-		systemversion "latest"
-
-		defines
-		{
-			"ZL_PLATFORM_WINDOWS",
-			"ZL_BUILD_DLL",
-			"NOMINMAX"
-		}
-
-	filter "configurations:Debug"
-		defines "ZL_DEBUG"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "ZL_RELEASE"
-		runtime "Release"
-		optimize "on"
-
-	filter "configurations:Dist"
-		defines "ZL_DIST"
-		runtime "Release"
-		optimize "on"		

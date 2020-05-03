@@ -7,6 +7,9 @@
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Platform\DX11">
+      <UniqueIdentifier>{0E8DC4D8-7AA3-C26E-C31A-4E902F7093F6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform\OpenGL">
       <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
@@ -27,6 +30,12 @@
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\DX11">
+      <UniqueIdentifier>{E00166C1-4CB7-DEB6-D5AB-D88D4160D5BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\DX11\src">
+      <UniqueIdentifier>{F7AF6F26-633B-DDEA-6C4C-60DFD85639EB}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -63,6 +72,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DX11\DX11Context.h">
+      <Filter>src\Platform\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DX11\DX11Window.h">
+      <Filter>src\Platform\DX11</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
@@ -155,6 +170,21 @@
     </ClInclude>
     <ClInclude Include="src\Zorlock\Window.h">
       <Filter>src\Zorlock</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DirectX11Window.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\Keyboard.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\KeyboardEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\Mouse.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\MouseEvent.h">
+      <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -2606,6 +2636,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DX11\DX11Context.cpp">
+      <Filter>src\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DX11\DX11Window.cpp">
+      <Filter>src\Platform\DX11</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -2665,6 +2701,21 @@
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DirectX11Window.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\Keyboard.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\KeyboardEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\Mouse.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\MouseEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
