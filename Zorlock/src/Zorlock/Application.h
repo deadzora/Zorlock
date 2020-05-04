@@ -11,7 +11,7 @@
 #include "Zorlock/Renderer/Shader.h"
 #include "Zorlock/Renderer/Buffer.h"
 #include "Zorlock/Renderer/VertexArray.h"
-
+#include "Zorlock/Renderer/ZColor.h"
 #include "Zorlock/Renderer/OrthographicCamera.h"
 
 namespace Zorlock {

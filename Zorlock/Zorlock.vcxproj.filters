@@ -2634,6 +2634,17 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\DX11\DXRendererAPI.h" />
+    <ClInclude Include="src\Platform\DX11\DX11Buffer.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11DeviceContext.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Graphics.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11SwapChain.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Math.h" />
+    <ClInclude Include="src\Zorlock\Math\ZMath.h" />
+    <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
+    <ClInclude Include="src\Platform\DX11\DX11VertexArray.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11VertexBuffer.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Context.cpp">
@@ -2717,5 +2728,12 @@
     <ClCompile Include="vendor\DX11\src\MouseEvent.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\DX11\DXRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Graphics.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11SwapChain.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />
+    <ClCompile Include="src\Platform\DX11\DX11VertexArray.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DirectX11VertexArray.cpp" />
   </ItemGroup>
 </Project>

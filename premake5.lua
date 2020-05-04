@@ -79,7 +79,10 @@ project "Zorlock"
 		"dxguid.lib",
 	}
 
-	libdirs { "%{prj.name}/vendor/assimp/lib" }
+	libdirs 
+	{ 
+		"%{prj.name}/vendor/assimp/lib" 
+	}
 	
 	filter "system:windows"
 		systemversion "latest"

@@ -6,7 +6,7 @@
 namespace Zorlock
 {
 
-	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
+	void OpenGLRendererAPI::SetClearColor(const ZColor color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}

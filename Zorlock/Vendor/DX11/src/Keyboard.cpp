@@ -3,105 +3,105 @@
 
 namespace ZorlockDX11
 {
-Keyboard::Keyboard()
-{
-	for (int i = 0; i < 256; i++)
-		this->keyStates[i] = false;
-
-}
-
-bool Keyboard::KeyIsPressed(const unsigned char keycode)
-{
-	return this->keyStates[keycode];
-}
-
-bool Keyboard::KeyBufferIsEmpty()
-{
-	return this->keybuffer.empty();
-}
-
-bool Keyboard::CharBufferIsEmpty()
-{
-	return this->charBuffer.empty();
-}
-
-KeyboardEvent Keyboard::ReadKey()
-{
-	if (this->keybuffer.empty())
+	Keyboard::Keyboard()
 	{
-		return KeyboardEvent();
-	}
-	else {
-		KeyboardEvent e = this->keybuffer.front();
-		this->keybuffer.pop();
-		return e;
-	}	
-}
+		for (int i = 0; i < 256; i++)
+			this->keyStates[i] = false;
 
-unsigned char Keyboard::ReadChar()
-{
-	if (this->charBuffer.empty())
+	}
+
+	bool Keyboard::KeyIsPressed(const unsigned char keycode)
 	{
-		return 0u;
+		return this->keyStates[keycode];
 	}
-	else {
-		unsigned char e = this->charBuffer.front();
-		this->charBuffer.pop();
-		return e;
+
+	bool Keyboard::KeyBufferIsEmpty()
+	{
+		return this->keybuffer.empty();
 	}
-}
 
-void Keyboard::OnKeyPressed(const unsigned char key)
-{
-	this->keyStates[key] = true;
-	this->keybuffer.push(KeyboardEvent(KeyboardEvent::EventType::Press, key));
+	bool Keyboard::CharBufferIsEmpty()
+	{
+		return this->charBuffer.empty();
+	}
 
-}
+	KeyboardEvent Keyboard::ReadKey()
+	{
+		if (this->keybuffer.empty())
+		{
+			return KeyboardEvent();
+		}
+		else {
+			KeyboardEvent e = this->keybuffer.front();
+			this->keybuffer.pop();
+			return e;
+		}	
+	}
 
-void Keyboard::OnKeyReleased(const unsigned char key)
-{
-	this->keyStates[key] = false;
-	this->keybuffer.push(KeyboardEvent(KeyboardEvent::EventType::Release, key));
+	unsigned char Keyboard::ReadChar()
+	{
+		if (this->charBuffer.empty())
+		{
+			return 0u;
+		}
+		else {
+			unsigned char e = this->charBuffer.front();
+			this->charBuffer.pop();
+			return e;
+		}
+	}
 
-}
+	void Keyboard::OnKeyPressed(const unsigned char key)
+	{
+		this->keyStates[key] = true;
+		this->keybuffer.push(KeyboardEvent(KeyboardEvent::EventType::Press, key));
 
-void Keyboard::OnChar(const unsigned char key)
-{
-	this->charBuffer.push(key);
-}
+	}
 
-void Keyboard::EnableAutoRepeatKeys()
-{
-	this->autoRepeatKeys = true;
-}
+	void Keyboard::OnKeyReleased(const unsigned char key)
+	{
+		this->keyStates[key] = false;
+		this->keybuffer.push(KeyboardEvent(KeyboardEvent::EventType::Release, key));
 
-void Keyboard::DisableAutoRepeatKeys()
-{
-	this->autoRepeatKeys = false;
-}
+	}
 
-void Keyboard::EnableAutoRepeatChars()
-{
-	this->autoRepeatChars = true;
-}
+	void Keyboard::OnChar(const unsigned char key)
+	{
+		this->charBuffer.push(key);
+	}
 
-void Keyboard::DisableAutoRepeatChars()
-{
-	this->autoRepeatChars = false;
-}
+	void Keyboard::EnableAutoRepeatKeys()
+	{
+		this->autoRepeatKeys = true;
+	}
 
-bool Keyboard::IsKeysAutoRepeat()
-{
-	return this->autoRepeatKeys;
-}
+	void Keyboard::DisableAutoRepeatKeys()
+	{
+		this->autoRepeatKeys = false;
+	}
 
-bool Keyboard::IsCharsAutoRepeat()
-{
-	return this->autoRepeatChars;
-}
+	void Keyboard::EnableAutoRepeatChars()
+	{
+		this->autoRepeatChars = true;
+	}
+
+	void Keyboard::DisableAutoRepeatChars()
+	{
+		this->autoRepeatChars = false;
+	}
+
+	bool Keyboard::IsKeysAutoRepeat()
+	{
+		return this->autoRepeatKeys;
+	}
+
+	bool Keyboard::IsCharsAutoRepeat()
+	{
+		return this->autoRepeatChars;
+	}
 
 
-Keyboard::~Keyboard()
-{
-}
+	Keyboard::~Keyboard()
+	{
+	}
 }

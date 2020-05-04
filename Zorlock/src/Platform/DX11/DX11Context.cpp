@@ -1,5 +1,7 @@
 #include "ZLpch.h"
 #include "DX11Context.h"
+#include "DX11Graphics.h"
+
 
 namespace Zorlock
 {
@@ -21,6 +23,7 @@ namespace Zorlock
 
 	void Zorlock::DX11Context::SwapBuffers()
 	{
+		//graphics engine flip swap chain
 	}
 
 	bool DX11Context::DX11LoadDXLoader(int status)
@@ -30,6 +33,7 @@ namespace Zorlock
 			ZL_CORE_ASSERT(status, "Failed to initialize Glad!");
 			return false;
 		}
+		ZorlockDX11::DX11GraphicsEngine::get()->Init(this->m_WindowHandle->windowhandle, this->m_WindowHandle->windowhandle->getClientWindowRect());
 		ZL_CORE_INFO("DX11 Info:");
 		ZL_CORE_INFO(" Vendor: Zorlock DX11 Engine");
 		ZL_CORE_INFO(" Vendor: Written by: Landon Ritchie");

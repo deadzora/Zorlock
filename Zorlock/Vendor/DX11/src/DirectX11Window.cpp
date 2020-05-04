@@ -1,12 +1,57 @@
 #include "DirectX11Window.h"
-
+#include <windowsx.h>
 
 
 namespace ZorlockDX11
 {
-	DirectX11Window* window = nullptr;
 
-	DirectX11Window::DirectX11Window() : contextcallback(NULL), m_hwnd(NULL), m_is_running(false)
+
+
+	DirectX11Window* window = nullptr;
+	DX11MouseButtonFunc mouseCallback = nullptr;
+	DX11CharFunc charCallback = nullptr;
+	DX11KeyFunc keyCallback = nullptr;
+	DX11CloseFunc closeCallback = nullptr;
+	DX11WindowSizeFunc windowsizeCallback = nullptr;
+	DX11ScrollFunc scrollCallback = nullptr;
+	DX11MousePosFunc mouseposCallback = nullptr;
+
+	int DisplayResourceNAMessageBox()
+	{
+		RAWINPUTDEVICE rid;
+
+		rid.usUsagePage = 0x01;
+		rid.usUsage = 0x02;
+		rid.dwFlags = 0;
+		rid.hwndTarget = 0;
+
+		int msgboxID = MessageBox(
+			NULL,
+			(LPCWSTR)L"Raw Input Device not available\nHow are you using a PC???",
+			(LPCWSTR)L"Zorlock DirectX11",
+			MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2
+		);
+
+		switch (msgboxID)
+		{
+		case IDCANCEL:
+
+			break;
+		case IDTRYAGAIN:
+			if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
+			{
+				DisplayResourceNAMessageBox();
+			}
+			break;
+		case IDCONTINUE:
+			// TODO: add code
+			break;
+		}
+
+		return msgboxID;
+	}
+
+	DirectX11Window::DirectX11Window() : contextcallback(NULL), m_hwnd(NULL), m_is_running(false), errorcallback(NULL)
 	{
 		static bool raw_input_initialized = false;
 		if (raw_input_initialized == false)
@@ -20,10 +65,19 @@ namespace ZorlockDX11
 
 			if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
 			{
-				//ErrorLogger::Log(GetLastError(), "Failed to register raw input devices.");
-				exit(-1);
+
+				if (DisplayResourceNAMessageBox() != 11)
+				{
+					exit(-1);
+				}
+				else {
+					raw_input_initialized = false;
+				}
 			}
-			raw_input_initialized = true;
+			else {
+				raw_input_initialized = true;
+			}
+			
 		}
 
 	}
@@ -39,65 +93,74 @@ namespace ZorlockDX11
 
 		case WM_MOUSEMOVE:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnMouseMove(x, y);
+			mouseposCallback(window, x, y);
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnLeftPressed(x, y);
+			mouseCallback(window, WM_LBUTTONDOWN,x, y);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnRightPressed(x, y);
+			mouseCallback(window, WM_RBUTTONDOWN, x, y);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnMiddlePressed(x, y);
+			mouseCallback(window, WM_MBUTTONDOWN, x, y);
 			return 0;
 		}
 		case WM_LBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnLeftReleased(x, y);
+			mouseCallback(window, WM_LBUTTONUP, x, y);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnRightReleased(x, y);
+			mouseCallback(window, WM_RBUTTONUP, x, y);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			window->mouse.OnMiddleReleased(x, y);
+			mouseCallback(window, WM_MBUTTONUP, x, y);
 			return 0;
 		}
 
 		case WM_MOUSEWHEEL:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			double x = GET_X_LPARAM(lparam);
+			double y = GET_Y_LPARAM(lparam);
 			if (GET_WHEEL_DELTA_WPARAM(wparam) > 0)
 			{
 				window->mouse.OnWheelUp(x, y);
+				scrollCallback(window, x, y);
 			}
 			else if (GET_WHEEL_DELTA_WPARAM(wparam) < 0)
 			{
 				window->mouse.OnWheelDown(x, y);
+				scrollCallback(window, x, y);
 			}
 			break;
 		}
@@ -130,12 +193,14 @@ namespace ZorlockDX11
 			if (window->keyboard.IsKeysAutoRepeat())
 			{
 				window->keyboard.OnKeyPressed(keycode);
+				keyCallback(window, keycode, keycode, DX_KEYACTION::DX_PRESS, 0);
 			}
 			else 
 			{
 				const bool wasPressed = lparam & 0x40000000;
 				if (!wasPressed)
 				{
+					keyCallback(window, keycode, keycode, DX_KEYACTION::DX_REPEATE, 0);
 					window->keyboard.OnKeyPressed(keycode);
 				}
 			}
@@ -147,6 +212,7 @@ namespace ZorlockDX11
 		{
 			unsigned char keycode = static_cast<unsigned char>(wparam);
 			window->keyboard.OnKeyReleased(keycode);
+			keyCallback(window, keycode, keycode, DX_KEYACTION::DX_RELEASE, 0);
 			return 0;
 		}
 
@@ -155,6 +221,7 @@ namespace ZorlockDX11
 			unsigned char ch = static_cast<unsigned char>(wparam);
 			if (window->keyboard.IsCharsAutoRepeat())
 			{
+				charCallback(window, ch);
 				window->keyboard.OnChar(ch);
 			}
 			else
@@ -162,6 +229,7 @@ namespace ZorlockDX11
 				const bool wasPressed = lparam & 0x40000000;
 				if (!wasPressed)
 				{
+					charCallback(window, ch);
 					window->keyboard.OnChar(ch);
 				}
 			}
@@ -179,6 +247,15 @@ namespace ZorlockDX11
 			window->OnDestroy();
 			::PostQuitMessage(0);
 			exit(0);
+			break;
+		}
+		case WM_SIZING:
+		{
+			RECT rc = window->getClientWindowRect();
+			int w = static_cast<int>((rc.right - rc.left));
+			int h = static_cast<int>((rc.bottom - rc.top));
+			windowsizeCallback(window, w, h);
+			return 0;
 			break;
 		}
 		default:
@@ -266,10 +343,10 @@ namespace ZorlockDX11
 		return true;
 	}
 
-	bool DirectX11Window::broadcast()
+	bool DirectX11Window::DX11PollEvents()
 	{
 		MSG msg;
-		window->OnUpdate();
+		//window->OnUpdate();
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)>0)
 		{
 			TranslateMessage(&msg);
@@ -303,6 +380,11 @@ namespace ZorlockDX11
 		contextcallback = f;
 	}
 
+	void DirectX11Window::SetErrorCallback(DX11ErrorCallback f)
+	{
+		this->errorcallback = f;
+	}
+
 	void DirectX11Window::SetHWND(HWND hwnd)
 	{
 		this->m_hwnd = hwnd;
@@ -333,5 +415,59 @@ namespace ZorlockDX11
 	DirectX11Window::~DirectX11Window()
 	{
 	}
+
+
+
+
+	void* DX11GetWindowUserPointer(DirectX11Window* handle)
+	{
+		DirectX11Window* xwindow = (DirectX11Window*)handle;
+		assert(xwindow != NULL);
+		return xwindow->userPointer;
+	}
+
+	void DX11SetWindowUserPointer(DirectX11Window* handle, void* pointer)
+	{
+		DirectX11Window* xwindow = (DirectX11Window*)handle;
+		assert(xwindow != NULL);
+		xwindow->userPointer = pointer;
+	}
+
+	void DX11SetMouseButtonCallback(DX11MouseButtonFunc func)
+	{
+		mouseCallback = func;
+	}
+
+	void DX11SetCharacterCallback(DX11CharFunc func)
+	{
+		charCallback = func;
+	}
+
+	void DX11SetKeyCallback(DX11KeyFunc func)
+	{
+		keyCallback = func;
+	}
+
+	void DX11SetCloseCallback(DX11CloseFunc func)
+	{
+		closeCallback = func;
+	}
+
+	void DX11SetWindowSizeCallback(DX11WindowSizeFunc func)
+	{
+		windowsizeCallback = func;
+	}
+
+	void DX11SetScrollCallback(DX11ScrollFunc func)
+	{
+		scrollCallback = func;
+	}
+
+	void DX11SetMousePosCallback(DX11MousePosFunc func)
+	{
+		mouseposCallback = func;
+	}
+
+
 
 }

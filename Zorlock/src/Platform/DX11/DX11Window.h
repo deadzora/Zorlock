@@ -25,12 +25,19 @@ public:
 
 	inline virtual void* GetNativeWindow() const { return m_Window; }
 private:
+	virtual void MouseCallback(ZorlockDX11::DirectX11Window* window, int button, int x, int y);
+	virtual void ResizeCallback(ZorlockDX11::DirectX11Window* window, int width, int height);
+	virtual void CloseCallback(ZorlockDX11::DirectX11Window* window);
+	virtual void KeyCallBack(ZorlockDX11::DirectX11Window* window, int key, int scancode, int action, int mods);
+	virtual void CharCallBack(ZorlockDX11::DirectX11Window* window, unsigned int keycode);
+	virtual void ScrollCallBack(ZorlockDX11::DirectX11Window* window, double xOffset, double yOffset);
+	virtual void MousePosCallBack(ZorlockDX11::DirectX11Window* window, double x, double y);
 	virtual void Init(const WindowProps& props);
 	virtual void Shutdown();
 private:
 	ZorlockDX11::DirectX11Window* m_Window;
 	GraphicsContext* m_Context;
-
+	
 	struct WindowData
 	{
 		std::string Title;

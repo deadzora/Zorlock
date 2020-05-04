@@ -8,8 +8,9 @@ namespace Zorlock {
 	{
 	public:
 		virtual ~VertexArray() {}
-
+		[[deprecated("Bind is now in Buffers")]]
 		virtual void Bind() const = 0;
+		[[deprecated("Unbind is now in Buffers")]]
 		virtual void Unbind() const = 0;
 
 		virtual void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;

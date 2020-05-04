@@ -11,9 +11,9 @@ namespace Zorlock {
 
 	static bool s_X11Initialized = false;
 
-	static void GLFWErrorCallback(int error, const char* description)
+	static void DX11ErrorCallback(int error, const char* description)
 	{
-		ZL_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		ZL_CORE_ERROR("DX11 Error ({0}): {1}", error, description);
 	}
 
 	DX11Window::DX11Window(const WindowProps& props)
@@ -28,6 +28,8 @@ namespace Zorlock {
 
 	void DX11Window::OnUpdate()
 	{
+		this->m_Window->DX11PollEvents();
+		this->m_Context->SwapBuffers();
 	}
 
 	void DX11Window::SetVSync(bool enabled)
@@ -38,6 +40,117 @@ namespace Zorlock {
 	bool DX11Window::IsVSync() const
 	{
 		return m_Data.VSync;
+	}
+
+	void DX11Window::MouseCallback(ZorlockDX11::DirectX11Window* window, int button, int x, int y)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+
+		switch (button)
+		{
+			case WM_LBUTTONDOWN:
+			{
+				MouseButtonPressedEvent event(0);
+				data.EventCallback(event);
+				break;
+			}
+			case WM_RBUTTONDOWN:
+			{
+				MouseButtonPressedEvent event(1);
+				data.EventCallback(event);
+				break;
+			}
+			case WM_MBUTTONDOWN:
+			{
+				MouseButtonPressedEvent event(2);
+				data.EventCallback(event);
+				break;
+			}
+			case WM_LBUTTONUP:
+			{
+				MouseButtonReleasedEvent event(0);
+				data.EventCallback(event);
+				break;
+			}
+			case WM_RBUTTONUP:
+			{
+				MouseButtonReleasedEvent event(1);
+				data.EventCallback(event);
+				break;
+			}
+			case WM_MBUTTONUP:
+			{
+				MouseButtonReleasedEvent event(2);
+				data.EventCallback(event);
+				break;
+			}
+		}
+	}
+
+	void DX11Window::ResizeCallback(ZorlockDX11::DirectX11Window* window, int width, int height)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+		data.Width = width;
+		data.Height = height;
+
+		WindowResizeEvent event(width, height);
+		data.EventCallback(event);
+	}
+
+	void DX11Window::CloseCallback(ZorlockDX11::DirectX11Window* window)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+		WindowCloseEvent event;
+		data.EventCallback(event);
+	}
+
+	void DX11Window::KeyCallBack(ZorlockDX11::DirectX11Window* window, int key, int scancode, int action, int mods)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+
+		switch (action)
+		{
+			case ZorlockDX11::DX_KEYACTION::DX_PRESS:
+			{
+				KeyPressedEvent event(key, 0);
+				data.EventCallback(event);
+				break;
+			}
+			case ZorlockDX11::DX_KEYACTION::DX_RELEASE:
+			{
+				KeyReleasedEvent event(key);
+				data.EventCallback(event);
+				break;
+			}
+			case ZorlockDX11::DX_KEYACTION::DX_REPEATE:
+			{
+				KeyPressedEvent event(key, 1);
+				data.EventCallback(event);
+				break;
+			}
+		}
+
+	}
+
+	void DX11Window::CharCallBack(ZorlockDX11::DirectX11Window* window, unsigned int keycode)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+		KeyTypedEvent event(keycode);
+		data.EventCallback(event);
+	}
+
+	void DX11Window::ScrollCallBack(ZorlockDX11::DirectX11Window* window, double xOffset, double yOffset)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+		MouseScrolledEvent event((float)xOffset, (float)yOffset);
+		data.EventCallback(event);
+	}
+
+	void DX11Window::MousePosCallBack(ZorlockDX11::DirectX11Window* window, double x, double y)
+	{
+		WindowData& data = *(WindowData*)ZorlockDX11::DX11GetWindowUserPointer(window);
+		MouseMovedEvent event((float)x, (float)y);
+		data.EventCallback(event);
 	}
 
 	void DX11Window::Init(const WindowProps& props)
@@ -52,18 +165,22 @@ namespace Zorlock {
 		m_Window->init((int)props.Width, (int)props.Height, props.Title);
 		m_Context = new DX11Context(m_Window);
 		m_Context->Init();
-		//TO-DO set use pointer function here
-
+		ZorlockDX11::DX11SetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		//TO-DO set DX11 window callbacks here
-
-
-
+		//Set DX11 Callbacks here, wrote them to marginally match GLFW counterparts
+		ZorlockDX11::DX11SetMouseButtonCallback(this->MouseCallback);
+		ZorlockDX11::DX11SetWindowSizeCallback(this->ResizeCallback);
+		ZorlockDX11::DX11SetKeyCallback(this->KeyCallBack);
+		ZorlockDX11::DX11SetCharacterCallback(this->CharCallBack);
+		ZorlockDX11::DX11SetScrollCallback(this->ScrollCallBack);
+		ZorlockDX11::DX11SetMousePosCallback(this->MousePosCallBack);
 	}
 
 	void DX11Window::Shutdown()
 	{
+		//Change this to shut down all GFX systems
+		m_Window->release();
 	}
 
 }

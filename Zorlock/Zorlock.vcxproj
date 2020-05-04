@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ZL_PLATFORM_WINDOWS;ZL_BUILD_DLL;GLFW_INCLUDE_NONE;ZL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -89,6 +89,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,7 +98,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ZL_PLATFORM_WINDOWS;ZL_BUILD_DLL;GLFW_INCLUDE_NONE;ZL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -113,6 +114,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -121,7 +123,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ZL_PLATFORM_WINDOWS;ZL_BUILD_DLL;GLFW_INCLUDE_NONE;ZL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -137,11 +139,15 @@
     </Link>
     <Lib>
       <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DX11\DX11Buffer.h" />
     <ClInclude Include="src\Platform\DX11\DX11Context.h" />
+    <ClInclude Include="src\Platform\DX11\DX11VertexArray.h" />
     <ClInclude Include="src\Platform\DX11\DX11Window.h" />
+    <ClInclude Include="src\Platform\DX11\DXRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -163,6 +169,7 @@
     <ClInclude Include="src\Zorlock\Layer.h" />
     <ClInclude Include="src\Zorlock\LayerStack.h" />
     <ClInclude Include="src\Zorlock\Log.h" />
+    <ClInclude Include="src\Zorlock\Math\ZMath.h" />
     <ClInclude Include="src\Zorlock\MouseButtonCodes.h" />
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h" />
     <ClInclude Include="src\Zorlock\Renderer\GraphicsContext.h" />
@@ -172,8 +179,15 @@
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
     <ClInclude Include="src\Zorlock\Window.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11VertexArray.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11VertexBuffer.h" />
     <ClInclude Include="vendor\DX11\src\DirectX11Window.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11DeviceContext.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Graphics.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Math.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11SwapChain.h" />
     <ClInclude Include="vendor\DX11\src\Keyboard.h" />
     <ClInclude Include="vendor\DX11\src\KeyboardEvent.h" />
     <ClInclude Include="vendor\DX11\src\Mouse.h" />
@@ -996,8 +1010,11 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp" />
     <ClCompile Include="src\Platform\DX11\DX11Context.cpp" />
+    <ClCompile Include="src\Platform\DX11\DX11VertexArray.cpp" />
     <ClCompile Include="src\Platform\DX11\DX11Window.cpp" />
+    <ClCompile Include="src\Platform\DX11\DXRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
@@ -1020,7 +1037,11 @@
     <ClCompile Include="src\Zorlock\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Shader.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DirectX11VertexArray.cpp" />
     <ClCompile Include="vendor\DX11\src\DirectX11Window.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Graphics.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11SwapChain.cpp" />
     <ClCompile Include="vendor\DX11\src\Keyboard.cpp" />
     <ClCompile Include="vendor\DX11\src\KeyboardEvent.cpp" />
     <ClCompile Include="vendor\DX11\src\Mouse.cpp" />

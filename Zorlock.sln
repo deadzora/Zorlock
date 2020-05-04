@@ -13,8 +13,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Zorlock\vendor\img
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zorlock", "Zorlock\Zorlock.vcxproj", "{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZorlockDX11", "ZorlockDX11\ZorlockDX11.vcxproj", "{E7A1EC68-5357-655E-DC4B-5F3548005C62}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -52,12 +50,6 @@ Global
 		{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}.Dist|x64.Build.0 = Dist|x64
 		{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}.Release|x64.ActiveCfg = Release|x64
 		{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}.Release|x64.Build.0 = Release|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Debug|x64.ActiveCfg = Debug|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Debug|x64.Build.0 = Debug|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Dist|x64.ActiveCfg = Dist|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Dist|x64.Build.0 = Dist|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Release|x64.ActiveCfg = Release|x64
-		{E7A1EC68-5357-655E-DC4B-5F3548005C62}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

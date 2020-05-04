@@ -18,6 +18,7 @@ namespace Zorlock {
 
 	Window* Window::Create(const WindowProps& props)
 	{
+		//TODO: should add the graphics selector enum here as well
 		return new WindowsWindow(props);
 	}
 
