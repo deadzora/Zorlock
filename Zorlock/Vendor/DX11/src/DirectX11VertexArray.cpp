@@ -6,7 +6,7 @@ namespace ZorlockDX11 {
 	DirectX11VertexArray::DirectX11VertexArray()
 	{
 
-
+		
 
 	}
 

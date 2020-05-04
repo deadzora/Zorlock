@@ -85,12 +85,33 @@ namespace ZorlockDX11
 		return true;
 	}
 
-	unsigned int DX11GraphicsEngine::DX11CreateVertexArray(DirectX11VertexArray& va)
+	DirectX11VertexArray* DX11GraphicsEngine::DX11CreateVertexArray()
 	{
-		DirectX11VertexArray* v = new DirectX11VertexArray();
-		va = *v;
-		vertexArrays.push_back(va);
-		return vertexArrays.size;
+		DirectX11VertexArray* v = new DirectX11VertexArray();		
+		vertexArrays.push_back(*v);
+		v->SetRenderID(vertexArrays.size);
+		return v;
+	}
+
+	void DX11GraphicsEngine::DX11DeleteVertexArray(DirectX11VertexArray* v)
+	{
+		for (size_t i = 0; i < vertexArrays.size; i++)
+		{
+			if (v == &vertexArrays.at(i))
+			{
+				vertexArrays.erase(vertexArrays.begin + i);
+				break;
+			}
+			delete v;
+			for (size_t i = 0; i < vertexArrays.size; i++)
+			{
+				DirectX11VertexArray* n = &vertexArrays.at(i);
+				if (n)
+				{
+					n->SetRenderID(i);
+				}
+			}
+		}
 	}
 
 

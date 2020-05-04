@@ -151,6 +151,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
     <ClInclude Include="src\Zorlock\Window.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11Buffer.h" />
     <ClInclude Include="Vendor\DX11\src\DirectX11VertexArray.h" />
     <ClInclude Include="Vendor\DX11\src\DirectX11VertexBuffer.h" />
     <ClInclude Include="vendor\DX11\src\DirectX11Window.h" />
@@ -1018,6 +1020,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
@@ -1037,6 +1040,7 @@
     <ClCompile Include="src\Zorlock\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Shader.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DirectX11Buffer.cpp" />
     <ClCompile Include="Vendor\DX11\src\DirectX11VertexArray.cpp" />
     <ClCompile Include="vendor\DX11\src\DirectX11Window.cpp" />
     <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />

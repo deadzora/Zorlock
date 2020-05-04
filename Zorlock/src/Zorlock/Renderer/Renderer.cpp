@@ -7,6 +7,10 @@ namespace Zorlock {
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
+		//Normally here you would pass the camera view matrix and projection matrix down into each renderable object in the scene and update their shaders
+		//with the matrix info, but since we are just going to use a global uniformbuffer (constantbuffer) we will just bind this to the main scene shader.
+
+
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
@@ -18,9 +22,13 @@ namespace Zorlock {
 
 	{
 		shader->Bind();
-		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		shader->UploadUniforms(m_SceneData);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+	}
+	void Renderer::SetSceneData(void* data)
+	{
+
 	}
 }

@@ -7,6 +7,8 @@
 
 namespace ZorlockDX11
 {
+	
+
 	class DX11DeviceContext;
 	class DX11SwapChain;
 
@@ -36,7 +38,8 @@ namespace ZorlockDX11
 		DX11DeviceContext* GetDX11DeviceContext();
 		bool DX11GraphicsEngine::CreateContext();
 		//DX API Create
-		unsigned int DX11CreateVertexArray(DirectX11VertexArray &va);
+		DirectX11VertexArray* DX11CreateVertexArray();
+		void DX11DeleteVertexArray(DirectX11VertexArray* v);
 		//DX API Set
 		void DX11AddVertexArray(unsigned int i);
 	private:

@@ -78,7 +78,7 @@ namespace Zorlock
 
 		inline uint32_t GetStride() const { return m_Stride; }
 		inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
-
+		inline uint32_t GetSize() const { return m_Elements.size(); }
 		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
 		std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
 		std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
@@ -127,5 +127,34 @@ namespace Zorlock
 
 		static IndexBuffer* Create(uint32_t* indices, uint32_t size);
 	};
+
+	class UniformBuffer
+	{
+	public:
+		virtual ~UniformBuffer() {}
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual const BufferLayout& GetLayout() const = 0;
+		virtual void SetLayout(const BufferLayout& layout) = 0;
+
+		virtual uint32_t GetCount() const = 0;
+		template <class T>
+		static UniformBuffer* Create(std::string buffername, T* uniformblob, Shader* shader)
+		{
+			switch (Renderer::GetAPI())
+			{
+			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL:  return new OpenGLUniformBuffer<T>(buffername, uniformblob, shader);
+			case RendererAPI::API::DX11:	return new DX11UniformBuffer<T>(buffername, uniformblob, shader);
+			}
+
+			ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
+			return nullptr;
+		};
+
+	};
+
 
 }

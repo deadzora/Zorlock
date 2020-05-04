@@ -17,12 +17,15 @@ namespace Zorlock {
 		static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+		static void SetSceneData(void* data);
 
-	private:
 		struct SceneData
 		{
+			//this needs to be changed to use a GFX agnostic math
 			glm::mat4 ViewProjectionMatrix;
 		};
+	private:
+
 
 		static SceneData* m_SceneData;
 

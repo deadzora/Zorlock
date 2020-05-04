@@ -2645,6 +2645,8 @@
     <ClInclude Include="src\Platform\DX11\DX11VertexArray.h" />
     <ClInclude Include="Vendor\DX11\src\DirectX11VertexBuffer.h" />
     <ClInclude Include="Vendor\DX11\src\DirectX11VertexArray.h" />
+    <ClInclude Include="Vendor\DX11\src\DirectX11Buffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Context.cpp">
@@ -2735,5 +2737,7 @@
     <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />
     <ClCompile Include="src\Platform\DX11\DX11VertexArray.cpp" />
     <ClCompile Include="Vendor\DX11\src\DirectX11VertexArray.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DirectX11Buffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
   </ItemGroup>
 </Project>

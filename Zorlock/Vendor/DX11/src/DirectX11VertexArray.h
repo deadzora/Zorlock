@@ -11,8 +11,16 @@ namespace ZorlockDX11
 		DirectX11VertexArray();
 
 		~DirectX11VertexArray();
-
+		unsigned int GetRenderID()
+		{
+			return Renderid;
+		};
+		void SetRenderID(unsigned int i)
+		{
+			Renderid = i;
+		};
 	private:
+		unsigned int Renderid;
 		std::vector<Vertex> VertexArray;
 		std::vector<DWORD> IndexArray;
 	};
