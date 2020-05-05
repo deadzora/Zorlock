@@ -8,6 +8,11 @@ workspace "Zorlock"
 		"Release",
 		"Dist"
 	}
+	
+		flags
+	{
+		"MultiProcessorCompile"
+	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -19,7 +24,7 @@ IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["assimp"] = "Zorlock/vendor/assimp/includes"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
-
+IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -47,7 +52,9 @@ project "Zorlock"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/DX11/src/**.h",
-		"%{prj.name}/vendor/DX11/src/**.cpp"
+		"%{prj.name}/vendor/DX11/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
 	}
 
 	defines
@@ -64,7 +71,8 @@ project "Zorlock"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.DX11}"
+		"%{IncludeDir.DX11}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links 
