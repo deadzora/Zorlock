@@ -8,7 +8,7 @@
 #include "Zorlock/Core/Application.h"
 
 // TEMPORARY
-#include <GLFW/glfw3.h>
+#include <glfw3.h>
 #include <glad/glad.h>
 
 namespace Zorlock {

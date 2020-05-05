@@ -9,8 +9,8 @@ class Sandbox : public Zorlock::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new ExampleLayer());
-		//PushLayer(new Sandbox2D());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

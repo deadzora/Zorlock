@@ -1,7 +1,7 @@
 #include "ZLpch.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
-#include <GLFW/glfw3.h>
+#include <glfw3.h>
 #include <glad/glad.h>
 
 namespace Zorlock {
