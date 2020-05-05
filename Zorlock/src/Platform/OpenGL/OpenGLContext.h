@@ -4,8 +4,8 @@
 
 struct GLFWwindow;
 
-namespace Zorlock
-{
+namespace Zorlock {
+
 	class OpenGLContext : public GraphicsContext
 	{
 	public:
@@ -16,4 +16,5 @@ namespace Zorlock
 	private:
 		GLFWwindow* m_WindowHandle;
 	};
+
 }

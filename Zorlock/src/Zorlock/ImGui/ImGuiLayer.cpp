@@ -1,14 +1,14 @@
-#include "Zlpch.h"
-#include "ImGuiLayer.h"
+#include "ZLpch.h"
+#include "Zorlock/ImGui/ImGuiLayer.h"
 
-#include "imgui.h"
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
-#include "Zorlock/Application.h"
+#include "Zorlock/Core/Application.h"
 
 // TEMPORARY
-#include <glfw3.h>
+#include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 namespace Zorlock {
@@ -18,12 +18,10 @@ namespace Zorlock {
 	{
 	}
 
-	ImGuiLayer::~ImGuiLayer()
-	{
-	}
-
 	void ImGuiLayer::OnAttach()
 	{
+		ZL_PROFILE_FUNCTION();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -57,13 +55,17 @@ namespace Zorlock {
 
 	void ImGuiLayer::OnDetach()
 	{
+		ZL_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
-
+	
 	void ImGuiLayer::Begin()
 	{
+		ZL_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -71,6 +73,8 @@ namespace Zorlock {
 
 	void ImGuiLayer::End()
 	{
+		ZL_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -86,12 +90,6 @@ namespace Zorlock {
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
-	}
-
-	void ImGuiLayer::OnImGuiRender()
-	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 
 }
