@@ -11,6 +11,7 @@ namespace ZorlockDX11
 
 	class DX11DeviceContext;
 	class DX11SwapChain;
+	class DirectX11VertexArray;
 
 	class DX11GraphicsEngine
 	{
@@ -41,7 +42,7 @@ namespace ZorlockDX11
 		DirectX11VertexArray* DX11CreateVertexArray();
 		void DX11DeleteVertexArray(DirectX11VertexArray* v);
 		//DX API Set
-		void DX11AddVertexArray(unsigned int i);
+		void DX11AddVertexArray(unsigned int i) {};
 	private:
 		//DX11API classes
 		DX11SwapChain* m_swapchain;
@@ -59,7 +60,7 @@ namespace ZorlockDX11
 		DirectX::XMMATRIX View;
 
 		//Renderable Stuff
-		std::vector<DirectX11VertexArray> vertexArrays;
+		std::vector<DirectX11VertexArray*> vertexArrays;
 
 
 	};

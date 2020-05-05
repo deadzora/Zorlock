@@ -1,9 +1,10 @@
 #pragma once
 
 #include "RenderCommand.h"
-
+#include "Buffer.h"
 #include "OrthographicCamera.h"
 #include "Shader.h"
+
 
 namespace Zorlock {
 
@@ -11,6 +12,13 @@ namespace Zorlock {
 	class Renderer
 	{
 	public:
+		struct SceneData
+		{
+			//this needs to be changed to use a GFX agnostic math
+			glm::mat4 u_ViewProjection;
+		};
+
+
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
@@ -19,11 +27,10 @@ namespace Zorlock {
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		static void SetSceneData(void* data);
 
-		struct SceneData
-		{
-			//this needs to be changed to use a GFX agnostic math
-			glm::mat4 ViewProjectionMatrix;
-		};
+		
+
+
+		static SceneData* GetSceneData();
 	private:
 
 

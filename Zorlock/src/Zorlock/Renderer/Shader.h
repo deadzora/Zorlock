@@ -1,29 +1,24 @@
 #pragma once
-#include "Zorlock/Renderer/Renderer.h"
+
 #include <string>
 
-//#include <glm/glm.hpp>
+#include <glm/glm.hpp>
 
 namespace Zorlock
 {
 	class Shader
 	{
 	public:
-		Shader();
-		Shader(const std::string& vertexSrc, const std::string& fragmentSrc) {};
-		~Shader() {};
+		Shader() {};
+		Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		~Shader();
 
-		virtual void Bind() const {};
-		virtual void Unbind() const {};
-		void* GetRenderID() {
-			return m_RendererID;
-		};
-		virtual void UploadUniforms(void * scene) {};
-		
+		void Bind() const;
+		void Unbind() const;
+
+		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
 	protected:
-		//i assume programID in openGL is the same as the Bufferslot in DX11.. maybe?
-		//uint32_t m_RendererID;
-		void* m_RendererID = nullptr;
+		uint32_t m_RendererID;
 	};
 }

@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\DX11\DX11Buffer.h" />
     <ClInclude Include="src\Platform\DX11\DX11Context.h" />
+    <ClInclude Include="src\Platform\DX11\DX11UniformBuffer.h" />
     <ClInclude Include="src\Platform\DX11\DX11VertexArray.h" />
     <ClInclude Include="src\Platform\DX11\DX11Window.h" />
     <ClInclude Include="src\Platform\DX11\DXRendererAPI.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -179,6 +181,8 @@
     <ClInclude Include="src\Zorlock\Renderer\Renderer.h" />
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
     <ClInclude Include="src\Zorlock\Window.h" />

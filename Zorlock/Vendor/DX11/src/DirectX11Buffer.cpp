@@ -1,6 +1,9 @@
 #include "ZLpch.h"
 #include "DirectX11Buffer.h"
 #include "DX11Graphics.h"
+#include <d3d11.h>
+
+
 namespace ZorlockDX11
 {
 
@@ -19,7 +22,7 @@ namespace ZorlockDX11
 		D3D11_SUBRESOURCE_DATA init_data = {};
 		init_data.pSysMem = m_list;
 		this->m_size = m_size;
-		HRESULT hr = ZorlockDX11::DX11GraphicsEngine::get()->GetD3D11Device->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+		HRESULT hr = ZorlockDX11::DX11GraphicsEngine::get()->GetD3D11Device()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 		if (FAILED(hr))
 		{
 			ZL_CORE_INFO("Failed to Create Vertex Buffer");

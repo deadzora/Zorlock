@@ -4,7 +4,7 @@
 #include "Zorlock/Log.h"
 
 #include "Zorlock/Renderer/Renderer.h"
-
+#include "Zorlock/Renderer/UniformHandler.h"
 #include "Input.h"
 
 namespace Zorlock {
@@ -27,6 +27,9 @@ namespace Zorlock {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
+		//Uniform buffer (especially a global buffer should be created before everything else)
+		std::shared_ptr<UniformBuffer<Renderer::SceneData>> uniformBuffer;
+		//uniformBuffer.reset(CreateUniformBuffer<OpenGLUniformBuffer<Renderer::SceneData>>("Matrices", Renderer::GetSceneData(), 0));
 		m_VertexArray.reset(VertexArray::Create());
 
 		float vertices[3 * 7] = {
@@ -77,14 +80,10 @@ namespace Zorlock {
 			layout(location = 1) in vec4 a_Color;
 			
 
-uniform BlobSettings {
-vec4 InnerColor;
-vec4 OuterColor;
-float RadiusInner;
-float RadiusOuter;
-};
-			uniform mat4 u_ViewProjection;
-			
+			uniform Matrices {
+			mat4 u_ViewProjection;
+			};
+
 			out vec3 v_Position;
 			out vec4 v_Color;
 			void main()
@@ -116,7 +115,9 @@ float RadiusOuter;
 			
 			layout(location = 0) in vec3 a_Position;
 
-			uniform mat4 u_ViewProjection;
+			uniform Matrices {
+			mat4 u_ViewProjection;
+			};
 
 			out vec3 v_Position;
 			void main()
@@ -138,6 +139,8 @@ float RadiusOuter;
 		)";
 
 		m_BlueShader.reset(new Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+
+
 	}
 
 	Application::~Application()

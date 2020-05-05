@@ -7,7 +7,7 @@ namespace Zorlock {
 	class RenderCommand
 	{
 	public:
-		inline static void SetClearColor(const glm::vec4& color)
+		inline static void SetClearColor(const Zorlock::ZColor color)
 		{
 			s_RendererAPI->SetClearColor(color);
 		}

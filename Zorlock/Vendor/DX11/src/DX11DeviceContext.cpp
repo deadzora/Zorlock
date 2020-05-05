@@ -14,10 +14,10 @@ namespace ZorlockDX11
 	{
 		FLOAT clear_color[] = { r,g,b,a };
 		m_device_context->ClearRenderTargetView(swap_chain->m_rtv, clear_color);
-		m_device_context->ClearDepthStencilView(m_depth_stencilview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, m_depth_stencilview);
-		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
-		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
+		m_device_context->ClearDepthStencilView(this->m_depth_stencilview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, this->m_depth_stencilview);
+		m_device_context->OMSetDepthStencilState(this->m_depth_stencilstate, 0);
+		m_device_context->PSSetSamplers(0, 1, &this->m_sampler_state);
 		//create depth stencil state
 		m_device_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
@@ -64,7 +64,7 @@ namespace ZorlockDX11
 		rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
 		blendDesc.RenderTarget[0] = rtbd;
-		HRESULT hr = DX11GraphicsEngine::get()->GetD3D11Device->CreateBlendState(&blendDesc, &m_bs);
+		HRESULT hr = DX11GraphicsEngine::get()->GetD3D11Device()->CreateBlendState(&blendDesc, &m_bs);
 		if (FAILED(hr))
 		{
 			return false;
@@ -131,13 +131,13 @@ namespace ZorlockDX11
 		depthstencildesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		depthstencildesc.CPUAccessFlags = 0;
 		depthstencildesc.MiscFlags = 0;
-		HRESULT hr = DX11GraphicsEngine::get()->GetD3D11Device->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
+		HRESULT hr = DX11GraphicsEngine::get()->GetD3D11Device()->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
 		if (FAILED(hr))
 		{
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
-		hr = DX11GraphicsEngine::get()->GetD3D11Device->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
+		hr = DX11GraphicsEngine::get()->GetD3D11Device()->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
 		if (FAILED(hr))
 		{
 			ZL_CORE_INFO("Failed to Depth Stencil View");

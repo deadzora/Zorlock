@@ -5,6 +5,8 @@
 
 namespace Zorlock {
 
+	
+
 	class DX11Context : public GraphicsContext
 	{
 	public:
@@ -12,10 +14,12 @@ namespace Zorlock {
 
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
-	private:
-		bool DX11LoadDXLoader(int status);
+	private:		
 		ZorlockDX11::DirectX11Window* m_WindowHandle;
 		
 	};
+
+	typedef  bool (Zorlock::DX11Context::*ContextCallback)(int status);
+	
 }
 

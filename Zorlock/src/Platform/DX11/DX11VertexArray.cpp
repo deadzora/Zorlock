@@ -51,7 +51,12 @@ namespace Zorlock {
 		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		uint32_t index = 0;
 		const auto& layout = vertexBuffer->GetLayout();
-		std::vector<D3D11_INPUT_ELEMENT_DESC> dxlayout;
+
+		uint32_t layoutsize = layout.GetSize();
+
+		D3D11_INPUT_ELEMENT_DESC** dxlayout = new D3D11_INPUT_ELEMENT_DESC * [layoutsize];
+
+		//std::vector<D3D11_INPUT_ELEMENT_DESC[]> dxlayout;
 		for (const auto& element : layout)
 		{
 			//glEnableVertexAttribArray(index);
@@ -59,15 +64,16 @@ namespace Zorlock {
 			//Second Value = Semantic Index: The semantic index for the element. A semantic index modifies a semantic, with an integer index number. 
 			//A semantic index is only needed in a case where there is more than one element with the same semantic. For example, a 4x4 matrix would 
 			//have four components each with the semantic name
-			D3D11_INPUT_ELEMENT_DESC dxelement = 
+			dxlayout[index] = new D3D11_INPUT_ELEMENT_DESC[7]
 			{ element.Name.c_str(),	0,	ShaderDataTypeToOpenDXBaseType(element.Type),0,	element.Offset,	D3D11_INPUT_PER_VERTEX_DATA,0 };
-			dxlayout.push_back(dxelement);
 
 
-			UINT size_layout = sizeof(D3D11_INPUT_ELEMENT_DESC)*dxlayout.size;
+
+			
 
 			index++;
 		}
+		UINT size_layout = sizeof(dxlayout);
 		m_VertexBuffers.push_back(vertexBuffer);
 
 	}

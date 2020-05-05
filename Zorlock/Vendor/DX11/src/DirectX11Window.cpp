@@ -1,4 +1,6 @@
+#include "ZLpch.h"
 #include "DirectX11Window.h"
+#include "DX11Graphics.h"
 #include <windowsx.h>
 
 
@@ -377,6 +379,7 @@ namespace ZorlockDX11
 
 	void DirectX11Window::SetContextCallback(DX11ContextCallback f)
 	{
+		
 		contextcallback = f;
 	}
 
@@ -400,11 +403,17 @@ namespace ZorlockDX11
 		HRESULT hr = CoInitialize(NULL);
 		if (FAILED(hr))
 		{
-			this->contextcallback(0);
+			ZL_CORE_ASSERT(0, "Failed to initialize Glad!");
 			return;
 		}
 
-		this->contextcallback(1);
+		DX11GraphicsEngine::get()->Init(m_hwnd, getClientWindowRect());
+		ZL_CORE_INFO("DX11 Info:");
+		ZL_CORE_INFO(" Vendor: Zorlock DX11 Engine");
+		ZL_CORE_INFO(" Vendor: Written by: Landon Ritchie");
+		return;
+
+		//this->contextcallback(1);
 	}
 
 	void DirectX11Window::OnDestroy()

@@ -169,12 +169,12 @@ namespace Zorlock {
 		SetVSync(true);
 
 		//Set DX11 Callbacks here, wrote them to marginally match GLFW counterparts
-		ZorlockDX11::DX11SetMouseButtonCallback(this->MouseCallback);
-		ZorlockDX11::DX11SetWindowSizeCallback(this->ResizeCallback);
-		ZorlockDX11::DX11SetKeyCallback(this->KeyCallBack);
-		ZorlockDX11::DX11SetCharacterCallback(this->CharCallBack);
-		ZorlockDX11::DX11SetScrollCallback(this->ScrollCallBack);
-		ZorlockDX11::DX11SetMousePosCallback(this->MousePosCallBack);
+		ZorlockDX11::DX11SetMouseButtonCallback(DX11Window::MouseCallback);
+		ZorlockDX11::DX11SetWindowSizeCallback(DX11Window::ResizeCallback);
+		ZorlockDX11::DX11SetKeyCallback(DX11Window::KeyCallBack);
+		ZorlockDX11::DX11SetCharacterCallback(DX11Window::CharCallBack);
+		ZorlockDX11::DX11SetScrollCallback(DX11Window::ScrollCallBack);
+		ZorlockDX11::DX11SetMousePosCallback(DX11Window::MousePosCallBack);
 	}
 
 	void DX11Window::Shutdown()

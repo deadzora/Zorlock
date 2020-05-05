@@ -74,7 +74,7 @@ namespace Zorlock
 		// Get a program object.
 		uint32_t ptr = glCreateProgram();
 		GLuint program = ptr;
-		m_RendererID = (void*)ptr;
+		m_RendererID = ptr;
 		// Attach our shaders to our program
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, fragmentShader);
@@ -112,14 +112,14 @@ namespace Zorlock
 
 	OpenGLShader::~OpenGLShader()
 	{
-		uint32_t ptr = reinterpret_cast<uint32_t>(m_RendererID);
-		glDeleteProgram(ptr);
+
+		glDeleteProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Bind() const
 	{
-		uint32_t ptr = reinterpret_cast<uint32_t>(m_RendererID);
-		glUseProgram(ptr);
+
+		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
@@ -128,17 +128,11 @@ namespace Zorlock
 
 	}
 
-	void OpenGLShader::UploadUniforms(void* scene)
-	{
-		//this is where we want to use and update our uniform/constant buffer
-
-		//UploadUniformMat4("u_ViewProjection", scene->ViewProjectionMatrix);
-	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
 	{
-		uint32_t ptr = reinterpret_cast<uint32_t>(m_RendererID);
-		GLint location = glGetUniformLocation(ptr, name.c_str());
+
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 

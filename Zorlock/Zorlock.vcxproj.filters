@@ -2647,6 +2647,10 @@
     <ClInclude Include="Vendor\DX11\src\DirectX11VertexArray.h" />
     <ClInclude Include="Vendor\DX11\src\DirectX11Buffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
+    <ClInclude Include="src\Platform\DX11\DX11UniformBuffer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Context.cpp">

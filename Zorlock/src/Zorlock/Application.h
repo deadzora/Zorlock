@@ -8,8 +8,11 @@
 #include "Zorlock/Events/ApplicationEvent.h"
 
 #include "Zorlock/ImGui/ImGuiLayer.h"
+#include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Renderer/Shader.h"
 #include "Zorlock/Renderer/Buffer.h"
+#include "Zorlock/Renderer/UniformBuffer.h"
+#include "Platform/OpenGL/OpenGLUniformBuffer.h"
 #include "Zorlock/Renderer/VertexArray.h"
 #include "Zorlock/Renderer/ZColor.h"
 #include "Zorlock/Renderer/OrthographicCamera.h"
@@ -44,6 +47,8 @@ namespace Zorlock {
 
 		std::shared_ptr<Shader> m_BlueShader;
 		std::shared_ptr<VertexArray> m_SquareVA;
+
+		//std::shared_ptr<UniformBuffer<OpenGLUniformBuffer<Renderer::SceneData>>> uniformBuffer;
 
 		OrthographicCamera m_Camera;
 	private:

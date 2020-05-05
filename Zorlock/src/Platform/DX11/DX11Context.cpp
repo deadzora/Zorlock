@@ -5,38 +5,28 @@
 
 namespace Zorlock
 {
-	Zorlock::DX11Context::DX11Context(ZorlockDX11::DirectX11Window* windowHandle)
+	
+
+
+	DX11Context::DX11Context(ZorlockDX11::DirectX11Window* windowHandle)
 		: m_WindowHandle(windowHandle)
 	{
 		ZL_CORE_ASSERT(windowHandle, "Window handle is null")
 	}
 
-	void Zorlock::DX11Context::Init()
+	void DX11Context::Init()
 	{
 		//DX11 requires the WM_CREATE callback from windows to create context
 		//For now Zorlock DX11 only supports 1 context. 
 		//Context creation happens automatically, to get info from it we need to pass a callback.
-
-		m_WindowHandle->SetContextCallback(this->DX11LoadDXLoader);
+		//ContextCallback p = this->DX11LoadDXLoader;
+		//m_WindowHandle->SetContextCallback(p); //this->DX11LoadDXLoader);
 
 	}
 
-	void Zorlock::DX11Context::SwapBuffers()
+	void DX11Context::SwapBuffers()
 	{
 		//graphics engine flip swap chain
 	}
 
-	bool DX11Context::DX11LoadDXLoader(int status)
-	{
-		if (!status)
-		{
-			ZL_CORE_ASSERT(status, "Failed to initialize Glad!");
-			return false;
-		}
-		ZorlockDX11::DX11GraphicsEngine::get()->Init(this->m_WindowHandle->windowhandle, this->m_WindowHandle->windowhandle->getClientWindowRect());
-		ZL_CORE_INFO("DX11 Info:");
-		ZL_CORE_INFO(" Vendor: Zorlock DX11 Engine");
-		ZL_CORE_INFO(" Vendor: Written by: Landon Ritchie");
-		return true;
-	}
 }

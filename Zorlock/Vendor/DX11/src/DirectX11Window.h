@@ -30,6 +30,8 @@ namespace ZorlockDX11
 		void OnUpdate();
 		void OnCreate();
 		void OnDestroy();
+
+
 		Keyboard keyboard;
 		Mouse mouse;
 		LPCWSTR WindowName = L"DXAPP";
@@ -47,16 +49,6 @@ namespace ZorlockDX11
 	void* DX11GetWindowUserPointer(DirectX11Window* window);
 	void DX11SetWindowUserPointer(DirectX11Window* handle, void* pointer);
 
-	void DX11SetMouseButtonCallback(DX11MouseButtonFunc func);
-	void DX11SetCharacterCallback(DX11CharFunc func);
-	void DX11SetKeyCallback(DX11KeyFunc func);
-	void DX11SetCloseCallback(DX11CloseFunc func);
-	void DX11SetWindowSizeCallback(DX11WindowSizeFunc func);
-	void DX11SetScrollCallback(DX11ScrollFunc func);
-	void DX11SetMousePosCallback(DX11MousePosFunc func);
-
-
-
 	//Set event callbacks here
 	typedef void (*DX11MouseButtonFunc)(DirectX11Window*,int,int,int);
 	typedef void (*DX11CharFunc)(DirectX11Window*, unsigned int);
@@ -65,6 +57,16 @@ namespace ZorlockDX11
 	typedef void (*DX11WindowSizeFunc)(DirectX11Window*, int, int);
 	typedef void (*DX11ScrollFunc)(DirectX11Window*, double, double);
 	typedef void (*DX11MousePosFunc)(DirectX11Window*, double, double);
+
+
+	void DX11SetMouseButtonCallback(DX11MouseButtonFunc func);
+	void DX11SetCharacterCallback(DX11CharFunc func);
+	void DX11SetKeyCallback(DX11KeyFunc func);
+	void DX11SetCloseCallback(DX11CloseFunc func);
+	void DX11SetWindowSizeCallback(DX11WindowSizeFunc func);
+	void DX11SetScrollCallback(DX11ScrollFunc func);
+	void DX11SetMousePosCallback(DX11MousePosFunc func);
+
 
 	enum DX_KEYACTION {
 		DX_RELEASE = 0,

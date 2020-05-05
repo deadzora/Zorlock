@@ -3,6 +3,7 @@
 
 namespace ZorlockDX11
 {
+	class DX11SwapChain;
 
 	class DX11DeviceContext
 	{
