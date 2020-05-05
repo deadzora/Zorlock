@@ -1,42 +1,46 @@
 #include "ZLpch.h"
-#include "Renderer.h"
+#include "Zorlock/Renderer/Renderer.h"
+#include "Zorlock/Renderer/Renderer2D.h"
 
 namespace Zorlock {
 
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
+
+	void Renderer::Init()
+	{
+		ZL_PROFILE_FUNCTION();
+
+		RenderCommand::Init();
+		Renderer2D::Init();
+	}
+
+	void Renderer::Shutdown()
+	{
+		Renderer2D::Shutdown();
+	}
+
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+	{
+		RenderCommand::SetViewport(0, 0, width, height);
+	}
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		//Normally here you would pass the camera view matrix and projection matrix down into each renderable object in the scene and update their shaders
-		//with the matrix info, but since we are just going to use a global uniformbuffer (constantbuffer) we will just bind this to the main scene shader.
-
-
-		m_SceneData->u_ViewProjection = camera.GetViewProjectionMatrix();
+		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
 	{
 	}
 
-	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray)
-
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
-		//globalbuffer->UpdateData(Renderer::m_SceneData);
-		//shader->UploadUniforms(m_SceneData);
 		shader->Bind();
-		//globalbuffer->Bind(shader->GetRenderID);
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SetMat4("u_Transform", transform);
+
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
-	}
-
-	void Renderer::SetSceneData(void* data)
-	{
-
-	}
-
-	Renderer::SceneData* Renderer::GetSceneData()
-	{
-		return m_SceneData;
 	}
 
 }

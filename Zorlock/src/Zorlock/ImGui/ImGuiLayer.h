@@ -1,7 +1,6 @@
-
 #pragma once
 
-#include "Zorlock/Layer.h"
+#include "Zorlock/Core/Layer.h"
 
 #include "Zorlock/Events/ApplicationEvent.h"
 #include "Zorlock/Events/KeyEvent.h"
@@ -9,15 +8,14 @@
 
 namespace Zorlock {
 
-	class ZORLOCK_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();
-		~ImGuiLayer();
+		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
 
 		void Begin();
 		void End();
