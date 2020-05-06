@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#define GLFW_EXPOSE_NATIVE_WIN32
 // Platform detection using predefined macros
 #ifdef _WIN32
 	/* Windows x64/x86 */

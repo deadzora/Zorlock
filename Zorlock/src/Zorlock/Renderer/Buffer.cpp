@@ -2,8 +2,8 @@
 #include "Zorlock/Renderer/Buffer.h"
 
 #include "Zorlock/Renderer/Renderer.h"
-
 #include "Platform/OpenGL/OpenGLBuffer.h"
+#include "Platform/DX11/DX11Buffer.h"
 
 namespace Zorlock {
 
@@ -13,6 +13,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLVertexBuffer>(size);
+			case RendererAPI::API::DX11:	return CreateRef<DX11VertexBuffer>(size);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -25,6 +26,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLVertexBuffer>(vertices, size);
+			case RendererAPI::API::DX11:	return CreateRef<DX11VertexBuffer>(vertices, size);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -37,6 +39,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLIndexBuffer>(indices, size);
+			case RendererAPI::API::DX11:	return CreateRef<DX11IndexBuffer>(indices, size);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");

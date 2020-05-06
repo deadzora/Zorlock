@@ -23,6 +23,8 @@ IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
 IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
+IncludeDir["assimp"] = "Zorlock/vendor/assimp/includes"
+IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -52,6 +54,8 @@ project "Zorlock"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/DX11/src/**.h",
+		"%{prj.name}/vendor/DX11/src/**.cpp"
 	}
 
 	defines
@@ -68,7 +72,15 @@ project "Zorlock"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.DX11}"
+	}
+	
+	libdirs 
+	{ 
+		"%{prj.name}/vendor/assimp/lib"
+
 	}
 
 	links 
@@ -76,9 +88,13 @@ project "Zorlock"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib"
+		"opengl32.lib",
+		"d3d11.lib",
+		"d3dcompiler.lib",
+		"assimp-vc140-mt.lib",
+		"dxguid.lib"
 	}
-
+	
 	filter "system:windows"
 		systemversion "latest"
 

@@ -3,6 +3,7 @@
 
 #include "Zorlock/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
+#include "Platform/DX11/DX11Texture.h"
 
 namespace Zorlock {
 
@@ -12,6 +13,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(width, height);
+			case RendererAPI::API::DX11:	return CreateRef<DX11Texture2D>(width, height);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -24,6 +26,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path);
+			case RendererAPI::API::DX11:	return CreateRef<DX11Texture2D>(path);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");

@@ -3,6 +3,7 @@
 
 #include "Zorlock/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/DX11/DX11Shader.h"
 
 namespace Zorlock {
 
@@ -12,6 +13,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath);
+			case RendererAPI::API::DX11:  return CreateRef<DX11Shader>(filepath);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -24,6 +26,7 @@ namespace Zorlock {
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			case RendererAPI::API::DX11:  return CreateRef<DX11Shader>(name, vertexSrc, fragmentSrc);
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");

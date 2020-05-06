@@ -1,17 +1,27 @@
 #include "ZLpch.h"
 #include "Zorlock/ImGui/ImGuiLayer.h"
+#include "Zorlock/Core/Application.h"
+#include "Zorlock/Renderer/RendererAPI.h"
+// TEMPORARY
 
+#include <glfw3.h>
+#include <glfw3native.h>
+#include <glad/glad.h>
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
 
-#include "Zorlock/Core/Application.h"
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
 
-// TEMPORARY
-#include <glfw3.h>
-#include <glad/glad.h>
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+
+
 
 namespace Zorlock {
+
+	
 
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
@@ -49,16 +59,46 @@ namespace Zorlock {
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer bindings
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		switch (RendererAPI::GetAPI())
+		{
+			case RendererAPI::API::OpenGL:
+			{
+				ImGui_ImplGlfw_InitForOpenGL(window, true);
+				ImGui_ImplOpenGL3_Init("#version 410");
+				break;
+			}
+			case RendererAPI::API::DX11:
+			{
+				
+				ImGui_ImplWin32_Init(glfwGetWin32Window(window));
+				//soon!
+				//ImGui_ImplDX11_Init()
+
+			}
+		}
+
 	}
 
 	void ImGuiLayer::OnDetach()
 	{
 		ZL_PROFILE_FUNCTION();
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::OpenGL:
+		{
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui_ImplGlfw_Shutdown();
+			break;
+		}
+		case RendererAPI::API::DX11:
+		{
+			//Soon
+			//ImGui_ImplDX11_Shutdown();
+			ImGui_ImplWin32_Shutdown();			
+			break;
+		}
+		}
 
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
 	
@@ -66,8 +106,22 @@ namespace Zorlock {
 	{
 		ZL_PROFILE_FUNCTION();
 
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+		switch (RendererAPI::GetAPI())
+		{
+			case RendererAPI::API::OpenGL:
+			{
+				ImGui_ImplOpenGL3_NewFrame();
+				ImGui_ImplGlfw_NewFrame();
+				break;
+			}
+			case RendererAPI::API::DX11:
+			{
+				//Soon
+				//ImGui_ImplDX11_NewFrame();
+				ImGui_ImplWin32_NewFrame();
+				break;
+			}
+		}
 		ImGui::NewFrame();
 	}
 
@@ -81,13 +135,28 @@ namespace Zorlock {
 
 		// Rendering
 		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::OpenGL:
+		{
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			break;
+		}
+		case RendererAPI::API::DX11:
+		{
+			//Soon
+			//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			break;
+		}
+		}
+
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			GLFWwindow* backup_current_context = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
+
 			glfwMakeContextCurrent(backup_current_context);
 		}
 	}

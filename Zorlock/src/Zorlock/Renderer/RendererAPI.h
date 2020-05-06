@@ -11,7 +11,7 @@ namespace Zorlock {
 	public:
 		enum class API
 		{
-			None = 0, OpenGL = 1
+			None = 0, OpenGL = 1, DX11 = 2
 		};
 	public:
 		virtual void Init() = 0;

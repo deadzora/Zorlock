@@ -27,7 +27,7 @@ Index of this file:
 */
 
 #pragma once
-
+#define GLFW_EXPOSE_NATIVE_WIN32
 // Configuration file with compile-time options (edit imconfig.h or define IMGUI_USER_CONFIG to your own filename)
 #ifdef IMGUI_USER_CONFIG
 #include IMGUI_USER_CONFIG
