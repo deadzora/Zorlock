@@ -36,12 +36,12 @@ namespace Zorlock
 
 	void DX11RendererAPI::SetClearColor(const glm::vec4& color)
 	{
-		DX11Raz::DX11GraphicsEngine::Get()->Cls(color.r, color.g, color.b, color.a);
+		//DX11Raz::DX11GraphicsEngine::Get()->Cls(color.r, color.g, color.b, color.a);
 	}
 
 	void DX11RendererAPI::Clear()
 	{
-		DX11Raz::DX11GraphicsEngine::Get()->Cls();
+		//DX11Raz::DX11GraphicsEngine::Get()->Cls();
 	}
 
 	void DX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)

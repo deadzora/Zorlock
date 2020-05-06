@@ -70,10 +70,10 @@ namespace Zorlock {
 			case RendererAPI::API::DX11:
 			{
 				
-				ImGui_ImplWin32_Init(glfwGetWin32Window(window));
+				//ImGui_ImplWin32_Init(glfwGetWin32Window(window));
 				//soon!
 				
-				ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), DX11Raz::DX11GraphicsEngine::Get()->GetContext());
+				//ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), DX11Raz::DX11GraphicsEngine::Get()->GetContext());
 
 			}
 		}
@@ -89,18 +89,20 @@ namespace Zorlock {
 		{
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
+			ImGui::DestroyContext();
 			break;
 		}
 		case RendererAPI::API::DX11:
 		{
 			//Soon
-			ImGui_ImplDX11_Shutdown();
-			ImGui_ImplWin32_Shutdown();			
+			//ImGui_ImplDX11_Shutdown();
+			//ImGui_ImplWin32_Shutdown();		
+			//ImGui::DestroyContext();
 			break;
 		}
 		}
 
-		ImGui::DestroyContext();
+		
 	}
 	
 	void ImGuiLayer::Begin()
@@ -113,53 +115,72 @@ namespace Zorlock {
 			{
 				ImGui_ImplOpenGL3_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
+				ImGui::NewFrame();
 				break;
 			}
 			case RendererAPI::API::DX11:
 			{
 				//Soon
-				ImGui_ImplDX11_NewFrame();
-				ImGui_ImplWin32_NewFrame();
+				//ImGui_ImplDX11_NewFrame();
+				//ImGui_ImplWin32_NewFrame();
+				//ImGui::NewFrame();
 				break;
 			}
 		}
-		ImGui::NewFrame();
+		
 	}
 
 	void ImGuiLayer::End()
 	{
 		ZL_PROFILE_FUNCTION();
 
-		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+
 
 		// Rendering
-		ImGui::Render();
+		
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
 		{
+			ImGuiIO& io = ImGui::GetIO();
+			Application& app = Application::Get();
+			io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				GLFWwindow* backup_current_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+
+				glfwMakeContextCurrent(backup_current_context);
+			}
 			break;
 		}
 		case RendererAPI::API::DX11:
 		{
 			//Soon
+			/*
+			ImGuiIO& io = ImGui::GetIO();
+			Application& app = Application::Get();
+			io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				GLFWwindow* backup_current_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+
+				glfwMakeContextCurrent(backup_current_context);
+				
+			}*/
 			break;
 		}
 		}
 
 
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
 
-			glfwMakeContextCurrent(backup_current_context);
-		}
 	}
 
 }

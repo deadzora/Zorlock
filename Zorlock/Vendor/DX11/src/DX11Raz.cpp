@@ -142,10 +142,10 @@ namespace DX11Raz
 	{
 		return new DX11SwapChain();;
 	}
-
+#ifdef ZL_DEBUG
 	ID3D11Debug* DX11GraphicsEngine::DXEnableDebug(DX11DebugCallback f)
 	{
-#ifdef ZL_DEBUG
+
 
 		if (this->m_d3dDebug != nullptr)
 		{
@@ -163,10 +163,10 @@ namespace DX11Raz
 			}
 			//res = ID3D11Debug::SetFeatureMask(D3D11_DEBUG_FEATURE_FINISH_PER_RENDER_OP);
 		}
-#endif
+
 		return nullptr;
 	}
-
+#endif
 
 
 }

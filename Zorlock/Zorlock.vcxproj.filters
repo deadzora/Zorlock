@@ -222,7 +222,13 @@
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11Raz.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11SwapChain.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -2676,8 +2682,24 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\DX11\src\DX11DeviceContext.h" />
-    <ClInclude Include="Vendor\DX11\src\DX11SwapChain.h" />
+    <ClInclude Include="src\Platform\Windows\WindowNative.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\Keyboard.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\Mouse.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\MouseEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\KeyboardEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\ZWindow.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2782,13 +2804,34 @@
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11DeviceContext.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11Raz.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11SwapChain.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />
-    <ClCompile Include="Vendor\DX11\src\DX11SwapChain.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowNative.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Window.cpp" />
+    <ClCompile Include="Vendor\DX11\src\Keyboard.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\KeyboardEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\Mouse.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\MouseEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\ZWindow.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

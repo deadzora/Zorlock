@@ -6,6 +6,9 @@
 
 namespace DX11Raz
 {
+
+
+
 #ifdef ZL_DEBUG
 	typedef bool (*DX11DebugCallback)(D3D11_MESSAGE_CATEGORY,D3D11_MESSAGE_SEVERITY,D3D11_MESSAGE_ID,const char*,SIZE_T);
 #endif
@@ -30,7 +33,9 @@ namespace DX11Raz
 		IDXGIFactory* GetFactory();
 		ID3D11DeviceContext* GetContext();
 		DX11SwapChain* CreateSwapChain();
+#if defined(ZL_DEBUG)
 		ID3D11Debug* DXEnableDebug(DX11DebugCallback func);
+#endif
 	private:
 		bool intialized;
 		RECT viewportsize;

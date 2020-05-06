@@ -11,7 +11,7 @@ namespace DX11Raz
 
 	void DX11DeviceContext::clearRenderTargetColor(DX11SwapChain* swap_chain, float r, float g, float b, float a)
 	{
-		std::string line = "Width: " + std::to_string(width) + " Height: " + std::to_string(height);
+		std::string line = "Width: " + std::to_string(this->width) + " Height: " + std::to_string(this->height);
 		OutputDebugStringA(line.c_str());
 		FLOAT clear_color[] = { r,g,b,a };
 		m_device_context->ClearRenderTargetView(swap_chain->m_rtv, clear_color);
