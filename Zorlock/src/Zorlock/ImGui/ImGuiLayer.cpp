@@ -10,7 +10,7 @@
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
-
+#include <DX11Raz.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
 
@@ -72,7 +72,8 @@ namespace Zorlock {
 				
 				ImGui_ImplWin32_Init(glfwGetWin32Window(window));
 				//soon!
-				//ImGui_ImplDX11_Init()
+				
+				ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), DX11Raz::DX11GraphicsEngine::Get()->GetContext());
 
 			}
 		}
@@ -93,7 +94,7 @@ namespace Zorlock {
 		case RendererAPI::API::DX11:
 		{
 			//Soon
-			//ImGui_ImplDX11_Shutdown();
+			ImGui_ImplDX11_Shutdown();
 			ImGui_ImplWin32_Shutdown();			
 			break;
 		}
@@ -117,7 +118,7 @@ namespace Zorlock {
 			case RendererAPI::API::DX11:
 			{
 				//Soon
-				//ImGui_ImplDX11_NewFrame();
+				ImGui_ImplDX11_NewFrame();
 				ImGui_ImplWin32_NewFrame();
 				break;
 			}
@@ -145,7 +146,7 @@ namespace Zorlock {
 		case RendererAPI::API::DX11:
 		{
 			//Soon
-			//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			break;
 		}
 		}

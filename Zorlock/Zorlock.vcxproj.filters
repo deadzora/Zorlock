@@ -2676,6 +2676,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\DX11DeviceContext.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11SwapChain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2786,5 +2788,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\DX11DeviceContext.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11SwapChain.cpp" />
   </ItemGroup>
 </Project>
