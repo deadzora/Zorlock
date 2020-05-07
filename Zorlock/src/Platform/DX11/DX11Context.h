@@ -1,20 +1,20 @@
 #pragma once
-
 #include "Zorlock/Renderer/GraphicsContext.h"
+#include <DX11Raz.h>
 
-struct GLFWwindow;
+
 
 namespace Zorlock {
 
 	class DX11Context : public GraphicsContext
 	{
 	public:
-		DX11Context(GLFWwindow* windowHandle);
+		DX11Context(DX11Raz::ZWindow* windowHandle);
 
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
 	private:
-		GLFWwindow* m_WindowHandle;
+		DX11Raz::ZWindow* m_WindowHandle;
 	};
 
 }

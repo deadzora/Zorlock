@@ -1,7 +1,7 @@
 #include "ZLpch.h"
 #include "DX11RendererAPI.h"
 #include <DX11Raz.h>
-#include <D3d11sdklayers.h>
+
 namespace Zorlock
 {
 	void DX11MessageCallback(
@@ -13,10 +13,10 @@ namespace Zorlock
 	{
 		switch (severity)
 		{
-		case D3D11_MESSAGE_SEVERITY_ERROR:         ZL_CORE_CRITICAL(message); return;
-		case D3D11_MESSAGE_SEVERITY_WARNING:       ZL_CORE_ERROR(message); return;
-		case D3D11_MESSAGE_SEVERITY_INFO:          ZL_CORE_WARN(message); return;
-		case D3D11_MESSAGE_SEVERITY_MESSAGE: ZL_CORE_TRACE(message); return;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_ERROR:         ZL_CORE_CRITICAL(message); return;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_WARNING:       ZL_CORE_ERROR(message); return;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_INFO:          ZL_CORE_WARN(message); return;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_MESSAGE: ZL_CORE_TRACE(message); return;
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown severity level!");
@@ -25,7 +25,7 @@ namespace Zorlock
 	void DX11RendererAPI::Init()
 	{
 
-		DX11Raz::DX11GraphicsEngine::Get()->Initialize();
+		//DX11Raz::DX11GraphicsEngine::Get()->Initialize();
 
 	}
 

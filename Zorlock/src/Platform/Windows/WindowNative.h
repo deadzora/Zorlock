@@ -1,8 +1,8 @@
 #pragma once
-
 #include "Zorlock/Core/Window.h"
 #include "Zorlock/Renderer/GraphicsContext.h"
-#include <ZWindow.h>
+#include <DX11Raz.h>
+
 
 namespace Zorlock {
 
@@ -31,7 +31,7 @@ namespace Zorlock {
 		DX11Raz::ZWindow* m_Window;
 		Scope<GraphicsContext> m_Context;
 
-		struct WindowData
+		struct ZWindowData
 		{
 			std::string Title;
 			unsigned int Width, Height;
@@ -40,7 +40,7 @@ namespace Zorlock {
 			EventCallbackFn EventCallback;
 		};
 
-		WindowData m_Data;
+		ZWindowData m_Data;
 	};
 
 }

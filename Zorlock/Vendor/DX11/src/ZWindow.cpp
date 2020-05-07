@@ -1,18 +1,23 @@
 #include "ZLpch.h"
 #include "ZWindow.h"
-//#include "ErrorLogger.h"
-#include "imgui.h"
-#include "imgui_impl_win32.h"
+#include <windowsx.h>
+#include <imgui.h>
+#include <imgui_impl_win32.h>
 
 namespace DX11Raz
 {
 
 
-	Win32ErrorCallBack callback = nullptr;
+
+
+
+	Win32ErrorCallBack Errorcallback = nullptr;
 
 	ZWindow::ZWindow()
 	{
+		
 		static bool raw_input_initialized = false;
+		/*
 		if (raw_input_initialized == false)
 		{
 			RAWINPUTDEVICE rid;
@@ -29,15 +34,17 @@ namespace DX11Raz
 			}
 			raw_input_initialized = true;
 		}
-
+		*/
 	}
 
-	extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	
+
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{ 
+		//if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		//	return true;
+
 		ZWindow* pThis;
-		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
-			return true;
 		if (msg == WM_NCCREATE)
 		{
 			LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lparam);
@@ -85,8 +92,10 @@ namespace DX11Raz
 		m_hwnd=::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"MyWindowClass", this->WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, w, h,
 			NULL, NULL, NULL, this);
 		if (!m_hwnd)
+		{
+			Errorcallback(1,"Could Not Create a Raz Window!");
 			return false;
-
+		}
 		::ShowWindow(m_hwnd, SW_SHOW);
 		::UpdateWindow(m_hwnd);
 
@@ -98,13 +107,14 @@ namespace DX11Raz
 
 	bool ZWindow::release()
 	{
+		//be sure to release the graphics!
 		if (!::DestroyWindow(m_hwnd))
 			return false;
 
 		return true;
 	}
 
-	bool ZWindow::broadcast()
+	bool ZWindow::PollEvents()
 	{
 		MSG msg;
 		this->OnUpdate();
@@ -145,69 +155,79 @@ namespace DX11Raz
 
 		case WM_MOUSEMOVE:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnMouseMove(x, y);
+			this->WMPCallback(this, x, y);
+
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnLeftPressed(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnRightPressed(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 		case WM_MBUTTONDOWN:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnMiddlePressed(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 		case WM_LBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnLeftReleased(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnRightReleased(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 		case WM_MBUTTONUP:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			int x = GET_X_LPARAM(lparam);
+			int y = GET_Y_LPARAM(lparam);
 			this->mouse.OnMiddleReleased(x, y);
+			this->WMBCallback(this, msg, 0, 0);
 			return 0;
 		}
 
 		case WM_MOUSEWHEEL:
 		{
-			int x = LOWORD(lparam);
-			int y = HIWORD(lparam);
+			double x = GET_X_LPARAM(lparam);
+			double y = GET_Y_LPARAM(lparam);
 			if (GET_WHEEL_DELTA_WPARAM(wparam) > 0)
 			{
+				this->WScrollCallback(this, x, y);
 				this->mouse.OnWheelUp(x, y);
 			}
 			else if (GET_WHEEL_DELTA_WPARAM(wparam) < 0)
 			{
+				this->WScrollCallback(this, x, y);
 				this->mouse.OnWheelDown(x, y);
 			}
 			break;
 		}
-
+		/*
 		case WM_INPUT:
 		{
 			UINT dataSize;
@@ -229,12 +249,13 @@ namespace DX11Raz
 
 			return ::DefWindowProc(hwnd, msg, wparam, lparam);
 		}
-
+		*/
 		case WM_KEYDOWN:
 		{
 			unsigned char keycode = static_cast<unsigned char>(wparam);
 			if (this->keyboard.IsKeysAutoRepeat())
 			{
+				this->WKCallback(this, keycode, keycode, DX_KEYACTION::DX_REPEATE, 0);
 				this->keyboard.OnKeyPressed(keycode);
 			}
 			else
@@ -242,6 +263,7 @@ namespace DX11Raz
 				const bool wasPressed = lparam & 0x40000000;
 				if (!wasPressed)
 				{
+					this->WKCallback(this, keycode, keycode, DX_KEYACTION::DX_PRESS, 0);
 					this->keyboard.OnKeyPressed(keycode);
 				}
 			}
@@ -253,6 +275,7 @@ namespace DX11Raz
 		{
 			unsigned char keycode = static_cast<unsigned char>(wparam);
 			this->keyboard.OnKeyReleased(keycode);
+			this->WKCallback(this, keycode, keycode, DX_KEYACTION::DX_RELEASE, 0);
 			return 0;
 		}
 
@@ -260,7 +283,8 @@ namespace DX11Raz
 		{
 			unsigned char ch = static_cast<unsigned char>(wparam);
 			if (this->keyboard.IsCharsAutoRepeat())
-			{
+			{	
+				this->WCharCallback(this, ch);
 				this->keyboard.OnChar(ch);
 			}
 			else
@@ -268,6 +292,7 @@ namespace DX11Raz
 				const bool wasPressed = lparam & 0x40000000;
 				if (!wasPressed)
 				{
+					this->WCharCallback(this, ch);
 					this->keyboard.OnChar(ch);
 				}
 			}
@@ -282,8 +307,18 @@ namespace DX11Raz
 		}
 		case WM_DESTROY:
 		{
+			this->WCCallback(this);
 			this->OnDestroy();
 			::PostQuitMessage(0);
+			break;
+		}
+		case WM_SIZING:
+		{
+			RECT rc = this->getClientWindowRect();
+			int w = static_cast<int>((rc.right - rc.left));
+			int h = static_cast<int>((rc.bottom - rc.top));
+			WSCallback(this, w, h);
+			return 0;
 			break;
 		}
 		default:
@@ -296,6 +331,8 @@ namespace DX11Raz
 
 	void ZWindow::OnUpdate()
 	{
+
+
 	}
 
 
@@ -311,13 +348,10 @@ namespace DX11Raz
 	ZWindow::~ZWindow()
 	{
 	}
-	void ZWindow::SetProps(Zorlock::WindowProps* props)
-	{
-		winprops = props;
-	}
+
 	void SetZWindowCallback(Win32ErrorCallBack f)
 	{
-		callback = f;
+		Errorcallback = f;
 	}
 
 	ZWindow* ZCreateWindow(UINT w, UINT h, LPCWSTR windowname)
@@ -327,15 +361,60 @@ namespace DX11Raz
 		return win;
 	}
 
-	void SetWindowUserPointer(ZWindow* s, Zorlock::WindowData* props)
+	void SetWindowUserPointer(ZWindow* window, void* data)
 	{
-		s->SetProps(props);
+		window->data = data;
 	}
+
+	void* GetWindowUserPointer(ZWindow* window)
+	{
+		return window->data;
+	}
+
 
 	int InitZWindows()
 	{
 		//i mean i guess there's some kind of init i can do pre creation of windows
 
 		return 1;
+	}
+	void ZDestroyWindow(ZWindow* m_Window)
+	{
+		m_Window->release();
+		
+	}
+
+	void ZTerminate()
+	{
+		return;
+	}
+
+	void ZSetMouseButtonCallback(ZWindow* win, WindowMouseButtonCallback func)
+	{
+		win->WMBCallback = func;
+	}
+	void ZSetCharacterCallback(ZWindow* win, WindowCharCallback func)
+	{
+		win->WCharCallback = func;
+	}
+	void ZSetKeyCallback(ZWindow* win, WindowKeyCallback func)
+	{
+		win->WKCallback = func;
+	}
+	void ZSetCloseCallback(ZWindow* win, WindowCloseCallback func)
+	{
+		win->WCCallback = func;
+	}
+	void ZSetWindowSizeCallback(ZWindow* win, WindowSizeCallback func)
+	{
+		win->WSCallback = func;
+	}
+	void ZSetScrollCallback(ZWindow* win, WindowScrollCallback func)
+	{
+		win->WScrollCallback = func;
+	}
+	void ZSetMousePosCallback(ZWindow* win, WindowMousePosCallback func)
+	{
+		win->WMPCallback = func;
 	}
 }

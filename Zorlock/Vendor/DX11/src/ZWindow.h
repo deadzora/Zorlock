@@ -6,20 +6,44 @@
 #include "Mouse.h"
 #include "Zorlock/Core/Window.h"
 
+#define ZWINDOW(x) static_cast<DX11Raz::ZWindow*>(x);
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
 namespace DX11Raz
 {
 
 	typedef void(*Win32ErrorCallBack)(int, const char*);
 
+	struct ZWindowData;
+	//typedefs for callbacks
 
+	enum DX_KEYACTION {
+		DX_RELEASE = 0,
+		DX_PRESS = 1,
+		DX_REPEATE = 2
+	};
 
-	class ZWindow
+	class ZWin
+	{
+
+	};
+
+	typedef void (*WindowSizeCallback)(DX11Raz::ZWin*, int, int);
+	typedef void (*WindowCloseCallback)(DX11Raz::ZWin*);
+	typedef void (*WindowKeyCallback)(DX11Raz::ZWin*, int, int, int, int);
+	typedef void (*WindowMouseButtonCallback)(DX11Raz::ZWin*, int, int, int);
+	typedef void (*WindowCharCallback)(DX11Raz::ZWin*, unsigned int);
+	typedef void (*WindowScrollCallback)(DX11Raz::ZWin*, double, double);
+	typedef void (*WindowMousePosCallback)(DX11Raz::ZWin*, double, double);
+
+	class ZWindow : public ZWin
 	{
 	public:
 		ZWindow();
 		bool init(UINT w, UINT h, LPCWSTR windowname);
 		bool release();
-		bool broadcast();
+		bool PollEvents();
 		bool isRunning();
 
 		RECT getClientWindowRect();
@@ -32,26 +56,41 @@ namespace DX11Raz
 		Keyboard keyboard;
 		Mouse mouse;
 		LPCWSTR WindowName = L"DXAPP";
-		~ZWindow();
-		void SetProps(Zorlock::WindowProps* props);
+		~ZWindow();		
+		void* data;
+		WindowMouseButtonCallback WMBCallback;
+		WindowCloseCallback WCCallback;
+		WindowKeyCallback WKCallback;
+		WindowSizeCallback WSCallback;
+		WindowCharCallback WCharCallback;
+		WindowScrollCallback WScrollCallback;
+		WindowMousePosCallback WMPCallback;
 	private:
-		Zorlock::WindowProps* winprops;
+
 	protected:
 		HWND m_hwnd;
 		bool m_is_running;
 
-		struct WindowData
-		{
-			std::string Title;
-			unsigned int Width, Height;
-			bool VSync;
-
-			//EventCallbackFn EventCallback;
-		};
 
 	};
-	static ZWindow* ZCreateWindow(UINT w, UINT h, LPCWSTR windowname);
-	//static void SetWindowUserPointer(ZWindow * s,  props);
-	static void SetZWindowCallback(Win32ErrorCallBack f);
-	static int InitZWindows();
+
+
+
+
+	ZWindow* ZCreateWindow(UINT w, UINT h, LPCWSTR windowname);
+	void SetWindowUserPointer(ZWindow * window, void * data);
+	void * GetWindowUserPointer(ZWindow * window);
+	void SetZWindowCallback(Win32ErrorCallBack f);
+	int InitZWindows();
+	void ZDestroyWindow(ZWindow * m_Window);
+	void ZTerminate();
+
+	void ZSetMouseButtonCallback(ZWindow * win, WindowMouseButtonCallback func);
+	void ZSetCharacterCallback(ZWindow* win, WindowCharCallback func);
+	void ZSetKeyCallback(ZWindow* win, WindowKeyCallback func);
+	void ZSetCloseCallback(ZWindow* win, WindowCloseCallback func);
+	void ZSetWindowSizeCallback(ZWindow* win, WindowSizeCallback func);
+	void ZSetScrollCallback(ZWindow* win, WindowScrollCallback func);
+	void ZSetMousePosCallback(ZWindow* win, WindowMousePosCallback func);
+
 }

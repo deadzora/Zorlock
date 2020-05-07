@@ -10,11 +10,12 @@
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
+
 #include <DX11Raz.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
 
-extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 
 
@@ -56,13 +57,14 @@ namespace Zorlock {
 		}
 
 		Application& app = Application::Get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		
 
 		// Setup Platform/Renderer bindings
 		switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
+				GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 				ImGui_ImplGlfw_InitForOpenGL(window, true);
 				ImGui_ImplOpenGL3_Init("#version 410");
 				break;

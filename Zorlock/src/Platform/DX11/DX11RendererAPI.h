@@ -1,5 +1,5 @@
 #pragma once
-
+#include <D3d11sdklayers.h>
 #include "Zorlock/Renderer/RendererAPI.h"
 
 namespace Zorlock {
@@ -16,5 +16,7 @@ namespace Zorlock {
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
 	};
 
+
+	void DX11MessageCallback(D3D11_MESSAGE_CATEGORY type, D3D11_MESSAGE_SEVERITY severity, D3D11_MESSAGE_ID id, const char* message, SIZE_T length);
 
 }
