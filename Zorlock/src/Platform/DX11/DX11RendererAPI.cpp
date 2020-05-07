@@ -1,47 +1,76 @@
 #include "ZLpch.h"
 #include "DX11RendererAPI.h"
 #include <DX11Raz.h>
-
+#include <D3d11sdklayers.h>
+#include "Zorlock/Core/Application.h"
+#include "Platform/Windows/WindowNative.h"
 namespace Zorlock
 {
-	void DX11MessageCallback(
-		D3D11_MESSAGE_CATEGORY  type,
-		D3D11_MESSAGE_SEVERITY  severity,
-		D3D11_MESSAGE_ID        id,
-		const char* message,
-		SIZE_T length)
+	DX11RendererAPI::DX11RendererAPI()
 	{
-		switch (severity)
+		DX11Raz::RazDX11Initialize();
+	}
+	/*
+	bool DX11MessageCallback(void* p)
+	{
+		ID3D11InfoQueue* pInfoQueue = PID3D11InfoQueue(p);
+		SIZE_T messageLength = 0;
+		HRESULT hr = pInfoQueue->GetMessage(0, NULL, &messageLength);
+		D3D11_MESSAGE* pMessage = (D3D11_MESSAGE*)malloc(messageLength);
+		hr = pInfoQueue->GetMessage(0, pMessage, &messageLength);
+		switch (pMessage->Severity)
 		{
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_ERROR:         ZL_CORE_CRITICAL(message); return;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_WARNING:       ZL_CORE_ERROR(message); return;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_INFO:          ZL_CORE_WARN(message); return;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_MESSAGE: ZL_CORE_TRACE(message); return;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_ERROR:         ZL_CORE_CRITICAL(pMessage); return true;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_WARNING:       ZL_CORE_ERROR(pMessage); return false;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_INFO:          ZL_CORE_WARN(pMessage); return false;
+		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_MESSAGE: ZL_CORE_TRACE(pMessage); return true;
 		}
 
-		ZL_CORE_ASSERT(false, "Unknown severity level!");
+		
+		return true;
 	}
-
+	*/
 	void DX11RendererAPI::Init()
 	{
-
-		//DX11Raz::DX11GraphicsEngine::Get()->Initialize();
-
+		
 	}
 
 	void DX11RendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
-		//DX11Raz::DX11GraphicsEngine::Get()->SetViewport(0, 0, 1280, 720);
+		Window & win = Application::Get().GetWindow();
+		//Need to make all this shit a macro
+
+		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
+		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
+
+		DX11Raz::RazSetViewport(zhandle->GetDeviceContext(), width, height);
 	}
 
 	void DX11RendererAPI::SetClearColor(const glm::vec4& color)
 	{
-		//DX11Raz::DX11GraphicsEngine::Get()->Cls(color.r, color.g, color.b, color.a);
+		Window& win = Application::Get().GetWindow();
+		//Need to make all this shit a macro
+
+		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
+		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
+
+		DX11Raz::RazSetCLSColor(zhandle->GetDeviceContext(), color.r, color.g, color.b, color.a);
 	}
 
 	void DX11RendererAPI::Clear()
 	{
-		//DX11Raz::DX11GraphicsEngine::Get()->Cls();
+		Window& win = Application::Get().GetWindow();
+		//Need to make all this shit a macro
+
+		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
+		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
+
+		DX11Raz::RazCLS(zhandle->GetDeviceContext());
+	}
+
+	void DX11RendererAPI::Release()
+	{
+		DX11Raz::RazDX11Release();
 	}
 
 	void DX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)

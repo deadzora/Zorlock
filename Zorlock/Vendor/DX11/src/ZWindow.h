@@ -13,6 +13,8 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wparam
 namespace DX11Raz
 {
 
+
+
 	typedef void(*Win32ErrorCallBack)(int, const char*);
 
 	struct ZWindowData;
@@ -37,6 +39,9 @@ namespace DX11Raz
 	typedef void (*WindowScrollCallback)(DX11Raz::ZWin*, double, double);
 	typedef void (*WindowMousePosCallback)(DX11Raz::ZWin*, double, double);
 
+
+	class DX11DeviceContext;
+
 	class ZWindow : public ZWin
 	{
 	public:
@@ -48,11 +53,15 @@ namespace DX11Raz
 
 		RECT getClientWindowRect();
 		void SetHWND(HWND hwnd);
+		HWND GetHWND();
+		UINT GetWidth();
+		UINT GetHeight();
 		LRESULT ZWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		virtual void OnUpdate();
 		virtual void OnCreate();
 		virtual void OnDestroy();
-		
+		DX11DeviceContext* GetDeviceContext();
+		void SetDeviceContext(DX11DeviceContext* context);
 		Keyboard keyboard;
 		Mouse mouse;
 		LPCWSTR WindowName = L"DXAPP";
@@ -66,11 +75,14 @@ namespace DX11Raz
 		WindowScrollCallback WScrollCallback;
 		WindowMousePosCallback WMPCallback;
 	private:
-
+		//we want to keep a copy of the devicecontext on the window
+		DX11DeviceContext * device_context;
+		
 	protected:
 		HWND m_hwnd;
 		bool m_is_running;
-
+		UINT width;
+		UINT height;
 
 	};
 

@@ -3,6 +3,7 @@
 #include <windowsx.h>
 #include <imgui.h>
 #include <imgui_impl_win32.h>
+#include "DX11DeviceContext.h"
 
 namespace DX11Raz
 {
@@ -37,12 +38,11 @@ namespace DX11Raz
 		*/
 	}
 
-	
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{ 
-		//if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
-		//	return true;
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+			return true;
 
 		ZWindow* pThis;
 		if (msg == WM_NCCREATE)
@@ -68,6 +68,8 @@ namespace DX11Raz
 
 	bool ZWindow::init(UINT w, UINT h, LPCWSTR windowname)
 	{
+		width = w;
+		height = h;
 		this->WindowName = windowname;
 		WNDCLASSEX wc;
 		wc.cbClsExtra = NULL;
@@ -108,6 +110,7 @@ namespace DX11Raz
 	bool ZWindow::release()
 	{
 		//be sure to release the graphics!
+		device_context->release();
 		if (!::DestroyWindow(m_hwnd))
 			return false;
 
@@ -144,6 +147,21 @@ namespace DX11Raz
 	void ZWindow::SetHWND(HWND hwnd)
 	{
 		this->m_hwnd = hwnd;
+	}
+
+	HWND ZWindow::GetHWND()
+	{
+		return m_hwnd;
+	}
+
+	UINT ZWindow::GetWidth()
+	{
+		return width;
+	}
+
+	UINT ZWindow::GetHeight()
+	{
+		return height;
 	}
 
 	LRESULT ZWindow::ZWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -343,6 +361,16 @@ namespace DX11Raz
 	void ZWindow::OnDestroy()
 	{
 		m_is_running = false;
+	}
+
+	DX11DeviceContext* ZWindow::GetDeviceContext()
+	{
+		return device_context;
+	}
+
+	void ZWindow::SetDeviceContext(DX11DeviceContext* context)
+	{
+		device_context = context;
 	}
 
 	ZWindow::~ZWindow()

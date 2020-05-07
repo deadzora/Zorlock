@@ -16,6 +16,7 @@ namespace Zorlock {
 
 	void Renderer::Shutdown()
 	{
+		RenderCommand::ReleaseRenderAPI();
 		Renderer2D::Shutdown();
 	}
 

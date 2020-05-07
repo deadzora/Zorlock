@@ -45,7 +45,6 @@ namespace Zorlock
 	void WindowsNative::OnUpdate()
 	{
 		ZL_PROFILE_FUNCTION();
-
 		m_Window->PollEvents();
 		m_Context->SwapBuffers();
 	}

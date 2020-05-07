@@ -7,8 +7,8 @@
 namespace DX11Raz
 {
 	
-	static bool enabled = false;
-
+	
+	DX11GraphicsEngine engine;
 	
 
 	DX11GraphicsEngine::~DX11GraphicsEngine()
@@ -34,12 +34,15 @@ namespace DX11Raz
 		UINT num_feature_levels = ARRAYSIZE(feature_levels);
 		HRESULT res = 0;
 
+		OutputDebugString(L"Initializing DX11 3D Device\r\n");
+
 		for (UINT driver_type_index = 0; driver_type_index < num_driver_types;)
 		{
+			//NO IMMEDIATE CONTEXT!
 #ifdef ZL_DEBUG
 			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, D3D11_DEBUG_FEATURE_FINISH_PER_RENDER_OP, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
 #else
-			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
+			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, NULL);//&m_imm_context);
 #endif
 			if (SUCCEEDED(res))
 				break;
@@ -50,29 +53,30 @@ namespace DX11Raz
 			
 			OutputDebugString(L"Failed to Create DX11 3D Device\r\n");
 			ZL_CORE_ASSERT(1,"Failed to Create DX11 3D Device");
-			m_imm_context->Release();
+			//m_imm_context->Release();
 			m_d3d_device->Release();
 			return false;
 		}
-		m_imm_device_context = new DX11DeviceContext(m_imm_context);
+		else {
+			OutputDebugString(L"Created DX11 3D Device\r\n");
+		}
+		//m_imm_device_context = new DX11DeviceContext(m_imm_context);
 
 		m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
 		m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
 		m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
 		//m_dxgi_factory->CreateSwapChain
 		intialized = true;
-
-		viewportsize.left = 0;
-		viewportsize.top = 0;
-		viewportsize.right = 1280;
-		viewportsize.bottom = 720;
-
 		return true;
 	}
 
-	bool DX11GraphicsEngine::SetContext(HWND hwnd)
+
+	void DX11GraphicsEngine::Release()
 	{
-		return this->SetContext(hwnd, viewportsize);
+		m_d3d_device->Release();
+		m_dxgi_device->Release();
+		m_dxgi_adapter->Release();
+
 	}
 
 	bool DX11GraphicsEngine::SetContext(HWND hwnd, RECT rect)
@@ -81,45 +85,43 @@ namespace DX11Raz
 		{
 			Initialize();
 		}
-		viewportsize = rect;
 		this->m_swapchain = this->CreateSwapChain();
-		this->m_swapchain->init(hwnd, 1280, 720);//rect.right - rect.left, rect.bottom - rect.top);
-		this->m_imm_device_context->setviewportsize(1280, 720); //rect.right - rect.left, rect.bottom - rect.top);
+		this->m_swapchain->init(hwnd,rect.right - rect.left, rect.bottom - rect.top);
+		this->m_imm_device_context->setviewportsize(rect.right - rect.left, rect.bottom - rect.top);
 		this->m_imm_device_context->createblendstate();
 		return true;
 	}
 
 	DX11GraphicsEngine* DX11GraphicsEngine::Get()
 	{
-		static DX11GraphicsEngine engine;
-		enabled = true;
+		
+		engine.enabled = true;
 		return &engine;
 	}
 
 	void DX11GraphicsEngine::Cls()
 	{
-		this->Cls(0, 0, 0, 1);
+		//this->Cls(0, 0, 0, 1);
 	}
 
 	void DX11GraphicsEngine::Cls(float r, float g, float b, float a)
 	{
-		this->m_imm_device_context->clearRenderTargetColor(this->m_swapchain, r, g, b, a);
+		//we need to know which context we are performing CLS on
+
+		//this->m_imm_device_context->clearRenderTargetColor(this->m_swapchain, r, g, b, a);
 	}
 
 	void DX11GraphicsEngine::Flip(bool vsync)
 	{
-		this->m_swapchain->flip(vsync);
+		//this->m_swapchain->flip(vsync);
 	}
 
 	void DX11GraphicsEngine::SetViewport(UINT x, UINT y, UINT width, UINT height)
 	{
 
-		viewportsize.left = x;
-		viewportsize.top = y;
-		viewportsize.right = x + width;
-		viewportsize.bottom = y + height;
 
-		m_imm_device_context->setviewportsize(width, height);
+
+		//m_imm_device_context->setviewportsize(width, height);
 
 	}
 
@@ -133,9 +135,9 @@ namespace DX11Raz
 		return m_dxgi_factory;
 	}
 
-	ID3D11DeviceContext* DX11GraphicsEngine::GetContext()
+	ID3D11DeviceContext* DX11GraphicsEngine::GetContext(ZWindow * zhandle)
 	{
-		return m_imm_context;
+		return zhandle->GetDeviceContext()->GetContext();
 	}
 
 	DX11SwapChain* DX11GraphicsEngine::CreateSwapChain()
@@ -143,6 +145,7 @@ namespace DX11Raz
 		return new DX11SwapChain();;
 	}
 #ifdef ZL_DEBUG
+	/*
 	ID3D11Debug* DX11GraphicsEngine::DXEnableDebug(DX11DebugCallback f)
 	{
 
@@ -166,7 +169,51 @@ namespace DX11Raz
 
 		return nullptr;
 	}
+	*/
 #endif
 
+
+	bool RazDX11Initialize()
+	{
+		return DX11GraphicsEngine::Get()->Initialize();
+		
+	}
+
+	bool RazDX11Release()
+	{
+		DX11GraphicsEngine::Get()->Release();
+		return true;
+	}
+
+	void RazDX11CreateContext(ZWindow* zhandle)
+	{
+		ID3D11DeviceContext * newcontext;
+		HRESULT res = 0;
+		DX11GraphicsEngine::Get()->GetDevice()->GetImmediateContext(&newcontext); //->CreateDeferredContext(0, &newcontext);
+		//if (SUCCEEDED(res))
+		//{
+			DX11DeviceContext * DXContext = new DX11DeviceContext(newcontext);
+
+			zhandle->SetDeviceContext(DXContext);
+			DXContext->Init(zhandle);
+
+		//}
+
+	}
+
+	void RazSetCLSColor(DX11DeviceContext* dhandle, float r, float g, float b, float a)
+	{
+		dhandle->clearRenderTargetColor(r, g, b, a);
+	}
+
+	void RazCLS(DX11DeviceContext* dhandle)
+	{
+		dhandle->clearRenderTarget();
+	}
+
+	void RazSetViewport(DX11DeviceContext* dhandle, UINT width, UINT height)
+	{
+		dhandle->setviewportsize(width, height);
+	}
 
 }

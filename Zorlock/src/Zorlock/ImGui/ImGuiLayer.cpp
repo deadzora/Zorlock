@@ -12,6 +12,7 @@
 #include <examples/imgui_impl_opengl3.h>
 
 #include <DX11Raz.h>
+#include <DX11DeviceContext.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
 
@@ -39,8 +40,21 @@ namespace Zorlock {
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::OpenGL:
+		{
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		}
+		case RendererAPI::API::DX11:
+		{
+
+
+		}
+		}
+
+		        // Enable Multi-Viewport / Platform Windows
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
@@ -75,7 +89,9 @@ namespace Zorlock {
 				//ImGui_ImplWin32_Init(glfwGetWin32Window(window));
 				//soon!
 				
-				//ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), DX11Raz::DX11GraphicsEngine::Get()->GetContext());
+				DX11Raz::ZWindow* window = static_cast<DX11Raz::ZWindow*>(app.GetWindow().GetNativeWindow());
+				ImGui_ImplWin32_Init(window->GetHWND());
+				ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), window->GetDeviceContext()->GetContext());
 
 			}
 		}
@@ -122,10 +138,11 @@ namespace Zorlock {
 			}
 			case RendererAPI::API::DX11:
 			{
-				//Soon
-				//ImGui_ImplDX11_NewFrame();
-				//ImGui_ImplWin32_NewFrame();
-				//ImGui::NewFrame();
+				
+				ImGui_ImplDX11_NewFrame();
+				ImGui_ImplWin32_NewFrame();
+				ImGui::NewFrame();
+				
 				break;
 			}
 		}
@@ -161,22 +178,13 @@ namespace Zorlock {
 		}
 		case RendererAPI::API::DX11:
 		{
-			//Soon
-			/*
 			ImGuiIO& io = ImGui::GetIO();
 			Application& app = Application::Get();
 			io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 			ImGui::Render();
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-			{
-				GLFWwindow* backup_current_context = glfwGetCurrentContext();
-				ImGui::UpdatePlatformWindows();
-				ImGui::RenderPlatformWindowsDefault();
 
-				glfwMakeContextCurrent(backup_current_context);
-				
-			}*/
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 			break;
 		}
 		}

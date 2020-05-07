@@ -9,14 +9,35 @@ namespace DX11Raz
 	{
 	}
 
-	void DX11DeviceContext::clearRenderTargetColor(DX11SwapChain* swap_chain, float r, float g, float b, float a)
+	void DX11DeviceContext::Init(ZWindow * zhandle)
 	{
-		std::string line = "Width: " + std::to_string(this->width) + " Height: " + std::to_string(this->height);
-		OutputDebugStringA(line.c_str());
+		m_contextContainer = zhandle;
+		m_contextswapchain = new DX11SwapChain();
+		m_contextswapchain->init(zhandle->GetHWND(), zhandle->GetWidth(), zhandle->GetHeight());
+		setviewportsize(zhandle->GetWidth(), zhandle->GetHeight());
+		createblendstate();
+	}
+
+	void DX11DeviceContext::Flip(bool vsync)
+	{		
+		m_contextswapchain->flip(vsync);
+	}
+
+	void DX11DeviceContext::clearRenderTarget()
+	{
+		clearRenderTargetColor(dcolor.r, dcolor.g, dcolor.b, dcolor.a);
+	}
+
+	void DX11DeviceContext::clearRenderTargetColor(float r, float g, float b, float a)
+	{
+		dcolor.r = r;
+		dcolor.g = g;
+		dcolor.b = b;
+		dcolor.a = a;
 		FLOAT clear_color[] = { r,g,b,a };
-		m_device_context->ClearRenderTargetView(swap_chain->m_rtv, clear_color);
+		m_device_context->ClearRenderTargetView(m_contextswapchain->m_rtv, clear_color);
 		m_device_context->ClearDepthStencilView(m_depth_stencilview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_device_context->OMSetRenderTargets(1, &swap_chain->m_rtv, m_depth_stencilview);
+		m_device_context->OMSetRenderTargets(1, &m_contextswapchain->m_rtv, m_depth_stencilview);
 		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
 		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
 		//create depth stencil state
@@ -25,8 +46,7 @@ namespace DX11Raz
 
 	void DX11DeviceContext::setviewportsize(UINT width, UINT height)
 	{
-		std::string line = "initial Width: "+ std::to_string(width)+" initial Height: " + std::to_string(height);
-		OutputDebugStringA(line.c_str());
+
 		
 		D3D11_VIEWPORT vp = {};
 		vp.Width = 1280;
@@ -156,7 +176,7 @@ namespace DX11Raz
 
 	bool DX11DeviceContext::release()
 	{
-		if (m_texture)m_texture->Release();
+		//if (m_texture)m_texture->Release();
 		if (m_bs)m_bs->Release();
 		if (m_depth_stencilview)m_depth_stencilview->Release();
 		if (m_depth_stecil_buffer)m_depth_stecil_buffer->Release();

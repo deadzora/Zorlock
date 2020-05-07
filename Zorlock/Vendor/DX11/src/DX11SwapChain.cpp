@@ -3,7 +3,7 @@
 
 namespace DX11Raz
 {
-	DX11SwapChain::DX11SwapChain() : m_rtv(nullptr), m_swapchain(nullptr)
+	DX11SwapChain::DX11SwapChain()
 	{
 
 

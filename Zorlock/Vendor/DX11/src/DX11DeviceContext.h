@@ -9,7 +9,10 @@ namespace DX11Raz
 	{
 	public:
 		DX11DeviceContext(ID3D11DeviceContext* device_context);
-		void clearRenderTargetColor(DX11SwapChain* swap_chain, float r, float g, float b, float a);
+		void Init(ZWindow* zhandle);
+		void Flip(bool vsync);
+		void clearRenderTarget();
+		void clearRenderTargetColor(float r, float g, float b, float a);
 		void setviewportsize(UINT width, UINT height);
 		bool createblendstate();
 		void setblendstate();
@@ -29,7 +32,16 @@ namespace DX11Raz
 		ID3D11Texture2D* m_depth_stecil_buffer;
 		ID3D11DepthStencilState* m_depth_stencilstate;
 		ID3D11SamplerState* m_sampler_state;
-		ID3D11ShaderResourceView* m_texture;
+		//ID3D11ShaderResourceView* m_texture;
+		DX11SwapChain* m_contextswapchain;
+		ZWindow* m_contextContainer;
+
+		//temporary color struct
+		struct ZColor
+		{
+			float r, g, b, a;
+		};
+		ZColor dcolor;
 
 	};
 
