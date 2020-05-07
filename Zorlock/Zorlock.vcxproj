@@ -191,6 +191,8 @@
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
     <ClInclude Include="src\Zorlock\Renderer\Texture.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h" />

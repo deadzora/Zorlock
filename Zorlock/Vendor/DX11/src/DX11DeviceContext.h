@@ -19,7 +19,8 @@ namespace DX11Raz
 		bool setstencilstate();
 		bool setsamplerstate();
 		bool setstencilbuffer();
-		bool release();
+		bool Release();
+		bool MainRelease();
 		ID3D11DeviceContext* GetContext();
 		~DX11DeviceContext();
 		UINT width;

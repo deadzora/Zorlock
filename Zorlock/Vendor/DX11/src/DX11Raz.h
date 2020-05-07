@@ -23,7 +23,7 @@ namespace DX11Raz
 	void RazDX11CreateContext(ZWindow* zhandle);
 	void RazSetCLSColor(DX11DeviceContext* dhandle, float r, float g, float b, float a);
 	void RazCLS(DX11DeviceContext* dhandle);
-	void RazSetViewport(DX11DeviceContext* dhandle, UINT width, UINT height);
+	void RazSetViewport(UINT width, UINT height);
 	
 	class DX11GraphicsEngine
 	{
@@ -33,7 +33,7 @@ namespace DX11Raz
 		bool Initialize();
 		bool enabled;
 		void Release();
-		bool SetContext(HWND hwnd, RECT rect);
+		//bool SetContext(HWND hwnd, RECT rect);
 	public:
 		static DX11GraphicsEngine* Get();
 	public:
@@ -43,7 +43,8 @@ namespace DX11Raz
 		void SetViewport(UINT x, UINT y, UINT width, UINT height);
 		ID3D11Device* GetDevice();
 		IDXGIFactory* GetFactory();
-		ID3D11DeviceContext* GetContext(ZWindow* zhandle);
+		DX11DeviceContext* GetImmediateDeviceContext();
+		//ID3D11DeviceContext* GetContext();
 		DX11SwapChain* CreateSwapChain();
 #if defined(ZL_DEBUG)
 		//ID3D11Debug* DXEnableDebug(DX11DebugCallback func);
@@ -55,15 +56,16 @@ namespace DX11Raz
 		IDXGIDevice* m_dxgi_device;
 		IDXGIAdapter* m_dxgi_adapter;
 		IDXGIFactory* m_dxgi_factory;
+		ID3D11InfoQueue* d3dInfoQueue;
+		D3D_FEATURE_LEVEL feature_level;
 
 		ID3D11DeviceContext* m_imm_context;
-
-		DX11SwapChain* m_swapchain;
+		//DX11SwapChain* m_swapchain;
 		ID3D11Debug* m_d3dDebug;
 		
-		ID3D11InfoQueue * d3dInfoQueue;
-		D3D_FEATURE_LEVEL feature_level;
+
 		DX11DebugCallback DebugCall;
+		//main context
 		DX11DeviceContext* m_imm_device_context;
 	};
 

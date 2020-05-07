@@ -174,15 +174,25 @@ namespace DX11Raz
 		return true;
 	}
 
-	bool DX11DeviceContext::release()
+
+	bool DX11DeviceContext::Release()
 	{
-		//if (m_texture)m_texture->Release();
-		if (m_bs)m_bs->Release();
-		if (m_depth_stencilview)m_depth_stencilview->Release();
-		if (m_depth_stecil_buffer)m_depth_stecil_buffer->Release();
-		if (m_depth_stencilstate)m_depth_stencilstate->Release();
-		if (m_sampler_state)m_sampler_state->Release();
-		if (m_device_context)m_device_context->Release();
+		
+		m_bs->Release();
+		m_depth_stencilview->Release();
+		m_depth_stecil_buffer->Release();
+		m_depth_stencilstate->Release();
+		m_sampler_state->Release();
+		m_contextswapchain->release();
+		delete this;
+		return true;
+	}
+
+	bool DX11DeviceContext::MainRelease()
+	{
+
+		m_device_context->Release();
+
 		delete this;
 		return true;
 	}

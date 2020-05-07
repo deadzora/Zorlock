@@ -110,7 +110,7 @@ namespace DX11Raz
 	bool ZWindow::release()
 	{
 		//be sure to release the graphics!
-		device_context->release();
+		device_context->Release();
 		if (!::DestroyWindow(m_hwnd))
 			return false;
 

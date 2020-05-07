@@ -60,7 +60,8 @@ namespace DX11Raz
 		else {
 			OutputDebugString(L"Created DX11 3D Device\r\n");
 		}
-		//m_imm_device_context = new DX11DeviceContext(m_imm_context);
+		//create main shared context
+		m_imm_device_context = new DX11DeviceContext(m_imm_context);
 
 		m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
 		m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
@@ -76,21 +77,11 @@ namespace DX11Raz
 		m_d3d_device->Release();
 		m_dxgi_device->Release();
 		m_dxgi_adapter->Release();
+		m_imm_device_context->MainRelease();
+		//m_imm_context->Release();
 
 	}
 
-	bool DX11GraphicsEngine::SetContext(HWND hwnd, RECT rect)
-	{
-		if (intialized == false)
-		{
-			Initialize();
-		}
-		this->m_swapchain = this->CreateSwapChain();
-		this->m_swapchain->init(hwnd,rect.right - rect.left, rect.bottom - rect.top);
-		this->m_imm_device_context->setviewportsize(rect.right - rect.left, rect.bottom - rect.top);
-		this->m_imm_device_context->createblendstate();
-		return true;
-	}
 
 	DX11GraphicsEngine* DX11GraphicsEngine::Get()
 	{
@@ -135,10 +126,12 @@ namespace DX11Raz
 		return m_dxgi_factory;
 	}
 
-	ID3D11DeviceContext* DX11GraphicsEngine::GetContext(ZWindow * zhandle)
+	DX11DeviceContext* DX11GraphicsEngine::GetImmediateDeviceContext()
 	{
-		return zhandle->GetDeviceContext()->GetContext();
+		return m_imm_device_context;
 	}
+
+
 
 	DX11SwapChain* DX11GraphicsEngine::CreateSwapChain()
 	{
@@ -187,12 +180,12 @@ namespace DX11Raz
 
 	void RazDX11CreateContext(ZWindow* zhandle)
 	{
-		ID3D11DeviceContext * newcontext;
-		HRESULT res = 0;
-		DX11GraphicsEngine::Get()->GetDevice()->GetImmediateContext(&newcontext); //->CreateDeferredContext(0, &newcontext);
+		//ID3D11DeviceContext * newcontext;
+		//HRESULT res = 0;
+		//DX11GraphicsEngine::Get()->GetDevice()->GetImmediateContext(&newcontext); //->CreateDeferredContext(0, &newcontext);
 		//if (SUCCEEDED(res))
 		//{
-			DX11DeviceContext * DXContext = new DX11DeviceContext(newcontext);
+			DX11DeviceContext * DXContext = new DX11DeviceContext(DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext());
 
 			zhandle->SetDeviceContext(DXContext);
 			DXContext->Init(zhandle);
@@ -211,9 +204,9 @@ namespace DX11Raz
 		dhandle->clearRenderTarget();
 	}
 
-	void RazSetViewport(DX11DeviceContext* dhandle, UINT width, UINT height)
+	void RazSetViewport(UINT width, UINT height)
 	{
-		dhandle->setviewportsize(width, height);
+		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->setviewportsize(width, height);
 	}
 
 }

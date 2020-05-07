@@ -37,13 +37,8 @@ namespace Zorlock
 
 	void DX11RendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
-		Window & win = Application::Get().GetWindow();
-		//Need to make all this shit a macro
 
-		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
-		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
-
-		DX11Raz::RazSetViewport(zhandle->GetDeviceContext(), width, height);
+		DX11Raz::RazSetViewport( width, height);
 	}
 
 	void DX11RendererAPI::SetClearColor(const glm::vec4& color)

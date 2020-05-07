@@ -213,6 +213,12 @@
     <ClInclude Include="src\Zorlock\Renderer\Texture.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
