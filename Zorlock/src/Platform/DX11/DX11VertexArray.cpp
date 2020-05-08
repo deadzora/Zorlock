@@ -1,6 +1,8 @@
 #include "ZLpch.h"
 #include "DX11VertexArray.h"
 #include <d3d11.h>
+#include <DX11Raz.h>
+#include <DX11VBuffer.h>
 
 
 namespace Zorlock
@@ -30,26 +32,98 @@ namespace Zorlock
 	DX11VertexArray::DX11VertexArray()
 	{
 		ZL_PROFILE_FUNCTION();
+		m_RendererID = DX11Raz::RazCreateVertexBuffer();
 
 	}
 	DX11VertexArray::~DX11VertexArray()
 	{
+
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Bind() const
 	{
+		//nothing to do here...since we have a direct reference to the buffer itself no need to make it current for operations
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Unbind() const
 	{
+		//nothing to do here...since we have a direct reference to the buffer itself no need to disable it for operations
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		ZL_PROFILE_FUNCTION();
+
+		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
+		if (vertexBuffer->GetLayout().GetElements().size() == 0) return;
+		const auto& layout = vertexBuffer->GetLayout();
+		for (const auto& element : layout)
+		{
+			switch (element.Type)
+			{
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
+			case ShaderDataType::Bool:
+			{
+				
+				m_RendererID->SetIndex(m_VertexBufferIndex);
+				D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
+				l.SemanticName = element.Name.c_str();
+				char buffer[100];
+				sprintf(buffer, "Layout NAME %s\r\n", element.Name.c_str());
+				OutputDebugStringA(buffer);
+				l.SemanticIndex = 0;
+				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
+				l.InputSlot = 0;
+				l.AlignedByteOffset = element.Offset;
+				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+				l.InstanceDataStepRate = 0;
+				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
+				m_VertexBufferIndex++;
+				break;
+			}
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+			{
+				uint8_t count = element.GetComponentCount();
+				for (uint8_t i = 0; i < count; i++)
+				{
+					m_RendererID->SetIndex(m_VertexBufferIndex);
+					D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
+					l.SemanticName = element.Name.c_str();
+					l.SemanticIndex = count;
+					l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
+					l.InputSlot = 0;
+					l.AlignedByteOffset = (sizeof(float) * count * i);
+					l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					l.InstanceDataStepRate = 0;
+
+					m_VertexBufferIndex++;
+				}
+				break;
+			}
+			default:
+				ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			}
+
+
+		}
+		m_VertexBuffers.push_back(vertexBuffer);
+		m_RendererID->SetLayout();
+		//call it after we have layout set in place, need to pass our buffer unlike opengl we are using the same buffer for verts and layout
+		vertexBuffer->Bind(m_RendererID);
+		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		indexBuffer->Bind();
+		m_IndexBuffer = indexBuffer;
 		ZL_PROFILE_FUNCTION();
 	}
 }

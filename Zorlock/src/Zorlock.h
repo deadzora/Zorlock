@@ -7,7 +7,7 @@
 #include "Zorlock/Core/Application.h"
 #include "Zorlock/Core/Layer.h"
 #include "Zorlock/Core/Log.h"
-
+#include "Zorlock/Core/Math.h"
 #include "Zorlock/Core/Timestep.h"
 
 #include "Zorlock/Core/Input.h"

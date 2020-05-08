@@ -6,11 +6,16 @@
 // TODO: REMOVE!
 typedef unsigned int GLenum;
 
+namespace DX11Raz {
+	class RazShader;
+}
+
 namespace Zorlock {
 
 	class DX11Shader : public Shader
 	{
 	public:
+		DX11Shader();
 		DX11Shader(const std::string& filepath);
 		DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~DX11Shader();
@@ -42,10 +47,9 @@ namespace Zorlock {
 
 	private:
 		std::string ReadFile(const std::string& filepath);
-		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
-		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+		void Compile(const std::string shaderSources);
 	private:
-		uint32_t m_RendererID;
+		DX11Raz::RazShader * m_RendererID;
 		std::string m_Name;
 	};
 

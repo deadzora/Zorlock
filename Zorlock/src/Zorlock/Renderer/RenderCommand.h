@@ -31,6 +31,12 @@ namespace Zorlock {
 		{
 			s_RendererAPI->DrawIndexed(vertexArray, count);
 		}
+
+		static void ReleaseRenderAPI()
+		{
+			s_RendererAPI->Release();
+		}
+
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

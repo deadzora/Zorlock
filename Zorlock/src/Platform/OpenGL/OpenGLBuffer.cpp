@@ -41,6 +41,13 @@ namespace Zorlock {
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	}
 
+	void OpenGLVertexBuffer::Bind(void* i)
+	{
+		ZL_PROFILE_FUNCTION();
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	}
+
 	void OpenGLVertexBuffer::Unbind() const
 	{
 		ZL_PROFILE_FUNCTION();

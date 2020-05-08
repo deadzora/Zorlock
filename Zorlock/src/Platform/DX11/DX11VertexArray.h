@@ -2,6 +2,12 @@
 
 #include "Zorlock/Renderer/VertexArray.h"
 
+
+namespace DX11Raz {
+	class RazVertexBuffer;
+}
+
+
 namespace Zorlock {
 
 	class DX11VertexArray : public VertexArray
@@ -19,8 +25,8 @@ namespace Zorlock {
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 	private:
-		uint32_t m_RendererID;
-		uint32_t m_VertexBufferIndex = 0;
+		DX11Raz::RazVertexBuffer* m_RendererID;
+		UINT m_VertexBufferIndex = 0;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;
 	};

@@ -117,6 +117,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowNative.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -222,7 +225,28 @@
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11Raz.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11SwapChain.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\Keyboard.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\KeyboardEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\Mouse.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\MouseEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\ZWindow.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -2676,6 +2700,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\DX11Vertex.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11VBuffer.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11IBuffer.h" />
+    <ClInclude Include="src\Zorlock\Core\Math.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2713,6 +2742,9 @@
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowNative.cpp">
+      <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
@@ -2780,11 +2812,35 @@
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11DeviceContext.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11Raz.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11SwapChain.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\Keyboard.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\KeyboardEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\Mouse.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\MouseEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\ZWindow.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\DX11VBuffer.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11IBuffer.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Shaders.cpp" />
   </ItemGroup>
 </Project>

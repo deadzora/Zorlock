@@ -5,10 +5,11 @@
 #include "Platform/DX11/DX11RendererAPI.h"
 namespace Zorlock {
 
-	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
+	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DX11;
 
 	Scope<RendererAPI> RendererAPI::Create()
 	{
+		OutputDebugString(L"Creating 3D Device\r\n");
 		switch (s_API)
 		{
 			case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
