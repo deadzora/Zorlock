@@ -172,6 +172,7 @@
     <ClInclude Include="src\Zorlock\Core\Layer.h" />
     <ClInclude Include="src\Zorlock\Core\LayerStack.h" />
     <ClInclude Include="src\Zorlock\Core\Log.h" />
+    <ClInclude Include="src\Zorlock\Core\Math.h" />
     <ClInclude Include="src\Zorlock\Core\MouseCodes.h" />
     <ClInclude Include="src\Zorlock\Core\Timestep.h" />
     <ClInclude Include="src\Zorlock\Core\Window.h" />
@@ -196,8 +197,12 @@
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
     <ClInclude Include="src\Zorlock\Renderer\ZColor.h" />
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11IBuffer.h" />
     <ClInclude Include="vendor\DX11\src\DX11Raz.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Shaders.h" />
     <ClInclude Include="vendor\DX11\src\DX11SwapChain.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11VBuffer.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Vertex.h" />
     <ClInclude Include="vendor\DX11\src\Keyboard.h" />
     <ClInclude Include="vendor\DX11\src\KeyboardEvent.h" />
     <ClInclude Include="vendor\DX11\src\Mouse.h" />
@@ -1060,8 +1065,11 @@
     <ClCompile Include="src\Zorlock\Renderer\Texture.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp" />
     <ClCompile Include="vendor\DX11\src\DX11DeviceContext.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11IBuffer.cpp" />
     <ClCompile Include="vendor\DX11\src\DX11Raz.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Shaders.cpp" />
     <ClCompile Include="vendor\DX11\src\DX11SwapChain.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11VBuffer.cpp" />
     <ClCompile Include="vendor\DX11\src\Keyboard.cpp" />
     <ClCompile Include="vendor\DX11\src\KeyboardEvent.cpp" />
     <ClCompile Include="vendor\DX11\src\Mouse.cpp" />

@@ -2700,6 +2700,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="Vendor\DX11\src\DX11Vertex.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11VBuffer.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11IBuffer.h" />
+    <ClInclude Include="src\Zorlock\Core\Math.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2834,5 +2839,8 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="Vendor\DX11\src\DX11VBuffer.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11IBuffer.cpp" />
+    <ClCompile Include="Vendor\DX11\src\DX11Shaders.cpp" />
   </ItemGroup>
 </Project>

@@ -8,6 +8,8 @@
 	#ifdef _WIN64
 		/* Windows x64  */
 		#define ZL_PLATFORM_WINDOWS
+		/* Direct X only Macro letting Shaders include other shader files from the same directory */
+		#define D3D_COMPILE_STANDARD_FILE_INCLUDE ((ID3DInclude*)(UINT_PTR)1)
 	#else
 		/* Windows x86 */
 		#error "x86 Builds are not supported!"

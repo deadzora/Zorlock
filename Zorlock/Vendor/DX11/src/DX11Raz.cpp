@@ -2,6 +2,9 @@
 #include "DX11Raz.h"
 #include "DX11DeviceContext.h"
 #include "DX11SwapChain.h"
+#include "DX11VBuffer.h"
+#include "DX11IBuffer.h"
+#include "DX11Shaders.h"
 #include <D3d11sdklayers.h>
 
 namespace DX11Raz
@@ -207,6 +210,36 @@ namespace DX11Raz
 	void RazSetViewport(UINT width, UINT height)
 	{
 		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->setviewportsize(width, height);
+	}
+
+	RazVertexBuffer* RazCreateVertexBuffer()
+	{
+		return new RazVertexBuffer();
+	}
+
+	void RazDeleteVertexBuffer(RazVertexBuffer* v)
+	{
+		v->Release();
+	}
+
+	RazIndexBuffer* RazCreateIndexBuffer()
+	{
+		return new RazIndexBuffer();
+	}
+
+	void RazDeleteIndexBuffer(RazIndexBuffer* i)
+	{
+		i->Release();
+	}
+
+	RazShader* RazCreateShader()
+	{
+		return new RazShader();
+	}
+
+	void RazDeleteShader(RazShader * shader)
+	{
+		shader->Release();
 	}
 
 }

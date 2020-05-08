@@ -1,12 +1,40 @@
 #include "ZLpch.h"
 #include "DX11Shader.h"
+#include "DX11Raz.h"
+#include "DX11Shaders.h"
 
 namespace Zorlock
 {
+	enum class shaderType
+	{
+		VertexShader,
+		PixelShader,
+		ComputeShader,
+		Unknown
+	};
 
+
+	static shaderType DXShaderTypeFromString(const std::string& type)
+	{
+		if (type == "vertex")
+			return shaderType::VertexShader;
+		if (type == "fragment" || type == "pixel")
+			return shaderType::PixelShader;
+		if (type == "compute")
+			return shaderType::ComputeShader;
+		ZL_CORE_ASSERT(false, "Unknown shader type!");
+		return shaderType::Unknown;
+	}
+
+	DX11Shader::DX11Shader() : m_RendererID(0)
+	{
+		m_RendererID = DX11Raz::RazCreateShader();
+	}
 
 	DX11Shader::DX11Shader(const std::string& filepath)
 	{
+		m_RendererID = DX11Raz::RazCreateShader();
+		//oof 
 		ZL_PROFILE_FUNCTION();
 	}
 
@@ -110,16 +138,10 @@ namespace Zorlock
 		return std::string();
 	}
 
-	std::unordered_map<GLenum, std::string> DX11Shader::PreProcess(const std::string& source)
+	void DX11Shader::Compile(const std::string shaderSources)
 	{
-		ZL_PROFILE_FUNCTION();
-		return std::unordered_map<GLenum, std::string>();
 	}
 
-	void DX11Shader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
 
 

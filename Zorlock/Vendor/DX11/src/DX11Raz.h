@@ -8,6 +8,10 @@
 namespace DX11Raz
 {
 
+#ifndef D3D_COMPILE_STANDARD_FILE_INCLUDE
+#define D3D_COMPILE_STANDARD_FILE_INCLUDE ((ID3DInclude*)(UINT_PTR)1)
+#endif
+
 #ifdef ZL_DEBUG
 	typedef bool (*DX11DebugCallback)(void* pInfoQueue);
 #define PID3D11InfoQueue(p) static_cast<ID3D11InfoQueue*>(p);
@@ -15,7 +19,9 @@ namespace DX11Raz
 
 	class DX11DeviceContext;
 	class DX11SwapChain;
-
+	class RazVertexBuffer;
+	class RazIndexBuffer;
+	class RazShader;
 	//we need to be able to handle multiple contexts at once, so we need to push our device data to a new class
 
 	bool RazDX11Initialize();
@@ -24,7 +30,14 @@ namespace DX11Raz
 	void RazSetCLSColor(DX11DeviceContext* dhandle, float r, float g, float b, float a);
 	void RazCLS(DX11DeviceContext* dhandle);
 	void RazSetViewport(UINT width, UINT height);
-	
+	RazVertexBuffer* RazCreateVertexBuffer();
+	void RazDeleteVertexBuffer(RazVertexBuffer* v);
+	RazIndexBuffer * RazCreateIndexBuffer();
+	void RazDeleteIndexBuffer(RazIndexBuffer* i);
+	RazShader* RazCreateShader();
+	void RazDeleteShader(RazShader * shader);
+
+
 	class DX11GraphicsEngine
 	{
 	public:

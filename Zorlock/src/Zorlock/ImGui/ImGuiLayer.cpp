@@ -50,7 +50,8 @@ namespace Zorlock {
 		case RendererAPI::API::DX11:
 		{
 
-
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		}
 		}
 
@@ -113,9 +114,9 @@ namespace Zorlock {
 		case RendererAPI::API::DX11:
 		{
 			//Soon
-			//ImGui_ImplDX11_Shutdown();
-			//ImGui_ImplWin32_Shutdown();		
-			//ImGui::DestroyContext();
+			ImGui_ImplDX11_Shutdown();
+			ImGui_ImplWin32_Shutdown();		
+			ImGui::DestroyContext();
 			break;
 		}
 		}
@@ -184,7 +185,14 @@ namespace Zorlock {
 			ImGui::Render();
 
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				//DX11Raz::ZWindow* backup_current_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
 
+				//glfwMakeContextCurrent(backup_current_context);
+			}
 			break;
 		}
 		}
