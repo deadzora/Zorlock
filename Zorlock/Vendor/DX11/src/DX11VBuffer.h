@@ -18,6 +18,7 @@ namespace DX11Raz
 		void SetIndexValue(UINT index , D3D11_INPUT_ELEMENT_DESC & value);
 		void SetVertices(uint32_t size);
 		void SetVertices(float* vertices, UINT size);
+		void SetVertices(void* vertices, UINT size);
 		void SetVertices(std::vector<RazVertex> & v);
 		D3D11_INPUT_ELEMENT_DESC& GetLayoutPointer(UINT index);
 		UINT GetVertexListSize();

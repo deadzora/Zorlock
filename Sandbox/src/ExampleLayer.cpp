@@ -169,6 +169,8 @@ void ExampleLayer::OnUpdate(Zorlock::Timestep ts)
 	m_ChernoLogoTexture->Bind();
 	Zorlock::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
+
+
 	// Triangle
 	// Zorlock::Renderer::Submit(m_Shader, m_VertexArray);
 

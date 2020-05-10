@@ -11,6 +11,8 @@
 
 namespace Zorlock {
 
+
+
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
@@ -76,7 +78,9 @@ namespace Zorlock {
 		{
 			ZL_PROFILE_SCOPE("RunLoop");
 
-			float time = (float)glfwGetTime();
+			//declared in Renderer.h so it's based on platform and renderer.
+			float time = GETTIME;
+			
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

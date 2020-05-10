@@ -17,7 +17,7 @@ namespace Zorlock {
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
-
+		virtual void Apply() const override;
 		virtual void SetInt(const std::string& name, int value) override;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
 		virtual void SetFloat(const std::string& name, float value) override;
