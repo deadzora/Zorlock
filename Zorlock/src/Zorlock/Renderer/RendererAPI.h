@@ -27,4 +27,12 @@ namespace Zorlock {
 		static API s_API;
 	};
 
+
+
+
 }
+
+#define ZINT(v) (Zorlock::RendererAPI::GetAPI()==Zorlock::RendererAPI::API::OpenGL) ? v : (UINT)v
+#define DXSHADERFILE(s) std::wstring(s.begin(), s.end()).c_str()
+#define OPENGLSHADERFILE(s) s
+#define SHADERFILE(s) (Zorlock::RendererAPI::GetAPI()==Zorlock::RendererAPI::API::OpenGL) ? OPENGLSHADERFILE(s) : DXSHADERFILE(s)

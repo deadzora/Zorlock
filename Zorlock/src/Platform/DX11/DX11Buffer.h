@@ -12,9 +12,10 @@ namespace Zorlock {
 	class DX11VertexBuffer : public VertexBuffer
 	{
 	public:
+		DX11VertexBuffer();
 		DX11VertexBuffer(uint32_t size);
 		DX11VertexBuffer(float* vertices, uint32_t size);
-		DX11VertexBuffer(void * vertices);
+		DX11VertexBuffer(void * vertices, uint32_t size);
 		virtual ~DX11VertexBuffer();
 
 		virtual void Bind() const override;

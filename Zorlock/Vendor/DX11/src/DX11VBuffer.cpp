@@ -3,7 +3,7 @@
 #include "DX11Vertex.h"
 #include "DX11Raz.h"
 
-DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0)
+DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_vertex(0), m_size_list(0)
 {
 }
 
@@ -11,14 +11,16 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 {
 	//Bind without Shader, very unoptimized way to bind layouts, data may get reinterpreted wrong with different shaders if the inputs do not match exactly.
 	UINT size_layout = vlayout.size();
-	//char buffer[100];
-	//sprintf(buffer, "LayoutSize %i\r\n", vlayout.size());
-	//OutputDebugStringA(buffer);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), size_layout, NULL, NULL, &this->m_layout);
+	char buffer[100];
+	sprintf(buffer, "LayoutSize %i \r\n", vlayout.size());
+
+	OutputDebugStringA(buffer);
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), vlayout.size(), NULL, NULL, &this->m_layout);
 	if (FAILED(hr))
 	{
 		OutputDebugString(L"Failed to Create Input Layout\r\n");
-		ZL_CORE_ASSERT(true, "Failed to Create DX11 3D Device");
+		ZL_CORE_ASSERT(true, "Failed to Create Input Layout");
+		this->m_layout = 0;
 		return false;
 	}
 	return true;
@@ -59,7 +61,7 @@ void DX11Raz::RazVertexBuffer::SetVertices(uint32_t size)
 
 void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 {
-	if (this->m_buffer)this->m_buffer->Release();
+	if (this->m_buffer!=0) this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -77,18 +79,44 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{
+		m_buffer = 0;
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
 
+}
 
+void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
+{
+	//assuming raz vertex list
+	std::vector<DX11Raz::RazVertex>* verts = static_cast<std::vector<DX11Raz::RazVertex>*>(vertices);
+
+	D3D11_BUFFER_DESC buff_desc = {};
+	buff_desc.Usage = D3D11_USAGE_DEFAULT;
+	buff_desc.ByteWidth = sizeof(RazVertex) * verts->size();
+	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buff_desc.CPUAccessFlags = 0;
+	buff_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data = {};
+	init_data.pSysMem = verts->data();
+
+	this->m_size_vertex = sizeof(RazVertex);
+	this->m_size_list = verts->size();
+
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	if (FAILED(hr))
+	{
+		OutputDebugStringW(L"Failed to Create Vertex Buffer");
+		return;
+	}
 
 
 }
 
 void DX11Raz::RazVertexBuffer::SetVertices(std::vector<RazVertex>& v)
 {
-	if (this->m_buffer)this->m_buffer->Release();
+	if (this->m_buffer!=0)this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;

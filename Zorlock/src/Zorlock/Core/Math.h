@@ -2,25 +2,36 @@
 #include <cmath>
 #include <math.h> 
 
+#define VERTEX Zorlock::Vertex
+#define VECTOR2 Zorlock::Vector2
+#define VECTOR3 Zorlock::Vector3
+#define VECTOR4 Zorlock::Vector4
+#define LINE Zorlock::Line
+#define PLANE Zorlock::Plane
+#define MATRIX3 Zorlock::Matrix
+#define TRANSFORM Zorlock::Transform
+#define BOX Zorlock::Box
+#define QUATERNION Zorlock::Quaternion
+
+
+
+#ifndef M_PI
+// You can extend this approximation as far as you need to;
+// this version was copied from the MINGW GCC headers
+#define M_PI 3.14159265358979323846  
+#endif
+#define DEG_CIRCLE 360
+#define DEG_TO_RAD (M_PI / (DEG_CIRCLE / 2))
+#define RAD_TO_DEG ((DEG_CIRCLE / 2) / M_PI)
+#define TWOPI M_PI * 2.0f;			//360 degrees
+#define HALFPI M_PI * .5f;			//90  degrees
+#define QUARTERPI  M_PI * .25f;		//45  degrees
+#define EPSILON 0.000001f
+
 
 namespace Zorlock {
 
-	#ifndef M_PI
-		// You can extend this approximation as far as you need to;
-		// this version was copied from the MINGW GCC headers
-	#define M_PI 3.14159265358979323846  
-	#endif
 
-	#define DEG_CIRCLE 360
-	#define DEG_TO_RAD (M_PI / (DEG_CIRCLE / 2))
-	#define RAD_TO_DEG ((DEG_CIRCLE / 2) / M_PI)
-
-
-
-	#define TWOPI M_PI * 2.0f;			//360 degrees
-	#define HALFPI M_PI * .5f;			//90  degrees
-	#define QUARTERPI  M_PI * .25f;		//45  degrees
-	constexpr auto EPSILON = 0.000001f;		//small value;
 
 	class MathF
 	{
@@ -28,17 +39,31 @@ namespace Zorlock {
 		static float DegreesFromRadians(float r)
 		{
 			return r * 180.0f / 3.141592653589793238463f;
-		};
+		}
 
 		static float RadiansFromDegrees(float d)
 		{
 			return d * 3.141592653589793238463f / 180;
-		};
+		}
 
 	};
 
 	struct Vector2
 	{
+		float x, y;
+
+		Vector2() : x(0), y(0) {}
+		Vector2(float x, float y) : x(x), y(y)
+		{}
+		//for template compatability
+		Vector2(float x, float y, float z) : x(x), y(y)
+		{
+		//we ignore Z
+		}
+		Vector2(float x, float y, float z, float w) : x(x), y(y)
+		{
+			//we ignore Z and W
+		}
 		float distance(const Vector2* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -47,7 +72,7 @@ namespace Zorlock {
 		}
 
 
-		float x, y;
+		
 	};
 
 	struct Vector3 : public Vector2
@@ -63,15 +88,17 @@ namespace Zorlock {
 			return d;
 		}
 
-		Vector3() {
-			x = 0;
-			y = 0;
-			z = 0;
+		Vector3() : Vector2() , z(0) {
+
 		}
-		Vector3(float x, float y, float z) {
-			this->x = x;
-			this->y = y;
-			this->z = z;
+
+		Vector3(float x, float y, float z) : Vector2(x, y), z(z) 
+		{				
+		}
+		//for template compatability
+		Vector3(float x, float y, float z, float w) : Vector2(x, y), z(z)
+		{
+			//we ignore Z and W
 		}
 
 		Vector3 operator-()const {
@@ -156,6 +183,14 @@ namespace Zorlock {
 
 	struct Vector4 : public Vector3
 	{
+		float w;
+
+		Vector4() : Vector3(), w(0)
+		{}
+		Vector4(float x, float y, float z, float w) : Vector3(x,y,z), w(0)
+		{
+
+		}
 		float distance(const Vector4* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -165,9 +200,262 @@ namespace Zorlock {
 			return d;
 		}
 
-		float w;
+		
 	};
 
+
+
+	struct VertexP
+	{
+		Vector3 value;
+		VertexP() {};
+		VertexP(float x, float y, float z) : value(Vector3(x,y,z))
+		{
+		}
+		//for template compatability
+		VertexP(float x, float y, float z, float w) : value(Vector3(x, y, z))
+		{
+			//ignore w
+		}
+		VertexP(float x, float y) : value(Vector3(x, y, 0))
+		{
+		}
+	};
+
+	struct VertexN
+	{
+		Vector3 value;
+		VertexN() {};
+		VertexN(float x, float y, float z) : value(Vector3(x, y, z))
+		{
+		}
+		//for template compatability
+		VertexN(float x, float y, float z, float w) : value(Vector3(x, y, z))
+		{
+			//ignore w
+		}
+		VertexN(float x, float y) : value(Vector3(x, y, 0))
+		{
+		}
+		
+	};
+
+	struct ColorRGB {
+		Vector3 value;
+		ColorRGB() {};
+		ColorRGB(float x, float y, float z) : value(Vector3(x, y, z))
+		{
+		}
+		//for template compatability
+		ColorRGB(float x, float y, float z, float w) : value(Vector3(x, y, z))
+		{
+			//ignore w
+		}
+		ColorRGB(float x, float y) : value(Vector3(x, y, 0))
+		{
+		}
+		ColorRGB White()
+		{
+			this->value.x = 1.0f;
+			this->value.y = 1.0f;
+			this->value.z = 1.0f;
+			return *this;
+		}
+
+		ColorRGB Black()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			return *this;
+		}
+
+		ColorRGB Red()
+		{
+			this->value.x = 1.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			return *this;
+		}
+
+		ColorRGB Green()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 1.0f;
+			this->value.z = 0.0f;
+			return *this;
+		}
+
+		ColorRGB Blue()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			return *this;
+		}
+
+	};
+
+	struct ColorRGBA {
+		Vector4 value;
+		ColorRGBA() {};
+		ColorRGBA(float x, float y, float z, float w) : value(Vector4(x, y, z, w))
+		{
+		}
+		ColorRGBA(float x, float y, float z) : value(Vector4(x, y, z, 0))
+		{
+		}
+		ColorRGBA(float x, float y) : value(Vector4(x, y, 0, 0))
+		{
+		}
+		ColorRGBA White()
+		{
+			this->value.x = 1.0f;
+			this->value.y = 1.0f;
+			this->value.z = 1.0f;
+			this->value.w = 1.0f;
+			return *this;
+		};
+
+		ColorRGBA Black()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			this->value.w = 1.0f;
+			return *this;
+		};
+
+		ColorRGBA Red()
+		{
+			this->value.x = 1.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			this->value.w = 1.0f;
+			return *this;
+		};
+
+		ColorRGBA Green()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 1.0f;
+			this->value.z = 0.0f;
+			this->value.w = 1.0f;
+			return *this;
+		};
+
+		ColorRGBA Blue()
+		{
+			this->value.x = 0.0f;
+			this->value.y = 0.0f;
+			this->value.z = 0.0f;
+			this->value.w = 1.0f;
+			return *this;
+		};
+
+		
+	};
+
+	struct UV {
+		Vector2 value;
+
+		UV() : value(Vector2())
+		{};
+		UV(float x, float y) : value(Vector2(x,y))
+		{
+			this->value.x = x;
+			this->value.y = y;
+
+		}
+		UV(float x, float y, float z) : value(Vector2(x, y))
+		{
+		}
+		//for template compatability
+		UV(float x, float y, float z, float w) : value(Vector2(x, y))
+		{
+			//ignore w
+		}
+
+		
+	};
+
+	struct UVW {
+		Vector3 value;
+
+		UVW() : value(Vector3()) {};
+		UVW(float x, float y, float z) : value(Vector3(x, y, z))
+		{
+			this->value.x = x;
+			this->value.y = y;
+			this->value.z = z;
+		}
+		UVW(float x, float y) : value(Vector3(x, y, 0))
+		{
+			this->value.x = x;
+			this->value.y = y;
+
+		}
+		//for template compatability
+		UVW(float x, float y, float z, float w) : value(Vector3(x, y, z))
+		{
+			//ignore w
+		}
+	};
+
+
+
+
+	template <class... T>
+	class VertexT : public T...
+	{
+	public:
+		VertexT(T&&... base_classes) : T(base_classes)...{
+		}
+		VertexT(T&&... base_classes, T... params) : T(base_classes(params...))...{
+		}
+	};
+
+
+
+
+
+	/*
+	template <class A, class B, class C, class D>
+	struct Vertex4 : public A, public B, public C, public D
+	{
+
+		Vertex4() : valueA(A()), valueB(B()), valueC(C()), valueD(D())
+		{}
+		Vertex4(A aa, B bb, C cc, D dd) : valueA(aa), valueB(bb), valueC(cc), valueD(dd)
+		{}
+
+		A valueA;
+		B valueB;
+		C valueC;
+		D valueD;
+	};
+
+	template <class A, class B, class C>
+	struct Vertex3 : public A, public B, public C
+	{
+		A valueA;
+		B valueB;
+		C valueC;
+	};
+
+	template <class A, class B>
+	struct Vertex2 : public A, public B
+	{
+		A valueA;
+		B valueB;
+
+	};
+	template <class A>
+	struct Vertex1 : public A
+	{
+		A valueA;
+	};
+	*/
 
 	struct Vertex
 	{
@@ -199,7 +487,21 @@ namespace Zorlock {
 			this->uvw.y = v;
 			this->uvw.z = w;
 		};
-
+		Vertex(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float u, float v, float w)
+		{
+			this->position.x = x;
+			this->position.y = y;
+			this->position.z = z;
+			this->normal.x = nx;
+			this->normal.y = ny;
+			this->normal.z = nz;
+			this->uvw.x = u;
+			this->uvw.y = v;
+			this->uvw.z = w;
+			this->color.x = r;
+			this->color.y = b;
+			this->color.z = g;
+		};
 		Vector3 position;
 		Vector3 normal;
 		Vector3 color;

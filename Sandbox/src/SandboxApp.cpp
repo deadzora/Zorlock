@@ -11,7 +11,7 @@ public:
 	Sandbox()
 	{
 		//PushLayer(new ExampleLayer());
-		PushLayer(new DX11Layer());
+		PushLayer(new ExampleLayer());
 	}
 
 	~Sandbox()

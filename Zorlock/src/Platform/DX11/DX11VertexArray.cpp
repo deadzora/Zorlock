@@ -12,21 +12,21 @@ namespace Zorlock
 	{
 		switch (type)
 		{
-		case Zorlock::ShaderDataType::Float:    return DXGI_FORMAT_R32_FLOAT;
-		case Zorlock::ShaderDataType::Float2:   return DXGI_FORMAT_R32G32_FLOAT;
-		case Zorlock::ShaderDataType::Float3:   return DXGI_FORMAT_R32G32B32_FLOAT;
-		case Zorlock::ShaderDataType::Float4:   return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case Zorlock::ShaderDataType::Mat3:     return DXGI_FORMAT_R32G32B32_FLOAT;
-		case Zorlock::ShaderDataType::Mat4:     return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case Zorlock::ShaderDataType::Int:      return DXGI_FORMAT_R32_SINT;
-		case Zorlock::ShaderDataType::Int2:     return DXGI_FORMAT_R32G32_SINT;
-		case Zorlock::ShaderDataType::Int3:     return DXGI_FORMAT_R32G32B32_SINT;
-		case Zorlock::ShaderDataType::Int4:     return DXGI_FORMAT_R32G32B32A32_SINT;
-		case Zorlock::ShaderDataType::Bool:     return DXGI_FORMAT_R1_UNORM;
+		case Zorlock::ShaderDataType::Float:    return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+		case Zorlock::ShaderDataType::Float2:   return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
+		case Zorlock::ShaderDataType::Float3:   return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
+		case Zorlock::ShaderDataType::Float4:   return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case Zorlock::ShaderDataType::Mat3:     return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
+		case Zorlock::ShaderDataType::Mat4:     return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case Zorlock::ShaderDataType::Int:      return DXGI_FORMAT::DXGI_FORMAT_R32_SINT;
+		case Zorlock::ShaderDataType::Int2:     return DXGI_FORMAT::DXGI_FORMAT_R32G32_SINT;
+		case Zorlock::ShaderDataType::Int3:     return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_SINT;
+		case Zorlock::ShaderDataType::Int4:     return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_SINT;
+		case Zorlock::ShaderDataType::Bool:     return DXGI_FORMAT::DXGI_FORMAT_R1_UNORM;
 		}
 
 		ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
-		return DXGI_FORMAT_UNKNOWN;
+		return DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
 	}
 
 	DX11VertexArray::DX11VertexArray()
@@ -56,7 +56,9 @@ namespace Zorlock
 
 		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		if (vertexBuffer->GetLayout().GetElements().size() == 0) return;
+		
 		const auto& layout = vertexBuffer->GetLayout();
+		int index = 0;
 		for (const auto& element : layout)
 		{
 			switch (element.Type)
@@ -75,16 +77,16 @@ namespace Zorlock
 				m_RendererID->SetIndex(m_VertexBufferIndex);
 				D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
 				l.SemanticName = element.Name.c_str();
-				char buffer[100];
-				sprintf(buffer, "Layout NAME %s\r\n", element.Name.c_str());
-				OutputDebugStringA(buffer);
 				l.SemanticIndex = 0;
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
-				l.AlignedByteOffset = element.Offset;
+				l.AlignedByteOffset = layout.GetStride();//(index==0) ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;//element.Offset;
 				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
+				char buffer[100];
+				sprintf(buffer, "Layout NAME %s FORMAT %i INDEX %i STRIDE %i \r\n", element.Name.c_str(), l.Format, m_VertexBufferIndex, layout.GetStride());
+				OutputDebugStringA(buffer);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -96,14 +98,17 @@ namespace Zorlock
 				{
 					m_RendererID->SetIndex(m_VertexBufferIndex);
 					D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
+					char buffer[100];
+					sprintf(buffer, "Layout NAME %s\r\n", element.Name.c_str());
+					OutputDebugStringA(buffer);
 					l.SemanticName = element.Name.c_str();
 					l.SemanticIndex = count;
 					l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
-					l.InputSlot = 0;
+					l.InputSlot = index;
 					l.AlignedByteOffset = (sizeof(float) * count * i);
 					l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					l.InstanceDataStepRate = 0;
-
+					m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
 					m_VertexBufferIndex++;
 				}
 				break;
@@ -112,7 +117,7 @@ namespace Zorlock
 				ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			}
 
-
+			index++;
 		}
 		m_VertexBuffers.push_back(vertexBuffer);
 		m_RendererID->SetLayout();

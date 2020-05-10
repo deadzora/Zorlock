@@ -201,6 +201,11 @@ namespace Zorlock {
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::Apply() const
+	{
+		//Can send Uniform buffers here.
+	}
+
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
 		ZL_PROFILE_FUNCTION();

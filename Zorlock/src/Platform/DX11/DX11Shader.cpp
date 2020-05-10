@@ -2,15 +2,18 @@
 #include "DX11Shader.h"
 #include "DX11Raz.h"
 #include "DX11Shaders.h"
+#include "DX11RendererAPI.h"
 
 namespace Zorlock
 {
 	enum class shaderType
 	{
-		VertexShader,
-		PixelShader,
-		ComputeShader,
-		Unknown
+		VertexShader = 0,
+		PixelShader = 1,
+		ComputeShader = 2,
+		Geometry = 3,
+		Hull = 4,
+		Unknown = 5
 	};
 
 
@@ -31,35 +34,56 @@ namespace Zorlock
 		m_RendererID = DX11Raz::RazCreateShader();
 	}
 
-	DX11Shader::DX11Shader(const std::string& filepath)
+	DX11Shader::DX11Shader(const std::string& filepath) 
 	{
-		m_RendererID = DX11Raz::RazCreateShader();
-		//oof 
 		ZL_PROFILE_FUNCTION();
+		m_RendererID = DX11Raz::RazCreateShader();
+
+		//If we are compiling from file path then vsmain and psmain should be int he same file therefore we can pass it to both shaders
+		m_RendererID->InitVertex(DXSHADERFILE(filepath));
+		m_RendererID->InitPixel(DXSHADERFILE(filepath));
+
 	}
 
 	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name)
 	{
 		ZL_PROFILE_FUNCTION();
+		m_RendererID->InitVertex(vertexSrc);
+		m_RendererID->InitPixel(fragmentSrc);
 	}
 
 	DX11Shader::~DX11Shader()
 	{
 		ZL_PROFILE_FUNCTION();
+		m_RendererID->Release();
 	}
 
 	void DX11Shader::Bind() const
 	{
 		ZL_PROFILE_FUNCTION();
+		//Use this to pass uniformbuffers
 	}
 
 	void DX11Shader::Unbind() const
 	{
 		ZL_PROFILE_FUNCTION();
+		//no
+	}
+
+	void DX11Shader::Apply() const
+	{
+		m_RendererID->ApplyAllVertexCB();
+		m_RendererID->ApplyAllPixelCB();
 	}
 
 	void DX11Shader::SetInt(const std::string& name, int value)
 	{
+		/*
+		if (sizeof(int) % 16)
+		{
+			shaderData.push_back(static_cast<void*>(&value));
+		}
+		*/
 		ZL_PROFILE_FUNCTION();
 	}
 
@@ -88,59 +112,14 @@ namespace Zorlock
 		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::UploadUniformInt(const std::string& name, int value)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
+	
 
-	void DX11Shader::UploadUniformFloat(const std::string& name, float value)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformFloat2(const std::string& name, const glm::vec2& value)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformFloat3(const std::string& name, const glm::vec3& value)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformFloat4(const std::string& name, const glm::vec4& value)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
 
-	void DX11Shader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
-	{
-		ZL_PROFILE_FUNCTION();
-	}
-
-	void DX11Shader::UploadUniformBuffer(void* bufferblob)
-	{
-	}
-
-	std::string DX11Shader::ReadFile(const std::string& filepath)
-	{
-		ZL_PROFILE_FUNCTION();
-		return std::string();
-	}
-
-	void DX11Shader::Compile(const std::string shaderSources)
-	{
-	}
 
 
 
