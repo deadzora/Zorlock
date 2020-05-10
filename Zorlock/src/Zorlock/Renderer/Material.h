@@ -2,8 +2,9 @@
 
 namespace Zorlock {
 
-	struct ZColor {
-		float r, g, b, a;
+	class Material {
+
 	};
+
 
 }

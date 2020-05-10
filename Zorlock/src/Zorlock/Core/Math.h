@@ -9,16 +9,15 @@
 #define LINE Zorlock::Line
 #define PLANE Zorlock::Plane
 #define MATRIX3 Zorlock::Matrix
-#define TRANSFORM Zorlock::Transform
+#define MATRIX4 Zorlock::Matrix4
+#define MATHTRANSFORM Zorlock::MathTransform
 #define BOX Zorlock::Box
 #define QUATERNION Zorlock::Quaternion
-
-
 
 #ifndef M_PI
 // You can extend this approximation as far as you need to;
 // this version was copied from the MINGW GCC headers
-#define M_PI 3.14159265358979323846  
+#define M_PI 3.14159265358979323846f  
 #endif
 #define DEG_CIRCLE 360
 #define DEG_TO_RAD (M_PI / (DEG_CIRCLE / 2))
@@ -32,21 +31,8 @@
 namespace Zorlock {
 
 
-
-	class MathF
-	{
-	public:
-		static float DegreesFromRadians(float r)
-		{
-			return r * 180.0f / 3.141592653589793238463f;
-		}
-
-		static float RadiansFromDegrees(float d)
-		{
-			return d * 3.141592653589793238463f / 180;
-		}
-
-	};
+	enum ZORLOCK_ZERO { Zero };
+	enum ZORLOCK_IDENTITY { Identity };
 
 	struct Vector2
 	{
@@ -79,7 +65,6 @@ namespace Zorlock {
 	{
 		float z;
 
-
 		float distance(const Vector3* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -91,6 +76,7 @@ namespace Zorlock {
 		Vector3() : Vector2() , z(0) {
 
 		}
+
 
 		Vector3(float x, float y, float z) : Vector2(x, y), z(z) 
 		{				
@@ -178,8 +164,35 @@ namespace Zorlock {
 		void clear() {
 			x = y = z = 0;
 		}
+		static Vector3 Up()
+		{
+			return Vector3(0,1,0);
+		}
+		static Vector3 Down()
+		{
+			return Vector3(0, -1, 0);
+		}
+		static Vector3 Forward()
+		{
+			return Vector3(0, 0, 1);
+		}
+		static Vector3 Back()
+		{
+			return Vector3(0, 0, -1);
+		}
+		static Vector3 Left()
+		{
+			return Vector3(-1, 0, 0);
+		}
+		static Vector3 Right()
+		{
+			return Vector3(1, 0, 0);
+		}
+		static Vector3 Zero()
+		{
+			return Vector3(0, 0, 0);
+		}
 	};
-
 
 	struct Vector4 : public Vector3
 	{
@@ -191,6 +204,10 @@ namespace Zorlock {
 		{
 
 		}
+		Vector4(Vector3 a, float w) : Vector3(a), w(w)
+		{
+
+		}
 		float distance(const Vector4* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -199,11 +216,13 @@ namespace Zorlock {
 				pow(vec->w - this->w, 2) * 1.0f);
 			return d;
 		}
+		static Vector4 Zero()
+		{
+			return Vector4(0,0, 0, 0);
+		}
 
 		
 	};
-
-
 
 	struct VertexP
 	{
@@ -240,122 +259,6 @@ namespace Zorlock {
 		
 	};
 
-	struct ColorRGB {
-		Vector3 value;
-		ColorRGB() {};
-		ColorRGB(float x, float y, float z) : value(Vector3(x, y, z))
-		{
-		}
-		//for template compatability
-		ColorRGB(float x, float y, float z, float w) : value(Vector3(x, y, z))
-		{
-			//ignore w
-		}
-		ColorRGB(float x, float y) : value(Vector3(x, y, 0))
-		{
-		}
-		ColorRGB White()
-		{
-			this->value.x = 1.0f;
-			this->value.y = 1.0f;
-			this->value.z = 1.0f;
-			return *this;
-		}
-
-		ColorRGB Black()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			return *this;
-		}
-
-		ColorRGB Red()
-		{
-			this->value.x = 1.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			return *this;
-		}
-
-		ColorRGB Green()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 1.0f;
-			this->value.z = 0.0f;
-			return *this;
-		}
-
-		ColorRGB Blue()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			return *this;
-		}
-
-	};
-
-	struct ColorRGBA {
-		Vector4 value;
-		ColorRGBA() {};
-		ColorRGBA(float x, float y, float z, float w) : value(Vector4(x, y, z, w))
-		{
-		}
-		ColorRGBA(float x, float y, float z) : value(Vector4(x, y, z, 0))
-		{
-		}
-		ColorRGBA(float x, float y) : value(Vector4(x, y, 0, 0))
-		{
-		}
-		ColorRGBA White()
-		{
-			this->value.x = 1.0f;
-			this->value.y = 1.0f;
-			this->value.z = 1.0f;
-			this->value.w = 1.0f;
-			return *this;
-		};
-
-		ColorRGBA Black()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			this->value.w = 1.0f;
-			return *this;
-		};
-
-		ColorRGBA Red()
-		{
-			this->value.x = 1.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			this->value.w = 1.0f;
-			return *this;
-		};
-
-		ColorRGBA Green()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 1.0f;
-			this->value.z = 0.0f;
-			this->value.w = 1.0f;
-			return *this;
-		};
-
-		ColorRGBA Blue()
-		{
-			this->value.x = 0.0f;
-			this->value.y = 0.0f;
-			this->value.z = 0.0f;
-			this->value.w = 1.0f;
-			return *this;
-		};
-
-		
-	};
-
 	struct UV {
 		Vector2 value;
 
@@ -375,7 +278,6 @@ namespace Zorlock {
 		{
 			//ignore w
 		}
-
 		
 	};
 
@@ -577,9 +479,30 @@ namespace Zorlock {
 		float w;
 		Vector3 v;
 
-		Quaternion() :w(1) {
+		Quaternion() :v(Vector3()), w(1) {
 		}
 		Quaternion(float w, const Vector3& v) :w(w), v(v) {
+		}
+		Quaternion FromEulerAngles(const Vector3& q) const {
+			Vector3 ypr = Vector3(q);
+			ypr.y *= DEG_TO_RAD;
+			ypr.x *= DEG_TO_RAD;
+			ypr.z *= DEG_TO_RAD;
+			float rollOver2 = ypr.z * 0.5f;
+			float sinRollOver2 = (float)sin((double)rollOver2);
+			float cosRollOver2 = (float)cos((double)rollOver2);
+			float pitchOver2 = ypr.x * 0.5f;
+			float sinPitchOver2 = (float)sin((double)pitchOver2);
+			float cosPitchOver2 = (float)cos((double)pitchOver2);
+			float yawOver2 = ypr.y * 0.5f;
+			float sinYawOver2 = (float)sin((double)yawOver2);
+			float cosYawOver2 = (float)cos((double)yawOver2);
+			Quaternion result;
+			result.w = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
+			result.v.x = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
+			result.v.y = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
+			result.v.z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
+			return result;
 		}
 		Quaternion operator-()const {
 			return Quaternion(w, -v);
@@ -645,11 +568,19 @@ namespace Zorlock {
 			return Vector3(2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
 		}
 
+		Vector3 ToEulerAngles()const {
+			Vector3 pitchYawRoll;
+			pitchYawRoll.y = (float)atan2(2.0f * v.x * w + 2.0f * v.y * v.z, 1 - 2.0f * (v.z * v.z + w * w));     // Yaw 
+			pitchYawRoll.x = (float)asin(2.0f * (v.x * v.z - w * v.y));                             // Pitch 
+			pitchYawRoll.z = (float)atan2(2.0f * v.x * v.y + 2.0f * v.z * w, 1 - 2.0f * (v.y * v.y + v.z * v.z));      // Roll 
+			return pitchYawRoll;
+		}
+
 	};
 
 	class Matrix {
 		static Matrix tmps[64];
-		static Matrix& alloc_tmp() { static int tmp = 0; return tmps[tmp++ & 63]; }
+		//static Matrix& alloc_tmp() { static int tmp = 0; return tmps[tmp++ & 63]; }
 		friend class Transform;
 	public:
 		Vector3 i, j, k;
@@ -680,8 +611,8 @@ namespace Zorlock {
 		const Vector3& operator[](int n)const {
 			return (&i)[n];
 		}
-		Matrix& operator~()const {
-			Matrix& m = alloc_tmp();
+		Matrix operator~()const {
+			Matrix m;
 			m.i.x = i.x; m.i.y = j.x; m.i.z = k.x;
 			m.j.x = i.y; m.j.y = j.y; m.j.z = k.y;
 			m.k.x = i.z; m.k.y = j.z; m.k.z = k.z;
@@ -690,16 +621,16 @@ namespace Zorlock {
 		float determinant()const {
 			return i.x * (j.y * k.z - j.z * k.y) - i.y * (j.x * k.z - j.z * k.x) + i.z * (j.x * k.y - j.y * k.x);
 		}
-		Matrix& operator-()const {
-			Matrix& m = alloc_tmp();
+		Matrix operator-()const {
+			Matrix m;
 			float t = 1.0f / determinant();
 			m.i.x = t * (j.y * k.z - j.z * k.y); m.i.y = -t * (i.y * k.z - i.z * k.y); m.i.z = t * (i.y * j.z - i.z * j.y);
 			m.j.x = -t * (j.x * k.z - j.z * k.x); m.j.y = t * (i.x * k.z - i.z * k.x); m.j.z = -t * (i.x * j.z - i.z * j.x);
 			m.k.x = t * (j.x * k.y - j.y * k.x); m.k.y = -t * (i.x * k.y - i.y * k.x); m.k.z = t * (i.x * j.y - i.y * j.x);
 			return m;
 		}
-		Matrix& cofactor()const {
-			Matrix& m = alloc_tmp();
+		Matrix cofactor()const {
+			Matrix m;
 			m.i.x = (j.y * k.z - j.z * k.y); m.i.y = -(j.x * k.z - j.z * k.x); m.i.z = (j.x * k.y - j.y * k.x);
 			m.j.x = -(i.y * k.z - i.z * k.y); m.j.y = (i.x * k.z - i.z * k.x); m.j.z = -(i.x * k.y - i.y * k.x);
 			m.k.x = (i.y * j.z - i.z * j.y); m.k.y = -(i.x * j.z - i.z * j.x); m.k.z = (i.x * j.y - i.y * j.x);
@@ -714,8 +645,8 @@ namespace Zorlock {
 		Vector3 operator*(const Vector3& q)const {
 			return Vector3(i.x * q.x + j.x * q.y + k.x * q.z, i.y * q.x + j.y * q.y + k.y * q.z, i.z * q.x + j.z * q.y + k.z * q.z);
 		}
-		Matrix& operator*(const Matrix& q)const {
-			Matrix& m = alloc_tmp();
+		Matrix operator*(const Matrix& q)const {
+			Matrix m;
 			m.i.x = i.x * q.i.x + j.x * q.i.y + k.x * q.i.z; m.i.y = i.y * q.i.x + j.y * q.i.y + k.y * q.i.z; m.i.z = i.z * q.i.x + j.z * q.i.y + k.z * q.i.z;
 			m.j.x = i.x * q.j.x + j.x * q.j.y + k.x * q.j.z; m.j.y = i.y * q.j.x + j.y * q.j.y + k.y * q.j.z; m.j.z = i.z * q.j.x + j.z * q.j.y + k.z * q.j.z;
 			m.k.x = i.x * q.k.x + j.x * q.k.y + k.x * q.k.z; m.k.y = i.y * q.k.x + j.y * q.k.y + k.y * q.k.z; m.k.z = i.z * q.k.x + j.z * q.k.y + k.z * q.k.z;
@@ -726,12 +657,248 @@ namespace Zorlock {
 			i = j.cross(k).normalized();
 			j = k.cross(i);
 		}
-		Matrix& orthogonalized()const {
-			Matrix& m = alloc_tmp();
+		Matrix orthogonalized()const {
+			Matrix m;
 			m = *this; m.orthogonalize();
 			return m;
 		}
+
+		static Matrix ZERO()
+		{
+			return Matrix(Vector3(),Vector3(),Vector3());
+		}
+
+		static Matrix IDENTITY()
+		{
+			return Matrix(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1));
+		}
+
 	};
+
+	class Matrix4 {
+	public:
+		Vector4 i, j, k, l;
+		Matrix4() = default;
+		constexpr Matrix4(const Matrix4&) = default;
+		constexpr Matrix4& operator=(const Matrix4&) = default;
+
+
+		Matrix4(const Matrix& mat3)
+		{
+			i = Vector4(mat3.i,0.0f);
+			j = Vector4(mat3.j, 0.0f);
+			k = Vector4(mat3.k, 0.0f);
+			l = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+
+		}
+
+		Matrix4(const Vector4& i, const Vector4& j, const Vector4& k, const Vector4& l) : i(i), j(j), k(k), l(l)
+		{
+
+		}
+		
+		Matrix4(float ix, float iy, float iz, float iw,
+			float jx, float jy, float jz, float jw,
+			float kx, float ky, float kz, float kw,
+			float lx, float ly, float lz, float lw) : i(Vector4(ix,iy,iz,iw)), j(Vector4(jx, jy, jz, jw)), k(Vector4(kx, ky, kz, kw)), l(Vector4(lx, ly, lz, lw))
+		{
+
+		}
+
+		bool operator==(const Matrix4& rhs) const
+		{
+			if (i.x != rhs.i.x || i.y != rhs.i.y || i.z != rhs.i.z || i.w != rhs.i.w ||
+				j.x != rhs.j.x || j.y != rhs.j.y || j.z != rhs.j.z || j.w != rhs.j.w ||
+				k.x != rhs.k.x || k.y != rhs.k.y || k.z != rhs.k.z || k.w != rhs.k.w ||
+				l.x != rhs.l.x || l.y != rhs.l.y || l.z != rhs.l.z || l.w != rhs.l.w)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		bool operator!=(const Matrix4& rhs) const
+		{
+			return !operator==(rhs);
+		}
+
+		Matrix4 operator*(const Matrix4& rhs)const {
+			Matrix4 r;
+
+			r.i.x = i.x * rhs.i.x + i.y * rhs.j.x + i.z * rhs.k.x + i.w * rhs.l.x;
+			r.i.y = i.x * rhs.i.y + i.y * rhs.j.y + i.z * rhs.k.y + i.w * rhs.l.y;
+			r.i.z = i.x * rhs.i.z + i.y * rhs.j.z + i.z * rhs.k.z + i.w * rhs.l.z;
+			r.i.w = i.x * rhs.i.w + i.y * rhs.j.w + i.z * rhs.k.w + i.w * rhs.l.w;
+
+			r.j.x = j.x * rhs.i.x + j.y * rhs.j.x + j.z * rhs.k.x + j.w * rhs.l.x;
+			r.j.y = j.x * rhs.i.y + j.y * rhs.j.y + j.z * rhs.k.y + j.w * rhs.l.y;
+			r.j.z = j.x * rhs.i.z + j.y * rhs.j.z + j.z * rhs.k.z + j.w * rhs.l.z;
+			r.j.w = j.x * rhs.i.w + j.y * rhs.j.w + j.z * rhs.k.w + j.w * rhs.l.w;
+
+			r.k.x = k.x * rhs.i.x + k.y * rhs.j.x + k.z * rhs.k.x + k.w * rhs.l.x;
+			r.k.y = k.x * rhs.i.y + k.y * rhs.j.y + k.z * rhs.k.y + k.w * rhs.l.y;
+			r.k.z = k.x * rhs.i.z + k.y * rhs.j.z + k.z * rhs.k.z + k.w * rhs.l.z;
+			r.k.w = k.x * rhs.i.w + k.y * rhs.j.w + k.z * rhs.k.w + k.w * rhs.l.w;
+
+			r.l.x = l.x * rhs.i.x + l.y * rhs.j.x + l.z * rhs.k.x + l.w * rhs.l.x;
+			r.l.y = l.x * rhs.i.y + l.y * rhs.j.y + l.z * rhs.k.y + l.w * rhs.l.y;
+			r.l.z = l.x * rhs.i.z + l.y * rhs.j.z + l.z * rhs.k.z + l.w * rhs.l.z;
+			r.l.w = l.x * rhs.i.w + l.y * rhs.j.w + l.z * rhs.k.w + l.w * rhs.l.w;
+			
+
+			return r;
+		}
+
+		Matrix4 operator+ (const Matrix4& rhs) const
+		{
+			Matrix4 r;
+
+			r.i.x = i.x + rhs.i.x;
+			r.i.y = i.y + rhs.i.y;
+			r.i.z = i.z + rhs.i.z;
+			r.i.w = i.w + rhs.i.w;
+
+			r.j.x = j.x + rhs.j.x;
+			r.j.y = j.y + rhs.j.y;
+			r.j.z = j.z + rhs.j.z;
+			r.j.w = j.w + rhs.j.w;
+
+			r.k.x = k.x + rhs.k.x;
+			r.k.y = k.y + rhs.k.y;
+			r.k.z = k.z + rhs.k.z;
+			r.k.w = k.w + rhs.k.w;
+
+			r.l.x = l.x + rhs.l.x;
+			r.l.y = l.y + rhs.l.y;
+			r.l.z = l.z + rhs.l.z;
+			r.l.w = l.w + rhs.l.w;
+
+			return r;
+		}
+
+		Matrix4 operator-(const Matrix4& rhs) const
+		{
+			Matrix4 r;
+			r.i.x = i.x - rhs.i.x;
+			r.i.y = i.y - rhs.i.y;
+			r.i.z = i.z - rhs.i.z;
+			r.i.w = i.w - rhs.i.w;
+
+			r.j.x = j.x - rhs.j.x;
+			r.j.y = j.y - rhs.j.y;
+			r.j.z = j.z - rhs.j.z;
+			r.j.w = j.w - rhs.j.w;
+
+			r.k.x = k.x - rhs.k.x;
+			r.k.y = k.y - rhs.k.y;
+			r.k.z = k.z - rhs.k.z;
+			r.k.w = k.w - rhs.k.w;
+
+			r.l.x = l.x - rhs.l.x;
+			r.l.y = l.y - rhs.l.y;
+			r.l.z = l.z - rhs.l.z;
+			r.l.w = l.w - rhs.l.w;
+
+			return r;
+		}
+
+
+
+		Matrix4 operator*(float rhs) const
+		{
+			return Matrix4(rhs * i.x, rhs * i.y, rhs * i.z, rhs * i.w,
+				rhs * j.x, rhs * j.y, rhs * j.z, rhs * j.w,
+				rhs * k.x, rhs * k.y, rhs * k.z, rhs * k.w,
+				rhs * l.x, rhs * l.y, rhs * l.z, rhs * l.w);
+		}
+
+		Vector3 operator*(const Vector3& v)const {
+
+			Vector3 r = Vector3::Zero();
+
+			float fInvW = 1.0f / (l.x * v.x + l.y * v.y + l.z * v.z + l.w);
+
+			r.x = (i.x * v.x + i.y * v.y + i.z * v.z + i.w) * fInvW;
+			r.y = (j.x * v.x + j.y * v.y + j.z * v.z + j.w) * fInvW;
+			r.z = (k.x * v.x + k.y * v.y + k.z * v.z + k.w) * fInvW;
+
+			return r;
+		}
+		Vector4 operator*(const Vector4& v)const {
+
+			return Vector4(
+				i.x * v.x + i.y * v.y + i.z * v.z + i.w * v.w,
+				j.x * v.x + j.y * v.y + j.z * v.z + j.w * v.w,
+				k.x * v.x + k.y * v.y + k.z * v.z + k.w * v.w,
+				l.x * v.x + l.y * v.y + l.z * v.z + l.w * v.w
+			);
+		}
+
+
+		Matrix4 transpose() const
+		{
+			return Matrix4(i.x, j.x, k.x, l.x,
+				i.y, j.y, k.y, l.y,
+				i.z, j.z, k.z, l.z,
+				i.w, j.w, k.w, l.w);
+		}
+
+		Matrix get3x3() const
+		{
+			Matrix m3x3;
+			m3x3.i.x = i.x;
+			m3x3.i.y = i.y;
+			m3x3.i.z = i.z;
+			m3x3.j.x = j.x;
+			m3x3.j.y = j.y;
+			m3x3.j.z = j.z;
+			m3x3.k.x = k.x;
+			m3x3.k.y = k.y;
+			m3x3.k.z = k.z;
+
+			return m3x3;
+		}
+
+		static Matrix4 lookAt(const Vector3& from, const Vector3& to, const Vector3& tmp = Vector3(0, 1, 0))
+		{
+			Vector3 dis = from - to;
+			Vector3 forward = dis.normalized();
+			Vector3 right = tmp.normalized().cross(forward);
+			Vector3 up = forward.cross(right);
+
+			Matrix4 camToWorld;
+
+			camToWorld.i.x = right.x;
+			camToWorld.i.y = right.y;
+			camToWorld.i.z = right.z;
+			camToWorld.j.x = up.x;
+			camToWorld.j.y = up.y;
+			camToWorld.j.z = up.z;
+			camToWorld.k.x = forward.x;
+			camToWorld.k.y = forward.y;
+			camToWorld.k.z = forward.z;
+
+			camToWorld.l.x = from.x;
+			camToWorld.l.y = from.y;
+			camToWorld.l.z = from.z;
+
+			return camToWorld;
+		}
+
+
+
+		static Matrix4 ZERO()
+		{
+			return Matrix4(Vector4(), Vector4(), Vector4(), Vector4());
+		}
+		static Matrix4 IDENTITY()
+		{
+			return Matrix4(Vector4(1,0,0,0), Vector4(0,1,0,0), Vector4(0,0,1,0), Vector4(0,0,0,1));
+		}
+
+	};
+
 
 	class Box {
 	public:
@@ -791,32 +958,30 @@ namespace Zorlock {
 
 
 
-	class Transform {
-		static Transform tmps[64];
-		static Transform& alloc_tmp() { static int tmp = 0; return tmps[tmp++ & 63]; }
+	class MathTransform {
+		static MathTransform tmps[64];
+		static MathTransform& alloc_tmp() { static int tmp = 0; return tmps[tmp++ & 63]; }
 	public:
 		Matrix m;
 		Vector3 v;
 
-		Vector3 position;
-		Quaternion rotation;
-		Vector3 scale;
 
-		Transform() {
+
+		MathTransform() {
 		}
-		Transform(const Matrix& m) :m(m) {
+		MathTransform(const Matrix& m) :m(m) {
 		}
-		Transform(const Vector3& v) :v(v) {
+		MathTransform(const Vector3& v) :v(v) {
 		}
-		Transform(const Matrix& m, const Vector3& v) :m(m), v(v) {
+		MathTransform(const Matrix& m, const Vector3& v) :m(m), v(v) {
 		}
-		Transform& operator-()const {
-			Transform& t = alloc_tmp();
+		MathTransform& operator-()const {
+			MathTransform& t = alloc_tmp();
 			t.m = -m; t.v = t.m * -v;
 			return t;
 		}
-		Transform& operator~()const {
-			Transform& t = alloc_tmp();
+		MathTransform& operator~()const {
+			MathTransform& t = alloc_tmp();
 			t.m = ~m; t.v = t.m * -v;
 			return t;
 		}
@@ -832,134 +997,154 @@ namespace Zorlock {
 			for (int k = 1; k < 8; ++k) t.update(*this * q.corner(k));
 			return t;
 		}
-		Transform& operator*(const Transform& q)const {
-			Transform& t = alloc_tmp();
+		MathTransform& operator*(const MathTransform& q)const {
+			MathTransform& t = alloc_tmp();
 			t.m = m * q.m; t.v = m * q.v + v;
 			return t;
 		}
-		bool operator==(const Transform& q)const {
+		bool operator==(const MathTransform& q)const {
 			return m == q.m && v == q.v;
 		}
-		bool operator!=(const Transform& q)const {
+		bool operator!=(const MathTransform& q)const {
 			return !operator==(q);
 		}
+
+
+	};
+
+	class MathF
+	{
+	public:
+		static float DegreesFromRadians(float r)
+		{
+			return r * 180.0f / 3.141592653589793238463f;
+		}
+
+		static float RadiansFromDegrees(float d)
+		{
+			return d * 3.141592653589793238463f / 180;
+		}
+		static float transformRadius(float r, const Matrix& t) {
+			static const float sq_3 = sqrtf(1.0f / 3.0f);
+			return (t * Vector3(sq_3, sq_3, sq_3)).length() * r;
+		}
+
+		static Matrix pitchMatrix(float q) {
+			return Matrix(Vector3(1, 0, 0), Vector3(0, cosf(q), sinf(q)), Vector3(0, -sinf(q), cosf(q)));
+		}
+
+		static Matrix yawMatrix(float q) {
+			return Matrix(Vector3(cosf(q), 0, sinf(q)), Vector3(0, 1, 0), Vector3(-sinf(q), 0, cosf(q)));
+		}
+
+		static Matrix rollMatrix(float q) {
+			return Matrix(Vector3(cosf(q), sinf(q), 0), Vector3(-sinf(q), cosf(q), 0), Vector3(0, 0, 1));
+		}
+
+		static float matrixPitch(const Matrix& m) {
+			return m.k.pitch();
+			//	return asinf( -m.k.y );
+		}
+
+		static float matrixYaw(const Matrix& m) {
+			return m.k.yaw();
+			//return atan2f( -m.k.x,m.k.z );
+		}
+
+		static float matrixRoll(const Matrix& m) {
+			return atan2f(m.i.y, m.j.y);
+			//Matrix t=pitchMatrix( -matrixPitch(m) )*yawMatrix( -matrixYaw(m) )*m;
+			//return atan2f( t.i.y,t.i.x );
+		}
+
+		static Matrix scaleMatrix(float x, float y, float z) {
+			return Matrix(Vector3(x, 0, 0), Vector3(0, y, 0), Vector3(0, 0, z));
+		}
+
+		static Matrix scaleMatrix(const Vector3& scale) {
+			return Matrix(Vector3(scale.x, 0, 0), Vector3(0, scale.y, 0), Vector3(0, 0, scale.z));
+		}
+
+		static Quaternion pitchQuat(float p) {
+			return Quaternion(cosf(p / -2), Vector3(sinf(p / -2), 0, 0));
+		}
+
+		static Quaternion yawQuat(float y) {
+			return Quaternion(cosf(y / 2), Vector3(0, sinf(y / 2), 0));
+		}
+
+		static Quaternion rollQuat(float r) {
+			return Quaternion(cosf(r / -2), Vector3(0, 0, sinf(r / -2)));
+		}
+
+		static Quaternion rotationQuat(float p, float y, float r) {
+			return yawQuat(y) * pitchQuat(p) * rollQuat(r);
+		}
+
+		//Quaternion rotationQuat(float p, float y, float r);
+
+		static Matrix rotationMatrix(float p, float y, float r) {
+			return yawMatrix(y) * pitchMatrix(p) * rollMatrix(r);
+		}
+
+		static Matrix rotationMatrix(const Vector3& rot) {
+			return yawMatrix(rot.y) * pitchMatrix(rot.x) * rollMatrix(rot.z);
+		}
+
+		static float quatPitch(const Quaternion& q) {
+			return q.k().pitch();
+		}
+
+		static float quatYaw(const Quaternion& q) {
+			return q.k().yaw();
+		}
+
+		static float quatRoll(const Quaternion& q) {
+			//	Vector i=q.i(),j=q.j();
+			//	return atan2f( i.y,j.y );
+			return matrixRoll(q);
+		}
+
+		static Quaternion matrixQuat(const Matrix& p) {
+			Matrix m = p;
+			m.orthogonalize();
+			float t = m.i.x + m.j.y + m.k.z, w, x, y, z;
+			if (t > EPSILON) {
+				t = sqrtf(t + 1) * 2;
+				x = (m.k.y - m.j.z) / t;
+				y = (m.i.z - m.k.x) / t;
+				z = (m.j.x - m.i.y) / t;
+				w = t / 4;
+			}
+			else if (m.i.x > m.j.y&& m.i.x > m.k.z) {
+				t = sqrtf(m.i.x - m.j.y - m.k.z + 1) * 2;
+				x = t / 4;
+				y = (m.j.x + m.i.y) / t;
+				z = (m.i.z + m.k.x) / t;
+				w = (m.k.y - m.j.z) / t;
+			}
+			else if (m.j.y > m.k.z) {
+				t = sqrtf(m.j.y - m.k.z - m.i.x + 1) * 2;
+				x = (m.j.x + m.i.y) / t;
+				y = t / 4;
+				z = (m.k.y + m.j.z) / t;
+				w = (m.i.z - m.k.x) / t;
+			}
+			else {
+				t = sqrtf(m.k.z - m.j.y - m.i.x + 1) * 2;
+				x = (m.i.z + m.k.x) / t;
+				y = (m.k.y + m.j.z) / t;
+				z = t / 4;
+				w = (m.j.x - m.i.y) / t;
+			}
+			return Quaternion(w, Vector3(x, y, z));
+		}
+
+
 	};
 
 
-	inline float transformRadius(float r, const Matrix& t) {
-		static const float sq_3 = sqrtf(1.0f / 3.0f);
-		return (t * Vector3(sq_3, sq_3, sq_3)).length() * r;
-	}
-
-	inline Matrix pitchMatrix(float q) {
-		return Matrix(Vector3(1, 0, 0), Vector3(0, cosf(q), sinf(q)), Vector3(0, -sinf(q), cosf(q)));
-	}
-
-	inline Matrix yawMatrix(float q) {
-		return Matrix(Vector3(cosf(q), 0, sinf(q)), Vector3(0, 1, 0), Vector3(-sinf(q), 0, cosf(q)));
-	}
-
-	inline Matrix rollMatrix(float q) {
-		return Matrix(Vector3(cosf(q), sinf(q), 0), Vector3(-sinf(q), cosf(q), 0), Vector3(0, 0, 1));
-	}
-
-	inline float matrixPitch(const Matrix& m) {
-		return m.k.pitch();
-		//	return asinf( -m.k.y );
-	}
-
-	inline float matrixYaw(const Matrix& m) {
-		return m.k.yaw();
-		//return atan2f( -m.k.x,m.k.z );
-	}
-
-	inline float matrixRoll(const Matrix& m) {
-		return atan2f(m.i.y, m.j.y);
-		//Matrix t=pitchMatrix( -matrixPitch(m) )*yawMatrix( -matrixYaw(m) )*m;
-		//return atan2f( t.i.y,t.i.x );
-	}
-
-	inline Matrix scaleMatrix(float x, float y, float z) {
-		return Matrix(Vector3(x, 0, 0), Vector3(0, y, 0), Vector3(0, 0, z));
-	}
-
-	inline Matrix scaleMatrix(const Vector3& scale) {
-		return Matrix(Vector3(scale.x, 0, 0), Vector3(0, scale.y, 0), Vector3(0, 0, scale.z));
-	}
-
-	inline Quaternion pitchQuat(float p) {
-		return Quaternion(cosf(p / -2), Vector3(sinf(p / -2), 0, 0));
-	}
-
-	inline Quaternion yawQuat(float y) {
-		return Quaternion(cosf(y / 2), Vector3(0, sinf(y / 2), 0));
-	}
-
-	inline Quaternion rollQuat(float r) {
-		return Quaternion(cosf(r / -2), Vector3(0, 0, sinf(r / -2)));
-	}
-
-	//inline Quat rotationQuat( float p,float y,float r ){
-	//	return yawQuat(y)*pitchQuat(p)*rollQuat(r);
-	//}
-
-	Quaternion rotationQuat(float p, float y, float r);
-
-	inline Matrix rotationMatrix(float p, float y, float r) {
-		return yawMatrix(y) * pitchMatrix(p) * rollMatrix(r);
-	}
-
-	inline Matrix rotationMatrix(const Vector3& rot) {
-		return yawMatrix(rot.y) * pitchMatrix(rot.x) * rollMatrix(rot.z);
-	}
-
-	inline float quatPitch(const Quaternion& q) {
-		return q.k().pitch();
-	}
-
-	inline float quatYaw(const Quaternion& q) {
-		return q.k().yaw();
-	}
-
-	inline float quatRoll(const Quaternion& q) {
-		//	Vector i=q.i(),j=q.j();
-		//	return atan2f( i.y,j.y );
-		return matrixRoll(q);
-	}
-
-	inline Quaternion matrixQuat(const Matrix& p) {
-		Matrix m = p;
-		m.orthogonalize();
-		float t = m.i.x + m.j.y + m.k.z, w, x, y, z;
-		if (t > EPSILON) {
-			t = sqrtf(t + 1) * 2;
-			x = (m.k.y - m.j.z) / t;
-			y = (m.i.z - m.k.x) / t;
-			z = (m.j.x - m.i.y) / t;
-			w = t / 4;
-		}
-		else if (m.i.x > m.j.y&& m.i.x > m.k.z) {
-			t = sqrtf(m.i.x - m.j.y - m.k.z + 1) * 2;
-			x = t / 4;
-			y = (m.j.x + m.i.y) / t;
-			z = (m.i.z + m.k.x) / t;
-			w = (m.k.y - m.j.z) / t;
-		}
-		else if (m.j.y > m.k.z) {
-			t = sqrtf(m.j.y - m.k.z - m.i.x + 1) * 2;
-			x = (m.j.x + m.i.y) / t;
-			y = t / 4;
-			z = (m.k.y + m.j.z) / t;
-			w = (m.i.z - m.k.x) / t;
-		}
-		else {
-			t = sqrtf(m.k.z - m.j.y - m.i.x + 1) * 2;
-			x = (m.i.z + m.k.x) / t;
-			y = (m.k.y + m.j.z) / t;
-			z = t / 4;
-			w = (m.j.x - m.i.y) / t;
-		}
-		return Quaternion(w, Vector3(x, y, z));
-	}
+	
+	
 
 }

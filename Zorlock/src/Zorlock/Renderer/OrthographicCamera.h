@@ -1,10 +1,10 @@
 #pragma once
-
+//#include "Zorlock/Renderer/Camera.h"
 #include <glm/glm.hpp>
 
 namespace Zorlock {
 
-	class OrthographicCamera
+	class OrthographicCamera //: public Camera
 	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);

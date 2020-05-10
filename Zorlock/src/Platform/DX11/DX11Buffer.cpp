@@ -4,7 +4,8 @@
 #include "DX11IBuffer.h"
 #include "DX11Vertex.h"
 #include "DX11Raz.h"
-#include "Zorlock/Core/Math.h"
+
+
 namespace Zorlock
 {
 	DX11VertexBuffer::DX11VertexBuffer() : m_RendererID(0)

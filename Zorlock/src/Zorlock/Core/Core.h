@@ -1,5 +1,4 @@
 #pragma once
-
 #include <memory>
 #define GLFW_EXPOSE_NATIVE_WIN32
 // Platform detection using predefined macros
@@ -70,6 +69,8 @@
 #define BIT(x) (1 << x)
 
 #define ZL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+#define ZL_SCRIPT_EXPORT(...) _attribute__((annotate("se," #__VA_ARGS__)))
 
 namespace Zorlock {
 
