@@ -25,8 +25,14 @@
     <Filter Include="src\Zorlock\Debug">
       <UniqueIdentifier>{5651899B-C267-8731-0BDF-1253773458B9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Zorlock\Editor">
+      <UniqueIdentifier>{1660FA0E-0244-BB64-6BA4-B5B757A7A5E6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Zorlock\Events">
       <UniqueIdentifier>{C4CE3D10-B0B2-FE65-1913-F9B80516E9E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Zorlock\Game">
+      <UniqueIdentifier>{89041D98-75FD-3BEA-9E2F-216F8A871BF6}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Zorlock\ImGui">
       <UniqueIdentifier>{0ABCE79B-76D2-E531-BF49-71532B9FB6B9}</UniqueIdentifier>
@@ -156,6 +162,9 @@
     <ClInclude Include="src\Zorlock\Core\Log.h">
       <Filter>src\Zorlock\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Core\Math.h">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Core\MouseCodes.h">
       <Filter>src\Zorlock\Core</Filter>
     </ClInclude>
@@ -222,16 +231,25 @@
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Renderer\ZColor.h">
-      <Filter>src\Zorlock\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11IBuffer.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11Raz.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11Shaders.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11SwapChain.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11VBuffer.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11Vertex.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\Keyboard.h">
@@ -2700,11 +2718,19 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\DX11\src\DX11Vertex.h" />
-    <ClInclude Include="Vendor\DX11\src\DX11VBuffer.h" />
-    <ClInclude Include="Vendor\DX11\src\DX11IBuffer.h" />
-    <ClInclude Include="src\Zorlock\Core\Math.h" />
-    <ClInclude Include="Vendor\DX11\src\DX11Shaders.h" />
+    <ClInclude Include="src\Zorlock\Game\Component.h" />
+    <ClInclude Include="src\Zorlock\Game\GameObject.h" />
+    <ClInclude Include="src\Zorlock\Game\Object.h" />
+    <ClInclude Include="src\Zorlock\Game\Scene.h" />
+    <ClInclude Include="src\Zorlock\Game\SceneManager.h" />
+    <ClInclude Include="src\Zorlock\Game\Transform.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Color.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Behavior.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Material.h" />
+    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2815,10 +2841,19 @@
     <ClCompile Include="vendor\DX11\src\DX11DeviceContext.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11IBuffer.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11Raz.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11Shaders.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11SwapChain.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11VBuffer.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\DX11\src\Keyboard.cpp">
@@ -2839,8 +2874,19 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\DX11\src\DX11VBuffer.cpp" />
-    <ClCompile Include="Vendor\DX11\src\DX11IBuffer.cpp" />
-    <ClCompile Include="Vendor\DX11\src\DX11Shaders.cpp" />
+    <ClCompile Include="src\Zorlock\Game\GameObject.cpp" />
+    <ClCompile Include="src\Zorlock\Game\Transform.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Zorlock\Game\Object.cpp" />
+    <ClCompile Include="src\Zorlock\Core\Math.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Zorlock\Editor\readme.md">
+      <Filter>src\Zorlock\Editor</Filter>
+    </None>
+    <None Include="src\Zorlock\Game\readme.md">
+      <Filter>src\Zorlock\Game</Filter>
+    </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
