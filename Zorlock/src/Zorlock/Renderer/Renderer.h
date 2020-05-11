@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Zorlock/Renderer/RenderCommand.h"
-
 #include "Zorlock/Renderer/OrthographicCamera.h"
 #include "Zorlock/Renderer/Shader.h"
 
@@ -14,7 +13,9 @@ namespace Zorlock {
 		static void Shutdown();
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
-
+		//Soon use
+		//static void BeginScene(Camera& camera);
+		ZL_DEPRECATED("Rolling out new base Camera class")
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
@@ -27,6 +28,7 @@ namespace Zorlock {
 			glm::mat4 ViewProjectionMatrix;
 		};
 	public:
+		ZL_DEPRECATED("Rolling out new SceneRenderer")
 		static Scope<SceneData> s_SceneData;
 	};
 

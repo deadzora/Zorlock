@@ -20,3 +20,5 @@
 #ifdef ZL_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
+
+#define ZL_DEPRECATED(x) [[deprecated(x)]]

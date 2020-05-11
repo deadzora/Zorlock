@@ -25,6 +25,7 @@ IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
 IncludeDir["assimp"] = "Zorlock/vendor/assimp/includes"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
+IncludeDir["LexerTK"] = "Zorlock/Vendor/lexertk"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -56,7 +57,8 @@ project "Zorlock"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/DX11/src/**.h",
-		"%{prj.name}/vendor/DX11/src/**.cpp"
+		"%{prj.name}/vendor/DX11/src/**.cpp",
+		"%{prj.name}/vendor/lexertk/**.hpp"
 	}
 
 	defines
@@ -75,7 +77,8 @@ project "Zorlock"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.DX11}"
+		"%{IncludeDir.DX11}",
+		"%{IncludeDir.LexerTK}"
 	}
 	
 	libdirs 

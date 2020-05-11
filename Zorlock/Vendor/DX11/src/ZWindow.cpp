@@ -236,12 +236,12 @@ namespace DX11Raz
 			if (GET_WHEEL_DELTA_WPARAM(wparam) > 0)
 			{
 				this->WScrollCallback(this, x, y);
-				this->mouse.OnWheelUp(x, y);
+				//this->mouse.OnWheelUp((int)x, y);
 			}
 			else if (GET_WHEEL_DELTA_WPARAM(wparam) < 0)
 			{
 				this->WScrollCallback(this, x, y);
-				this->mouse.OnWheelDown(x, y);
+				//this->mouse.OnWheelDown(x, y);
 			}
 			break;
 		}

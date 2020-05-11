@@ -13,6 +13,9 @@
 #define MATHTRANSFORM Zorlock::MathTransform
 #define BOX Zorlock::Box
 #define QUATERNION Zorlock::Quaternion
+typedef float MATRIX3ARRAY[3][3];
+typedef float MATRIX4ARRAY[4][4];
+
 
 #ifndef M_PI
 // You can extend this approximation as far as you need to;
@@ -683,6 +686,7 @@ namespace Zorlock {
 		constexpr Matrix4& operator=(const Matrix4&) = default;
 
 
+
 		Matrix4(const Matrix& mat3)
 		{
 			i = Vector4(mat3.i,0.0f);
@@ -702,6 +706,18 @@ namespace Zorlock {
 			float kx, float ky, float kz, float kw,
 			float lx, float ly, float lz, float lw) : i(Vector4(ix,iy,iz,iw)), j(Vector4(jx, jy, jz, jw)), k(Vector4(kx, ky, kz, kw)), l(Vector4(lx, ly, lz, lw))
 		{
+
+		}
+
+		MATRIX4ARRAY& ToArray()
+		{
+			MATRIX4ARRAY mat4;
+			mat4[0][0] = i.x; mat4[0][1] = i.y; mat4[0][2] = i.z; mat4[0][3] = i.w;
+			mat4[1][0] = j.x; mat4[1][1] = j.y; mat4[1][2] = j.z; mat4[1][3] = j.w;
+			mat4[2][0] = k.x; mat4[2][1] = k.y; mat4[2][2] = k.z; mat4[2][3] = k.w;
+			mat4[3][0] = l.x; mat4[3][1] = l.y; mat4[3][2] = l.z; mat4[3][3] = l.w;
+
+			return mat4;
 
 		}
 

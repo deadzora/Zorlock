@@ -97,19 +97,26 @@ namespace Zorlock
 		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetFloat3(const std::string& name, const glm::vec3& value)
+
+
+	void DX11Shader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
-		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetFloat4(const std::string& name, const glm::vec4& value)
+
+
+	void DX11Shader::SetFloat4(const std::string& name, const VECTOR4& value)
 	{
-		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetMat4(const std::string& name, const glm::mat4& value)
+
+
+	void DX11Shader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
-		ZL_PROFILE_FUNCTION();
+	}
+
+	void DX11Shader::PostProcess() const
+	{
 	}
 
 
