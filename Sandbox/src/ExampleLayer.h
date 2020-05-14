@@ -2,6 +2,8 @@
 
 #include "Zorlock.h"
 
+using namespace Zorlock;
+
 class ExampleLayer : public Zorlock::Layer
 {
 public:
@@ -15,7 +17,7 @@ public:
 	virtual void OnImGuiRender() override;
 	void OnEvent(Zorlock::Event& e) override;
 private:
-	Zorlock::ShaderLibrary m_ShaderLibrary;
+	
 	Zorlock::Ref<Zorlock::Shader> m_Shader;
 	Zorlock::Ref<Zorlock::VertexArray> m_VertexArray;
 

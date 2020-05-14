@@ -5,9 +5,16 @@ namespace Zorlock {
 
 	class Material {
 	public:
-		virtual ~Material() = default;
+		Material();
+		Material(const Ref<Shader>& shader);
+		Material(const std::string shadername);
+		void Apply();
+
+		virtual ~Material()
+		{};
 	protected:
-		std::shared_ptr<Shader> m_Shader;
+		bool Process();
+		Ref<Shader> m_Shader;
 	};
 
 

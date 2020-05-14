@@ -31,7 +31,7 @@ namespace Zorlock {
 		virtual void SetFloat4(const std::string& name, const VECTOR4& value) override;
 		//virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) override;
-		virtual void PostProcess() const override;
+		virtual void PostProcess() override;
 		virtual const std::string& GetName() const override { return m_Name; }
 		/*
 		void UploadUniformInt(const std::string& name, int value);

@@ -129,7 +129,7 @@ namespace Zorlock
 			SAMPLER2D,
 			SAMPLERCUBE,
 			VARVOID,
-			VERTEX,
+			VARVERTEX,
 			PIXEL,
 			CORE
 			
@@ -340,7 +340,7 @@ namespace Zorlock
 		bool isVertex;
 
 		bool Parse(std::string filename);
-
+		bool ParseString(std::string shader);
 		std::string GetShader(OutPutShaderType output, ShaderSection section);
 		void SaveShader(std::string shaderdata, std::string shaderfile);
 		

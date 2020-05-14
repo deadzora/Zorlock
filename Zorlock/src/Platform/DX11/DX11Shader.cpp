@@ -3,7 +3,7 @@
 #include "DX11Raz.h"
 #include "DX11Shaders.h"
 #include "DX11RendererAPI.h"
-
+#include <ZLSLParser.h>
 namespace Zorlock
 {
 	enum class shaderType
@@ -115,8 +115,13 @@ namespace Zorlock
 	{
 	}
 
-	void DX11Shader::PostProcess() const
+	void DX11Shader::PostProcess()
 	{
+		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
+		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
+		ZL_PROFILE_FUNCTION();
+		m_RendererID->InitVertex(vertexSrc);
+		m_RendererID->InitPixel(fragmentSrc);
 	}
 
 

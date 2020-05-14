@@ -39,16 +39,22 @@ namespace Zorlock {
 		std::string Name;
 		ShaderDataType Type;
 		uint32_t Size;
+		uint32_t Slot;
 		size_t Offset;
 		bool Normalized;
 
-		ShaderVariable() = default;
+		ShaderVariable() : Name(""), Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false), Slot(0)
+		{};
 
-		ShaderVariable(ShaderDataType type, const std::string & name, bool normalized = false)
-			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+		ShaderVariable(ShaderDataType type, const std::string & name, bool normalized)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized), Slot(0)
 		{
 		}
 
+		ShaderVariable(ShaderDataType type, const std::string& name, uint32_t slot , size_t offset, bool normalized)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Slot(slot)
+		{
+		}
 		uint32_t GetComponentCount() const
 		{
 			switch (Type)
@@ -105,39 +111,50 @@ namespace Zorlock {
 
 	};
 
+	class ZLSLParser;
 
 	class Shader
 	{
 	public:
-		virtual ~Shader() = default;
+		virtual ~Shader() {};
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		virtual void Bind() const {};
+		virtual void Unbind() const {};
 		//compatibility function for us poor folk who have to use uniform buffers.
-		virtual void Apply() const = 0;
-		virtual void SetInt(const std::string& name, int value) = 0;
-		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) = 0;
-		virtual void SetFloat(const std::string& name, float value) = 0;
+		virtual void Apply() const {};
+		virtual void SetInt(const std::string& name, int value) {};
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) {};
+		virtual void SetFloat(const std::string& name, float value) {};
 		ZL_DEPRECATED("No longer using glm in base classes")
 			virtual void SetFloat3(const std::string& name, const glm::vec3& value) {}; //making them non abstract so there's no need to override
-		virtual void SetFloat3(const std::string& name, const VECTOR3& value) = 0;
+		virtual void SetFloat3(const std::string& name, const VECTOR3& value) {};
 		ZL_DEPRECATED("No longer using glm in base classes")
 			virtual void SetFloat4(const std::string& name, const glm::vec4& value) {}; //making them non abstract so there's no need to override
-		virtual void SetFloat4(const std::string& name, const VECTOR4& value) = 0;
+		virtual void SetFloat4(const std::string& name, const VECTOR4& value) {};
 		ZL_DEPRECATED("No longer using glm in base classes")
 			virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
-		virtual void SetMat4(const std::string& name, const MATRIX4& value) = 0;
-		virtual void PostProcess() const = 0;
-		virtual const std::string& GetName() const = 0;
+		virtual void SetMat4(const std::string& name, const MATRIX4& value) {};
+		virtual void PostProcess() {};
+		virtual const std::string& GetName() const { return "";  };
+		bool Preprocess();
+		void CreateParser();
+		static Ref<Shader> CreateFromFile(const std::string& filepath);
+		static Ref<Shader> CreateFromString(const std::string& value);
 
+		ZL_DEPRECATED("Using Material to Initialize Shader")
 		static Ref<Shader> Create(const std::string& filepath);
+		ZL_DEPRECATED("Using Material to Initialize Shader")
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 	protected:
-		std::shared_ptr<ShaderVariables> m_VShaderVars;
-		std::shared_ptr<ShaderVariables> m_FShaderVars;
+		Ref<ZLSLParser> parser;
+		std::shared_ptr<ShaderVariables> m_VInputVars;
+		std::shared_ptr<ShaderVariables> m_VOutputVars;
+		std::shared_ptr<ShaderVariables> m_VUniformVars;
+		std::shared_ptr<ShaderVariables> m_FUniformVars;
 	};
 
 
+	
 
 	class ShaderLibrary
 	{
@@ -146,9 +163,8 @@ namespace Zorlock {
 		void Add(const Ref<Shader>& shader);
 		Ref<Shader> Load(const std::string& filepath);
 		Ref<Shader> Load(const std::string& name, const std::string& filepath);
-
 		Ref<Shader> Get(const std::string& name);
-
+		static ShaderLibrary* Instance();
 		bool Exists(const std::string& name) const;
 	private:
 		std::unordered_map<std::string, Ref<Shader>> m_Shaders;

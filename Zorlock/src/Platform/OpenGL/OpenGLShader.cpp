@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 
 #include <glm/gtc/type_ptr.hpp>
-
+#include <ZLSLParser.h>
 namespace Zorlock {
 
 	static GLenum ShaderTypeFromString(const std::string& type)
@@ -18,6 +18,11 @@ namespace Zorlock {
 			return GL_COMPUTE_SHADER;
 		ZL_CORE_ASSERT(false, "Unknown shader type!");
 		return 0;
+	}
+
+	OpenGLShader::OpenGLShader()
+	{
+		ZL_PROFILE_FUNCTION();
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
@@ -40,7 +45,6 @@ namespace Zorlock {
 		: m_Name(name)
 	{
 		ZL_PROFILE_FUNCTION();
-
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -258,8 +262,18 @@ namespace Zorlock {
 	{
 	}
 
-	void OpenGLShader::PostProcess() const
+	void OpenGLShader::PostProcess()
 	{
+		ZL_PROFILE_FUNCTION();
+
+		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
+		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
+		std::unordered_map<GLenum, std::string> shaderSources;
+		shaderSources[GL_VERTEX_SHADER] = vertexSrc;
+		shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
+
+		Compile(shaderSources);
+
 	}
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)

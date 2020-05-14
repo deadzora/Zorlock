@@ -1,8 +1,6 @@
 #include "DX11Layer.h"
 #include "imgui/imgui.h"
-#include "Platform/DX11/DX11Shader.h"
-#include <d3d11.h>
-#include <DirectXMath.h>
+
 
 
 DX11Layer::DX11Layer() : Layer("DX11Layer"), m_CameraController(1280.0f / 720.0f)

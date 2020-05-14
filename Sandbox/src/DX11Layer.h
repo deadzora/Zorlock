@@ -16,7 +16,7 @@ public:
 	void OnEvent(Zorlock::Event& e) override;
 
 private:
-	Zorlock::ShaderLibrary m_ShaderLibrary;
+
 	Zorlock::Ref<Zorlock::Shader> m_Shader;
 	Zorlock::Ref<Zorlock::VertexArray> m_VertexArray;
 

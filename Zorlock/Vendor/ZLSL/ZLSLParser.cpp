@@ -315,17 +315,39 @@ namespace Zorlock {
 		std::cout << "***** Shader *****" << std::endl;
 
 		std::string shaderfile = buffer.str();
-		//ZLSLParser::variable_decl_definition vd;
-		//ZLSLParser::function_definition fd;
+
 		shaderfile = ZLSLParser::ParsevariableDeclares(shaderfile, vd, fd, fbd);
 
-		//shaderfile = ZLSLParser::Parsefunctions(shaderfile, fd);
-		//printf("Remaining: \n%s\n", shaderfile.c_str());
+
 
 
 
 		std::cout << "***** End Shader *****" << std::endl;
+		return true;
+	}
 
+	bool ZLSLParser::ParseString(std::string shader)
+	{
+		lexertk::generator generator;
+		if (!generator.process(shader))
+		{
+			std::cout << "Example01 - Failed to lex: " << shader << std::endl;
+			return 0;
+		}
+		lexertk::helper::dump(generator);
+
+
+		std::cout << "***** Shader *****" << std::endl;
+
+		std::string shaderfile = shader;
+
+		shaderfile = ZLSLParser::ParsevariableDeclares(shaderfile, vd, fd, fbd);
+
+
+
+
+		std::cout << "***** End Shader *****" << std::endl;
+		return true;
 	}
 
 	std::string ZLSLParser::GetShader(ZLSLParser::OutPutShaderType output, ZLSLParser::ShaderSection section)
@@ -912,7 +934,7 @@ namespace Zorlock {
 		s_mapStringVariables["sampler2D"] = SAMPLER2D;
 		s_mapStringVariables["samplerCube"] = SAMPLERCUBE;
 		s_mapStringVariables["void"] = VARVOID;
-		s_mapStringVariables["vertex"] = VERTEX;
+		s_mapStringVariables["vertex"] = VARVERTEX;
 		s_mapStringVariables["fragment"] = PIXEL;
 		s_mapStringVariables["core"] = CORE;
 		s_mapStringVariables[""] = VAR_NONE;
