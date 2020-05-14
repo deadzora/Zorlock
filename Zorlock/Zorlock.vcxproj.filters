@@ -52,6 +52,9 @@
     <Filter Include="vendor\DX11\src">
       <UniqueIdentifier>{F7AF6F26-633B-DDEA-6C4C-60DFD85639EB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\ZLSL">
+      <UniqueIdentifier>{A7E371C1-1399-EAB6-9C8D-E48D0842E1BA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
     </Filter>
@@ -84,9 +87,6 @@
     </Filter>
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\lexertk">
-      <UniqueIdentifier>{01083D3B-EDD5-3041-D669-A167C2D60CA6}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
@@ -314,6 +314,15 @@
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\ZWindow.h">
       <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\ZLSL.h">
+      <Filter>vendor\ZLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\ZLSLParser.h">
+      <Filter>vendor\ZLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\lexertk.hpp">
+      <Filter>vendor\ZLSL</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -2763,9 +2772,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\lexertk\lexertk.hpp">
-      <Filter>vendor\lexertk</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
@@ -2935,6 +2941,9 @@
     </ClCompile>
     <ClCompile Include="vendor\DX11\src\ZWindow.cpp">
       <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ZLSL\ZLSLParser.cpp">
+      <Filter>vendor\ZLSL</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
