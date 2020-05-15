@@ -95,6 +95,7 @@ namespace Zorlock
 			Constant,
 			Layout,
 			Function,
+			Texture,
 			Z_Position,
 			Z_PointSize,
 			Z_FragColor,
@@ -176,6 +177,8 @@ namespace Zorlock
 			VariableTypes vartype;
 			std::string varname;
 			ShaderSyntax syntax;
+			std::string original;
+			std::vector<ZLSLDeclaredVariables> functionArgVarList;
 			size_t begin;
 			size_t end;
 		};
@@ -227,10 +230,6 @@ namespace Zorlock
 
 		struct syntax_definition
 		{
-			syntax_definition() : funcname(""), command(""), varname(""), vartype(""), value(""), begin(""), end (""), syntax("")
-			{
-
-			}
 
 			std::string funcname;
 			std::string syntax;
@@ -240,7 +239,8 @@ namespace Zorlock
 			std::string value;
 			std::string begin;
 			std::string end;
-
+			std::string original;
+			std::vector<ZLSLDeclaredVariables> var_list;
 			void clear()
 			{
 				funcname.clear();
@@ -251,15 +251,15 @@ namespace Zorlock
 				syntax.clear();
 				begin.clear();
 				end.clear();
+				original.clear();
+				var_list.clear();
 			}
 
 		};
 
 		struct function_definition
 		{
-			function_definition() : returntype(""), name(""), body("") {
 
-			}
 
 			std::string returntype;
 			std::string name;
@@ -319,7 +319,7 @@ namespace Zorlock
 		std::string ReturnHLSLFunctionBody(ZLSLFunctions func, bool isvert);
 		std::string IsDeclaredVar(std::string& varname);
 		std::string GetDeclareType(std::string& varname);
-
+		uint32_t GetSamplerIndex(std::string varname);
 		void MapFunctions();
 		void MapVariables();
 		void MapGLSLVariables();
@@ -329,7 +329,7 @@ namespace Zorlock
 
 		ZLSLParser();
 		~ZLSLParser();
-
+	private:
 		variable_decl_definition vd;
 		function_definition fd;
 		syntax_definition fbd;
@@ -338,9 +338,10 @@ namespace Zorlock
 		parse_funcbody_decl_definition_impl fbodyparser;
 
 		bool isVertex;
-
+	public:
 		bool Parse(std::string filename);
 		bool ParseString(std::string shader);
+
 		std::string GetShader(OutPutShaderType output, ShaderSection section);
 		void SaveShader(std::string shaderdata, std::string shaderfile);
 		
@@ -360,7 +361,7 @@ namespace Zorlock
 		std::vector<ZLSLFunctions> vertexFunctions;
 		std::vector<ZLSLFunctions> pixelFunctions;
 
-
+	
 
 		std::map<std::string, VarCommandValue> s_mapStringCommands;
 		std::map<std::string, VariableTypes> s_mapStringVariables;

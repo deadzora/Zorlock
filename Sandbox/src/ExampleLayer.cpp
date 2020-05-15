@@ -119,7 +119,7 @@ ExampleLayer::ExampleLayer()
 
 	m_FlatColorShader = Zorlock::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
-	auto textureShader = ShaderLibrary::Instance()->Load("assets/shaders/Texture.glsl");
+	auto textureShader = ShaderLibrary::GetInstance()->Load("assets/shaders/Texture.glsl");
 
 	m_Texture = Zorlock::Texture2D::Create("assets/textures/Checkerboard.png");
 	m_ChernoLogoTexture = Zorlock::Texture2D::Create("assets/textures/ChernoLogo.png");
@@ -162,7 +162,7 @@ void ExampleLayer::OnUpdate(Zorlock::Timestep ts)
 		}
 	}
 
-	auto textureShader = ShaderLibrary::Instance()->Get("Texture");
+	auto textureShader = ShaderLibrary::GetInstance()->Get("Texture");
 
 	m_Texture->Bind();
 	Zorlock::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));

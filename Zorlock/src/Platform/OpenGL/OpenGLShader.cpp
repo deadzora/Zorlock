@@ -20,12 +20,13 @@ namespace Zorlock {
 		return 0;
 	}
 
-	OpenGLShader::OpenGLShader()
+	OpenGLShader::OpenGLShader() : Shader(), m_RendererID(0)
 	{
+		
 		ZL_PROFILE_FUNCTION();
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::string& filepath) : Shader(), m_RendererID(0)
 	{
 		ZL_PROFILE_FUNCTION();
 
@@ -41,8 +42,8 @@ namespace Zorlock {
 		m_Name = filepath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
-		: m_Name(name)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : Shader(), m_RendererID(0)
+		, m_Name(name)
 	{
 		ZL_PROFILE_FUNCTION();
 		std::unordered_map<GLenum, std::string> sources;
@@ -51,10 +52,32 @@ namespace Zorlock {
 		Compile(sources);
 	}
 
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
+	{
+		CreateParser();
+		parser->Parse(filepath);
+		Process();
+		printf("COMPILE SHADERS!! \n");
+		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
+		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
+		parser->SaveShader(vertexSrc, filepath + "_vertex.glsl");
+		parser->SaveShader(fragmentSrc, filepath + "_pixel.glsl");
+
+		std::unordered_map<GLenum, std::string> shaderSources;
+		shaderSources[GL_VERTEX_SHADER] = vertexSrc;
+		shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
+
+		Compile(shaderSources);
+
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& source, bool diff)
+	{
+	}
+
 	OpenGLShader::~OpenGLShader()
 	{
 		ZL_PROFILE_FUNCTION();
-
 		glDeleteProgram(m_RendererID);
 	}
 
@@ -149,6 +172,7 @@ namespace Zorlock {
 
 				ZL_CORE_ERROR("{0}", infoLog.data());
 				ZL_CORE_ASSERT(false, "Shader compilation failure!");
+				printf("Shader Compile Failure \n");
 				break;
 			}
 
@@ -181,6 +205,7 @@ namespace Zorlock {
 
 			ZL_CORE_ERROR("{0}", infoLog.data());
 			ZL_CORE_ASSERT(false, "Shader link failure!");
+			
 			return;
 		}
 
@@ -264,8 +289,8 @@ namespace Zorlock {
 
 	void OpenGLShader::PostProcess()
 	{
-		ZL_PROFILE_FUNCTION();
-
+		
+		printf("COMPILE SHADERS!! \n");
 		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
 		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
 		std::unordered_map<GLenum, std::string> shaderSources;
@@ -273,7 +298,7 @@ namespace Zorlock {
 		shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
 
 		Compile(shaderSources);
-
+		
 	}
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)

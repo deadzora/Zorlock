@@ -29,12 +29,13 @@ namespace Zorlock
 		return shaderType::Unknown;
 	}
 
-	DX11Shader::DX11Shader() : m_RendererID(0)
+	DX11Shader::DX11Shader() : Shader(), m_RendererID(0)
 	{
+		CreateParser();
 		m_RendererID = DX11Raz::RazCreateShader();
 	}
 
-	DX11Shader::DX11Shader(const std::string& filepath) 
+	DX11Shader::DX11Shader(const std::string& filepath)  : Shader()
 	{
 		ZL_PROFILE_FUNCTION();
 		m_RendererID = DX11Raz::RazCreateShader();
@@ -45,11 +46,19 @@ namespace Zorlock
 
 	}
 
-	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name)
+	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name), Shader()
 	{
 		ZL_PROFILE_FUNCTION();
 		m_RendererID->InitVertex(vertexSrc);
 		m_RendererID->InitPixel(fragmentSrc);
+	}
+
+	DX11Shader::DX11Shader(const std::string& name, const std::string& filepath)
+	{
+	}
+
+	DX11Shader::DX11Shader(const std::string& source, bool diff)
+	{
 	}
 
 	DX11Shader::~DX11Shader()

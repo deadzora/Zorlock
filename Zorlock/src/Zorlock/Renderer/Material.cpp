@@ -14,7 +14,7 @@ namespace Zorlock
 	}
 	Material::Material(const std::string shadername)
 	{
-		m_Shader = ShaderLibrary::Instance()->Get(shadername);
+		m_Shader = ShaderLibrary::GetInstance()->Get(shadername);
 	}
 	void Material::Apply()
 	{

@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ZL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;..\Zorlock\vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ZL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;..\Zorlock\vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +118,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ZL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Zorlock\vendor\spdlog\include;..\Zorlock\src;..\Zorlock\vendor;..\Zorlock\vendor\glm;..\Zorlock\vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -137,11 +137,13 @@
   <ItemGroup>
     <ClInclude Include="src\DX11Layer.h" />
     <ClInclude Include="src\ExampleLayer.h" />
+    <ClInclude Include="src\GraphicsTestLayer.h" />
     <ClInclude Include="src\Sandbox2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DX11Layer.cpp" />
     <ClCompile Include="src\ExampleLayer.cpp" />
+    <ClCompile Include="src\GraphicsTestLayer.cpp" />
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>

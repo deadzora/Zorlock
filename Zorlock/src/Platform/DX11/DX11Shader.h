@@ -17,7 +17,9 @@ namespace Zorlock {
 		DX11Shader();
 		DX11Shader(const std::string& filepath);
 		DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-		virtual ~DX11Shader();
+		DX11Shader(const std::string& name, const std::string& filepath);
+		DX11Shader(const std::string& source, bool diff);
+		virtual ~DX11Shader() override;
 		
 		virtual void Bind() const override;
 		virtual void Unbind() const override;

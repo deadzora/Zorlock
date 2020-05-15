@@ -47,10 +47,18 @@ namespace Zorlock {
 	void Renderer2D::Init()
 	{
 		ZL_PROFILE_FUNCTION();
+		int32_t samplers[s_Data.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+			samplers[i] = i;
 
+		//s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+		s_Data.TextureShader = Shader::Create("2dShader","assets/shaders/Texture.zlsl");
+
+		s_Data.TextureShader->Bind();
 		s_Data.QuadVertexArray = VertexArray::Create();
-
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+		s_Data.QuadVertexBuffer->SetLayout(s_Data.TextureShader->GetLayout());
+		/*
 		s_Data.QuadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float4, "a_Color" },
@@ -58,6 +66,7 @@ namespace Zorlock {
 			{ ShaderDataType::Float, "a_TexIndex" },
 			{ ShaderDataType::Float, "a_TilingFactor" }
 			});
+		*/
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
@@ -86,12 +95,8 @@ namespace Zorlock {
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		int32_t samplers[s_Data.MaxTextureSlots];
-		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
-			samplers[i] = i;
 
-		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
-		s_Data.TextureShader->Bind();
+
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		// Set all texture slots to 0
@@ -101,6 +106,8 @@ namespace Zorlock {
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+
+		
 	}
 
 	void Renderer2D::Shutdown()

@@ -144,7 +144,8 @@ project "Sandbox"
 		"Zorlock/vendor/spdlog/include",
 		"Zorlock/src",
 		"Zorlock/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ZLSL}"
 	}
 
 	links
