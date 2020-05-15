@@ -229,7 +229,7 @@ namespace Zorlock {
 								synt.syntax = s_mapSyntaxNames[fbd.syntax];
 								std::stringstream(fbd.begin) >> synt.begin;
 								std::stringstream(fbd.end) >> synt.end;
-
+								synt.original = fbd.original;
 								func.functionBodySyntax.push_back(synt);
 
 
@@ -290,6 +290,7 @@ namespace Zorlock {
 		vparser.parser = this;
 		fparser.parser = this;
 		fbodyparser.parser = this;
+		fbodyfuncparser.parser = this;
 	}
 
 	ZLSLParser::~ZLSLParser()
@@ -351,6 +352,12 @@ namespace Zorlock {
 
 		std::cout << "***** End Shader *****" << std::endl;
 		return true;
+	}
+
+	ZLSLParser::functionbodyfunc_definition& ZLSLParser::ParseFunctionBody(std::string func)
+	{
+		fbodyfuncparser.process(func, fbf);
+		return fbf;
 	}
 
 	std::string ZLSLParser::GetShader(ZLSLParser::OutPutShaderType output, ZLSLParser::ShaderSection section)
@@ -507,18 +514,14 @@ namespace Zorlock {
 					{
 						if (isvert == true)
 						{
-							printf("ZL_Return is : %s \n", func.functionBodySyntax[i].varname.c_str());
-							std::string bodyA = func.functionBody.substr(0, fbody.size() - func.functionBodySyntax[i].begin);
-							std::string bodyB = func.functionBody.substr(fbody.size() - func.functionBodySyntax[i].end, func.functionBody.size());
-							//switch variable semantic here
-							fbody = bodyA + "gl_Position=" + func.functionBodySyntax[i].variable + ";" + EOL + bodyB;
+							std::string zr = "gl_Position=" + func.functionBodySyntax[i].variable + ";"+EOL;
+							ReplaceAll(fbody, func.functionBodySyntax[i].original, zr);
+							
+
 						}
 						else {
-							printf("ZL_Return is : %s \n", func.functionBodySyntax[i].varname.c_str());
-							std::string bodyA = func.functionBody.substr(0, fbody.size() - func.functionBodySyntax[i].begin);
-							std::string bodyB = func.functionBody.substr(fbody.size() - func.functionBodySyntax[i].end, func.functionBody.size());
-							//switch variable semantic here
-							fbody = bodyA + EOL + bodyB;
+							ReplaceAll(fbody, func.functionBodySyntax[i].original, EOL);
+
 						}
 					}
 				}
@@ -635,33 +638,55 @@ namespace Zorlock {
 					{
 						if (isvert == true)
 						{
+							std::string zr = "return output;" + EOL;
+							ReplaceAll(fbody, "{", "");
+							ReplaceAll(fbody, "}", "");
+							ReplaceAll(fbody, func.functionBodySyntax[i].original, zr);
+							fbody = "{" + EOL + "	VS_OUTPUT output = (VS_OUTPUT) 0; " + EOL + fbody + EOL + "}" + EOL;
 
 
-							std::string bodyA = func.functionBody.substr(0, fbody.size() - func.functionBodySyntax[i].begin);
-							ReplaceAll(bodyA, "{", "");
-							std::string bodyB = func.functionBody.substr(fbody.size() - func.functionBodySyntax[i].end, func.functionBody.size());
-							ReplaceAll(bodyB, "}", "");
-							
-							//switch variable semantic here
-							fbody = "{" + EOL + "	VS_OUTPUT output = (VS_OUTPUT) 0;" + EOL + bodyA + "return output;" + EOL + bodyB + EOL + "}" + EOL;
 						}
 						else {
-
-							
-							std::string bodyA = func.functionBody.substr(0, fbody.size() - func.functionBodySyntax[i].begin);
-							ReplaceAll(bodyA, "{", "");
-							std::string bodyB = func.functionBody.substr(fbody.size() - func.functionBodySyntax[i].end, func.functionBody.size());
-							ReplaceAll(bodyB, "}", "");
-
-							//switch variable semantic here
-							fbody = "{" + EOL + ReturnHLSLDeclares(playoutVars) + EOL + bodyA + "return "+ func.functionBodySyntax[i].variable+";" + EOL + bodyB + EOL + "}" + EOL;
-							
-							//add layout declare here
-							//fbody = "{" + EOL + ReturnHLSLDeclares(playoutVars) + EOL + fbody + EOL + "return "+ func.functionBodySyntax[i].variable+";" + EOL +"}" + EOL;
-
+							std::string zr = "return " + func.functionBodySyntax[i].variable + ";" + EOL;
+							ReplaceAll(fbody, "{", "");
+							ReplaceAll(fbody, "}", "");
+							ReplaceAll(fbody, func.functionBodySyntax[i].original, zr);
+							fbody = "{" + EOL + ReturnHLSLDeclares(playoutVars) + EOL + fbody + EOL + "}" + EOL;
 						}
+						
 					}
 				}
+				else if (func.functionBodySyntax[i].command == VarCommandValue::Texture)
+				{
+					printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
+					fbf.clear();
+					ParseFunctionBody(func.functionBodySyntax[i].original);
+					printf("Function : %s \n", fbf.name.c_str());
+					std::string newfuncbody = "";
+					bool isarray = false;
+
+							
+					newfuncbody += fbf.arguments[0].varname + ".Sample("+ fbf.arguments[0].varname +"Sampler,";
+					printf("Function : %s \n", newfuncbody.c_str());
+					if (fbf.arguments[0].isArray)
+					{
+						isarray = true;
+					}
+
+					if (isarray)
+					{
+						newfuncbody += " float3("+ fbf.arguments[0].arithmetic+","+ fbf.arguments[0].val_list[0] + ")) ";
+
+					}
+					else {
+						newfuncbody += fbf.arguments[0].arithmetic + ") ";
+					}
+						
+
+					
+					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);
+				}
+				//parse_functiontexture_definition_impl
 			}
 			else if (func.functionBodySyntax[i].vartype != VariableTypes::VAR_NONE)
 			{
@@ -696,6 +721,18 @@ namespace Zorlock {
 				{
 					printf("Replacing vars : %d \n", ii);
 					fbody = replace_all_copy(fbody, voutVars[ii].varname, "output." + voutVars[ii].varname);
+				}
+			}
+		}
+		else {
+			printf("Replacing vars in  : %s \n", func.functionName.c_str());
+			if (s_mapFunctionNames[func.functionName] == FunctionNames::MAIN)
+			{
+
+				for (size_t ii = 0; ii < voutVars.size(); ii++)
+				{
+					printf("Replacing vars : %d \n", ii);
+					fbody = replace_all_copy(fbody, voutVars[ii].varname, "input." + voutVars[ii].varname);
 				}
 			}
 		}
@@ -1018,6 +1055,7 @@ namespace Zorlock {
 		s_mapStringCommands["function"] = Function;
 		s_mapStringCommands["Z_Return"] = Z_Return;
 		s_mapStringCommands["texture"] = Texture;
+		s_mapStringCommands["int"] = Texture;
 		s_mapStringCommands[""] = COM_NONE;
 
 		s_mapStringVariables["float"] = FLOAT;
@@ -1546,6 +1584,9 @@ namespace Zorlock {
 			{
 			case Z_Return:
 			{
+				size_t bodybegin = 0;
+				size_t bodyend = 0;
+				bodybegin = current_token().position;
 				printf("is Z Return \n");
 				next_token();
 				if (!token_is(token_t::e_lbracket))
@@ -1558,7 +1599,9 @@ namespace Zorlock {
 					return false;
 				if (!token_is(token_t::e_eof))
 					return false;
-				fd.end = std::to_string(var_def.size() - current_token().position);
+				fd.end = std::to_string(current_token().position);
+				bodyend = current_token().position;
+				fd.original = var_def.substr(bodybegin, bodyend - bodybegin);
 				printf("Command: %s end %d \n", fd.command.c_str(), fd.end.c_str());
 				break;
 			}
@@ -1568,21 +1611,29 @@ namespace Zorlock {
 				size_t bodyend = 0;
 				 
 				bodybegin = current_token().position;
-				
+				printf("is Texture Function \n");
 				next_token();
 
 				if (!token_is(token_t::e_lbracket))
 					return false;
-				
+				size_t nofbrackets = 1;
 				do {
 					ZLSLDeclaredVariables vars;
 					vars.varname = current_token().value;
 					fd.var_list.push_back(vars);
 					printf("Token: %s  \n", current_token().value.c_str());
 					next_token();
-				} while (current_token().type!=token_t::e_eof);
-				
-				bodyend = current_token().position+1;
+					if (current_token().type == token_t::e_lbracket)
+					{
+						nofbrackets++;
+					}
+					if (current_token().type == token_t::e_rbracket)
+					{
+						nofbrackets--;
+					}
+				} while (nofbrackets>0);
+				next_token();
+				bodyend = current_token().position;
 				fd.end = std::to_string(bodyend);
 				fd.original = var_def.substr(bodybegin, bodyend - bodybegin);
 
@@ -1641,6 +1692,105 @@ namespace Zorlock {
 			var_def = var_def.substr(body_begin, var_def.length() - body_begin);
 		else
 			var_def = "";
+
+
+		return true;
+	}
+
+	bool ZLSLParser::parse_functionbodyfunc_definition_impl::process(std::string& func_def, functionbodyfunc_definition& fd)
+	{
+		if (!init(func_def))
+			return false;
+		size_t nofargs = 2;
+		fd.name = current_token().value;
+		next_token();
+		if (!token_is(token_t::e_lbracket))
+			return false;
+		size_t nofbrackets = 1;
+		do 
+		{
+			size_t capturea = current_token().position;
+			ZLSLDeclaredVariables var;
+			if (!token_is_then_assign(token_t::e_symbol, var.varname))
+				return false;
+			
+			
+			//var.varname = current_token().value;
+			printf("Function Arg %s \n", var.varname.c_str());
+			nofargs--;
+
+			if (nofargs < 0)
+				break;
+			if (token_is(token_t::e_lsqrbracket))
+			{
+				nofbrackets++;
+				var.isArray = true;
+				//next_token();
+				size_t arrbegin = current_token().position;
+				do {
+					next_token();
+				} while (!token_is(token_t::e_rsqrbracket));
+
+				size_t arrend = current_token().position-1;
+
+				
+				std::string arga = func_def.substr(arrbegin, arrend - arrbegin);
+				printf("Array Arg %s \n", arga.c_str());
+				var.val_list.push_back(arga);
+
+				next_token();
+				if (!token_is(token_t::e_comma))
+				{
+					size_t arthbegin= current_token().position;
+					//could be some math here or the end of the function
+					if (token_is(token_t::e_rbracket))
+					{
+						nofbrackets--;
+						break;
+					}
+					//wasn't end of function, grab arithmetic
+					do {
+						next_token();
+					} while (!token_is(token_t::e_rbracket));
+					nofbrackets--;
+					size_t arthend = current_token().position-2;
+					std::string arith = func_def.substr(arthbegin, arthend - arthbegin);
+					printf("Arithmetic Arg %s \n", arith.c_str());
+					var.arithmetic = arith;
+					fd.arguments.push_back(var);
+				}
+
+
+
+				
+			}
+			
+			
+			
+			if (current_token().type != token_t::e_comma)
+			{
+				if (current_token().type == token_t::e_rbracket)
+				{
+					nofbrackets--;
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				size_t captureb = current_token().position - 1;
+				if (!var.arithmetic.empty())
+				{
+					var.arithmetic = func_def.substr(capturea, captureb - capturea);
+				}
+				next_token();
+			}
+
+			
+			fd.arguments.push_back(var);
+
+		} while (nofbrackets > 0);
+
 
 
 		return true;

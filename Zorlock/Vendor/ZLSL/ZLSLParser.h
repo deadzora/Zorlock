@@ -96,6 +96,7 @@ namespace Zorlock
 			Layout,
 			Function,
 			Texture,
+			Int,
 			Z_Position,
 			Z_PointSize,
 			Z_FragColor,
@@ -159,6 +160,7 @@ namespace Zorlock
 			VarCommandValue command;
 			VariableTypes vartype;
 			std::string varname;
+			std::string arithmetic;
 			uint32_t index;
 			bool isArray;
 			bool issemantic;
@@ -277,6 +279,26 @@ namespace Zorlock
 			}
 		};
 
+		struct functionbodyfunc_definition
+		{
+			std::string name;
+			std::vector<ZLSLDeclaredVariables> arguments;
+
+			void clear()
+			{
+				arguments.clear();
+				name.clear();
+			}
+		};
+
+		struct parse_functionbodyfunc_definition_impl : public lexertk::parser_helper
+		{
+		public:
+			ZLSLParser* parser;
+
+			bool process(std::string& func_def, functionbodyfunc_definition& fd);
+		};
+
 		struct parse_function_definition_impl : public lexertk::parser_helper
 		{
 		public:
@@ -333,15 +355,17 @@ namespace Zorlock
 		variable_decl_definition vd;
 		function_definition fd;
 		syntax_definition fbd;
+		functionbodyfunc_definition fbf;
 		parse_variable_decl_definition_impl vparser;
 		parse_function_definition_impl fparser;
 		parse_funcbody_decl_definition_impl fbodyparser;
+		parse_functionbodyfunc_definition_impl fbodyfuncparser;
 
 		bool isVertex;
 	public:
 		bool Parse(std::string filename);
 		bool ParseString(std::string shader);
-
+		functionbodyfunc_definition& ParseFunctionBody(std::string func);
 		std::string GetShader(OutPutShaderType output, ShaderSection section);
 		void SaveShader(std::string shaderdata, std::string shaderfile);
 		

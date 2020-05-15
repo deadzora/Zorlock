@@ -17,7 +17,7 @@ float main(VS_INPUT input) : SV_Target
 	float4 color;
 
 
-	color = texture(u_Textures[int(v_TexIndex)], v_TexCoord * v_TilingFactor) * v_Color;
+	color = u_Textures.Sample(u_TexturesSampler, float3(input.v_TexCoord * input.v_TilingFactor,int(input.v_TexIndex))) * input.v_Color;
 	return color;
 
 }
