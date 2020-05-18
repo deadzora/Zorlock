@@ -4,9 +4,12 @@
 #include <DirectXMath.h>
 #include <ZWindow.h>
 #include <vector>
+#include <filesystem>
 
 namespace DX11Raz
 {
+#define RAZGETEXTENSION(f) f.substr(f.find_last_of(".") + 1)
+#define RAZFILEEXISTS(f) std::filesystem::exists(f)
 
 #ifndef D3D_COMPILE_STANDARD_FILE_INCLUDE
 #define D3D_COMPILE_STANDARD_FILE_INCLUDE ((ID3DInclude*)(UINT_PTR)1)

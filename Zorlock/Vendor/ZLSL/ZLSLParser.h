@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include "lexertk.hpp"
-
+#define ZLSLDEBUG false
 
 namespace Zorlock
 {

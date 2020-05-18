@@ -29,8 +29,8 @@ namespace Zorlock {
 	std::string ZLSLParser::Parsefunctions(std::string residual, function_definition& fd)
 	{
 		int function_count = 0;
-		//std::string residual = buffer.str();
-		printf("Remaining: \n%s\n", residual.c_str());
+		
+		if (ZLSLDEBUG == true) printf("Remaining: \n%s\n", residual.c_str());
 		do
 		{
 			if (ZLSLParser::parse_function_definition(residual, fd))
@@ -48,11 +48,11 @@ namespace Zorlock {
 
 
 
-				printf("Function[%02d]\n", function_count++);
-				printf("Name: %s\n", fd.name.c_str());
+				//printf("Function[%02d]\n", function_count++);
+				//printf("Name: %s\n", fd.name.c_str());
 				//printf("Vars: (%s)\n", vars.c_str());
-				printf("Body: \n%s\n", fd.body.c_str());
-				printf("-----------------------------\n\n");
+				//printf("Body: \n%s\n", fd.body.c_str());
+				//printf("-----------------------------\n\n");
 
 				fd.clear();
 			}
@@ -78,7 +78,7 @@ namespace Zorlock {
 	{
 		int function_count = 0;
 		//std::string residual = buffer.str();
-		//printf("Remaining: \n%s\n", residual.c_str());
+		if (ZLSLDEBUG == true) printf("Remaining: \n%s\n", residual.c_str());
 		do
 		{
 			if (ZLSLParser::parse_variable_decl_definition(residual, vd))
@@ -117,7 +117,7 @@ namespace Zorlock {
 						{
 							variable.issemantic = true;
 							variable.semantic = s_mapStringSemantics[vd.semantic];
-							printf("Semantic: %s\n", vd.semantic.c_str());
+							if (ZLSLDEBUG == true) printf("Semantic: %s\n", vd.semantic.c_str());
 						}
 						vlayoutVars.push_back(variable);
 					}
@@ -131,7 +131,7 @@ namespace Zorlock {
 							variable.issemantic = true;
 							variable.inout = s_mapStringCommands[vd.inout];
 							variable.semantic = s_mapStringSemantics[vd.semantic];
-							printf("Semantic: %s\n", vd.semantic.c_str());
+							if (ZLSLDEBUG == true) printf("Semantic: %s\n", vd.semantic.c_str());
 						}
 
 						voutVars.push_back(variable);
@@ -175,13 +175,13 @@ namespace Zorlock {
 
 
 
-				printf("Variable[%02d]\n", function_count++);
-				printf("Command: %s\n", vd.command.c_str());
-				printf("Variable: (%s)\n", vd.varname.c_str());
-				printf("Type: \n%s\n", vd.vartype.c_str());
-				printf("Index: \n%s\n", vd.index.c_str());
-				printf("Semantic: \n%s\n", vd.semantic.c_str());
-				printf("-----------------------------\n\n");
+				if (ZLSLDEBUG == true) printf("Variable[%02d]\n", function_count++);
+				if (ZLSLDEBUG == true) printf("Command: %s\n", vd.command.c_str());
+				if (ZLSLDEBUG == true) printf("Variable: (%s)\n", vd.varname.c_str());
+				if (ZLSLDEBUG == true) printf("Type: \n%s\n", vd.vartype.c_str());
+				if (ZLSLDEBUG == true) printf("Index: \n%s\n", vd.index.c_str());
+				if (ZLSLDEBUG == true) printf("Semantic: \n%s\n", vd.semantic.c_str());
+				if (ZLSLDEBUG == true) printf("-----------------------------\n\n");
 
 				vd.clear();
 			}
@@ -206,11 +206,11 @@ namespace Zorlock {
 
 
 
-						printf("Function[%02d]\n", function_count++);
-						printf("Name: %s\n", fd.name.c_str());
-						printf("Vars: (%s)\n", vars.c_str());
-						printf("Body: \n%s\n", fd.body.c_str());
-						printf("-----------------------------\n\n");
+						if (ZLSLDEBUG == true) printf("Function[%02d]\n", function_count++);
+						if (ZLSLDEBUG == true) printf("Name: %s\n", fd.name.c_str());
+						if (ZLSLDEBUG == true) printf("Vars: (%s)\n", vars.c_str());
+						if (ZLSLDEBUG == true) printf("Body: \n%s\n", fd.body.c_str());
+						if (ZLSLDEBUG == true) printf("-----------------------------\n\n");
 
 						std::string fbody = fd.body;
 						do {
@@ -241,14 +241,14 @@ namespace Zorlock {
 								func.functionBodySyntax.push_back(synt);
 
 
-								printf("Command: %s\n", fbd.command.c_str());
-								printf("Var: (%s)\n", synt.variable.c_str());
-								printf("Syntax: (%s)\n", fbd.syntax.c_str());
-								printf("Vartype: (%s)\n", fbd.vartype.c_str());
-								printf("Begin: (%s)\n", fbd.begin.c_str());
-								printf("End: \n%s\n", fbd.end.c_str());
-								printf("O: \n%s\n", fbd.original.c_str());
-								printf("-----------------------------\n\n");
+								if (ZLSLDEBUG == true) printf("Command: %s\n", fbd.command.c_str());
+								if (ZLSLDEBUG == true) printf("Var: (%s)\n", synt.variable.c_str());
+								if (ZLSLDEBUG == true) printf("Syntax: (%s)\n", fbd.syntax.c_str());
+								if (ZLSLDEBUG == true) printf("Vartype: (%s)\n", fbd.vartype.c_str());
+								if (ZLSLDEBUG == true) printf("Begin: (%s)\n", fbd.begin.c_str());
+								if (ZLSLDEBUG == true) printf("End: \n%s\n", fbd.end.c_str());
+								if (ZLSLDEBUG == true) printf("O: \n%s\n", fbd.original.c_str());
+								if (ZLSLDEBUG == true) printf("-----------------------------\n\n");
 
 								fbd.clear();
 							}
@@ -318,13 +318,13 @@ namespace Zorlock {
 		lexertk::generator generator;
 		if (!generator.process(buffer.str()))
 		{
-			std::cout << "Example01 - Failed to lex: " << buffer.str() << std::endl;
+			if (ZLSLDEBUG == true) std::cout << "Shader - Failed to lex: " << buffer.str() << std::endl;
 			return 0;
 		}
-		lexertk::helper::dump(generator);
+		if (ZLSLDEBUG == true) lexertk::helper::dump(generator);
 
 
-		std::cout << "***** Shader *****" << std::endl;
+		if (ZLSLDEBUG == true) std::cout << "***** Shader *****" << std::endl;
 
 		std::string shaderfile = buffer.str();
 
@@ -334,7 +334,7 @@ namespace Zorlock {
 
 
 
-		std::cout << "***** End Shader *****" << std::endl;
+		if (ZLSLDEBUG == true) std::cout << "***** End Shader *****" << std::endl;
 		return true;
 	}
 
@@ -343,13 +343,13 @@ namespace Zorlock {
 		lexertk::generator generator;
 		if (!generator.process(shader))
 		{
-			std::cout << "Example01 - Failed to lex: " << shader << std::endl;
+			if (ZLSLDEBUG == true) std::cout << "Example01 - Failed to lex: " << shader << std::endl;
 			return 0;
 		}
 		lexertk::helper::dump(generator);
 
 
-		std::cout << "***** Shader *****" << std::endl;
+		if (ZLSLDEBUG == true) std::cout << "***** Shader *****" << std::endl;
 
 		std::string shaderfile = shader;
 
@@ -358,7 +358,7 @@ namespace Zorlock {
 
 
 
-		std::cout << "***** End Shader *****" << std::endl;
+		if (ZLSLDEBUG == true) std::cout << "***** End Shader *****" << std::endl;
 		return true;
 	}
 
@@ -455,7 +455,7 @@ namespace Zorlock {
 				shaderFile += "};" + EOL;
 				//Next add functions
 
-				shaderFile += "/*Change function body return type to " + ReturnHLSLDeclares(playoutVars);
+				shaderFile += "/* Change function body return type to " + ReturnHLSLDeclares(playoutVars);
 				shaderFile += "*/" + EOL;
 				shaderFile += ReturnHLSLFunctions(pixelFunctions, false);
 				break;
@@ -517,7 +517,7 @@ namespace Zorlock {
 
 		for (size_t i = 0; i < func.functionBodySyntax.size(); i++)
 		{
-			printf("Function body Command: %d \n", func.functionBodySyntax[i].command);
+			if (ZLSLDEBUG == true) printf("Function body Command: %d \n", func.functionBodySyntax[i].command);
 			//check commands
 			if (func.functionBodySyntax[i].command != VarCommandValue::COM_NONE)
 			{
@@ -541,7 +541,7 @@ namespace Zorlock {
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Texture)
 				{
-					printf("Texture is : %s \n", func.functionBodySyntax[i].varname.c_str());
+					if (ZLSLDEBUG == true) printf("Texture is : %s \n", func.functionBodySyntax[i].varname.c_str());
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
 				{
@@ -553,7 +553,7 @@ namespace Zorlock {
 
 					std::string finalf = fbf.arguments[0].arithmetic+"*"+ fbf.arguments[1].arithmetic;
 					
-					printf("Process Texture Function : %s \n", finalf.c_str());
+					if (ZLSLDEBUG == true) printf("Process Texture Function : %s \n", finalf.c_str());
 					ReplaceAll(fbody, func.functionBodySyntax[i].original, finalf);
 
 
@@ -689,12 +689,12 @@ namespace Zorlock {
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Texture)
 				{
-					printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
+					if (ZLSLDEBUG == true) printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
 					fbf.clear();
 					ParseFunctionBodyGeneric(func.functionBodySyntax[i].original, 2);
 
 					//ParseFunctionBody(func.functionBodySyntax[i].original);
-					printf("Function : %s nof args %i   \n", fbf.name.c_str(),fbf.arguments.size());
+					if (ZLSLDEBUG == true) printf("Function : %s nof args %i   \n", fbf.name.c_str(),fbf.arguments.size());
 					std::string newfuncbody = "";
 					bool isarray = false;
 
@@ -715,13 +715,13 @@ namespace Zorlock {
 					}
 						
 
-					printf("Function : %s \n", newfuncbody.c_str());
+					if (ZLSLDEBUG == true) printf("Function : %s \n", newfuncbody.c_str());
 					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);
 					
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
 				{
-					printf("Process Multiply Function : %s \n", func.functionBodySyntax[i].original.c_str());
+					if (ZLSLDEBUG == true) printf("Process Multiply Function : %s \n", func.functionBodySyntax[i].original.c_str());
 					ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
 					lexertk::generator generator;
 					if (generator.process(fbody))
@@ -744,7 +744,7 @@ namespace Zorlock {
 			else if (func.functionBodySyntax[i].vartype != VariableTypes::VAR_NONE)
 			{
 				//change delcares - change declares from GLSL style to HLSL
-				printf("Replacing decls : %s to %s \n", s_mapGLSLVariables[func.functionBodySyntax[i].vartype].c_str(), s_mapHLSLVariables[func.functionBodySyntax[i].vartype].c_str());
+				if (ZLSLDEBUG == true) printf("Replacing decls : %s to %s \n", s_mapGLSLVariables[func.functionBodySyntax[i].vartype].c_str(), s_mapHLSLVariables[func.functionBodySyntax[i].vartype].c_str());
 
 				fbody = replace_all_copy(fbody, s_mapGLSLVariables[func.functionBodySyntax[i].vartype], s_mapHLSLVariables[func.functionBodySyntax[i].vartype]);
 			}
@@ -763,29 +763,29 @@ namespace Zorlock {
 		}
 		if (isvert)
 		{
-			printf("Replacing vars in  : %s \n", func.functionName.c_str());
+			if (ZLSLDEBUG == true) printf("Replacing vars in  : %s \n", func.functionName.c_str());
 			if (s_mapFunctionNames[func.functionName] == FunctionNames::MAIN)
 			{
 				for (size_t ii = 0; ii < vlayoutVars.size(); ii++)
 				{
-					printf("Replacing vars : %d \n", ii);
+					if (ZLSLDEBUG == true) printf("Replacing vars : %d \n", ii);
 					fbody = replace_all_copy(fbody, vlayoutVars[ii].varname, "input." + vlayoutVars[ii].varname);
 				}
 				for (size_t ii = 0; ii < voutVars.size(); ii++)
 				{
-					printf("Replacing vars : %d \n", ii);
+					if (ZLSLDEBUG == true) printf("Replacing vars : %d \n", ii);
 					fbody = replace_all_copy(fbody, voutVars[ii].varname, "output." + voutVars[ii].varname);
 				}
 			}
 		}
 		else {
-			printf("Replacing vars in  : %s \n", func.functionName.c_str());
+			if (ZLSLDEBUG == true) printf("Replacing vars in  : %s \n", func.functionName.c_str());
 			if (s_mapFunctionNames[func.functionName] == FunctionNames::MAIN)
 			{
 
 				for (size_t ii = 0; ii < voutVars.size(); ii++)
 				{
-					printf("Replacing vars : %d \n", ii);
+					if (ZLSLDEBUG == true) printf("Replacing vars : %d \n", ii);
 					fbody = replace_all_copy(fbody, voutVars[ii].varname, "input." + voutVars[ii].varname);
 				}
 			}
@@ -884,7 +884,7 @@ namespace Zorlock {
 			}
 		}
 
-		printf("Could not find variable name \n");
+		if (ZLSLDEBUG == true) printf("Could not find variable name \n");
 		return "";
 	}
 
@@ -1453,7 +1453,7 @@ namespace Zorlock {
 				}
 				else {
 					fd.isarray = true;
-					printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.index.c_str());
+					if (ZLSLDEBUG == true) printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.index.c_str());
 				}
 
 				if (!token_is(token_t::e_rsqrbracket))
@@ -1609,13 +1609,13 @@ namespace Zorlock {
 		case Function:
 		{
 
-			printf("FUNCTION FOUND: %s\n", current_token().value.c_str());
+			if (ZLSLDEBUG == true) printf("FUNCTION FOUND: %s\n", current_token().value.c_str());
 			std::size_t body_begin = current_token().position;
 
 
 
 
-			printf("Remaining size: %d Index %d \n", var_def.length(), body_begin);
+			if (ZLSLDEBUG == true) printf("Remaining size: %d Index %d \n", var_def.length(), body_begin);
 			if (body_begin < var_def.length())
 				var_def = var_def.substr(body_begin, var_def.length() - body_begin);
 			else
@@ -1631,7 +1631,7 @@ namespace Zorlock {
 
 
 
-		printf("Remaining size: %d Index %d \n", var_def.length(), body_begin);
+		if (ZLSLDEBUG == true) printf("Remaining size: %d Index %d \n", var_def.length(), body_begin);
 		if (body_begin < var_def.length())
 			var_def = var_def.substr(body_begin, var_def.length() - body_begin);
 		else
@@ -1663,7 +1663,7 @@ namespace Zorlock {
 
 			fd.command = current_token().value;
 			fd.begin = std::to_string(var_def.size() - current_token().position);
-			printf("Command: %s begin %s \n", fd.command.c_str(), fd.begin.c_str());
+			if (ZLSLDEBUG == true) printf("Command: %s begin %s \n", fd.command.c_str(), fd.begin.c_str());
 			switch (parser->s_mapStringCommands[fd.command])
 			{
 			case Z_Return:
@@ -1671,14 +1671,14 @@ namespace Zorlock {
 				size_t bodybegin = 0;
 				size_t bodyend = 0;
 				bodybegin = current_token().position;
-				printf("is Z Return \n");
+				if (ZLSLDEBUG == true) printf("is Z Return \n");
 				next_token();
 				if (!token_is(token_t::e_lbracket))
 					return false;
-				printf("Left Bracket \n");
+				if (ZLSLDEBUG == true) printf("Left Bracket \n");
 				if (!token_is_then_assign(token_t::e_symbol, fd.varname))
 					return false;
-				printf("Command: %s var %s \n", fd.command.c_str(), fd.varname.c_str());
+				if (ZLSLDEBUG == true) printf("Command: %s var %s \n", fd.command.c_str(), fd.varname.c_str());
 				if (!token_is(token_t::e_rbracket))
 					return false;
 				if (!token_is(token_t::e_eof))
@@ -1686,7 +1686,7 @@ namespace Zorlock {
 				fd.end = std::to_string(current_token().position);
 				bodyend = current_token().position;
 				fd.original = var_def.substr(bodybegin, bodyend - bodybegin);
-				printf("Command: %s end %d \n", fd.command.c_str(), fd.end.c_str());
+				if (ZLSLDEBUG == true) printf("Command: %s end %d \n", fd.command.c_str(), fd.end.c_str());
 				break;
 			}
 			case Texture:
@@ -1695,7 +1695,7 @@ namespace Zorlock {
 				size_t bodyend = 0;
 				 
 				bodybegin = current_token().position;
-				printf("is Texture Function \n");
+				if (ZLSLDEBUG == true) printf("is Texture Function \n");
 				next_token();
 
 				if (!token_is(token_t::e_lbracket))
@@ -1705,7 +1705,7 @@ namespace Zorlock {
 					ZLSLDeclaredVariables vars;
 					vars.varname = current_token().value;
 					fd.var_list.push_back(vars);
-					printf("Token: %s  \n", current_token().value.c_str());
+					if (ZLSLDEBUG == true) printf("Token: %s  \n", current_token().value.c_str());
 					next_token();
 					if (current_token().type == token_t::e_lbracket)
 					{
@@ -1728,7 +1728,7 @@ namespace Zorlock {
 				size_t bodybegin = 0;
 				size_t bodyend = 0;
 				bodybegin = current_token().position;
-				printf("is Multiply Function \n");
+				if (ZLSLDEBUG == true) printf("is Multiply Function \n");
 				next_token();
 
 				if (!token_is(token_t::e_lbracket))
@@ -1738,7 +1738,7 @@ namespace Zorlock {
 					ZLSLDeclaredVariables vars;
 					vars.varname = current_token().value;
 					fd.var_list.push_back(vars);
-					printf("Token: %s  \n", current_token().value.c_str());
+					if (ZLSLDEBUG == true) printf("Token: %s  \n", current_token().value.c_str());
 					next_token();
 					if (current_token().type == token_t::e_lbracket)
 					{
@@ -1762,7 +1762,7 @@ namespace Zorlock {
 		}
 		else if (parser->s_mapStringVariables[current_token().value] != VAR_NONE) 
 		{
-			printf("Variable Declare: %s\n", current_token().value.c_str());
+			if (ZLSLDEBUG == true) printf("Variable Declare: %s\n", current_token().value.c_str());
 
 			fd.vartype = current_token().value;
 			
@@ -1800,7 +1800,7 @@ namespace Zorlock {
 
 		}
 		else if (parser->s_mapSyntaxNames[current_token().value] != SYNTAX_NONE) {
-			printf("Syntax: %s\n", current_token().value.c_str());
+			if (ZLSLDEBUG == true) printf("Syntax: %s\n", current_token().value.c_str());
 
 			fd.syntax = current_token().value;
 
@@ -1810,7 +1810,7 @@ namespace Zorlock {
 
 
 			fd.syntax = current_token().value;
-			printf("Syntax: operator %s\n", current_token().value.c_str());
+			if (ZLSLDEBUG == true) printf("Syntax: operator %s\n", current_token().value.c_str());
 
 
 
@@ -1826,7 +1826,7 @@ namespace Zorlock {
 
 
 		std::size_t body_begin = current_token().position;
-		printf("Remaining size: %i Index %i \n", var_def.length(), body_begin);
+		if (ZLSLDEBUG == true) printf("Remaining size: %i Index %i \n", var_def.length(), body_begin);
 		if (body_begin < var_def.length())
 			var_def = var_def.substr(body_begin, var_def.length() - body_begin);
 		else
@@ -1855,7 +1855,7 @@ namespace Zorlock {
 			
 			
 			//var.varname = current_token().value;
-			printf("Function Arg %s \n", var.varname.c_str());
+			if (ZLSLDEBUG == true) printf("Function Arg %s \n", var.varname.c_str());
 			nofargs--;
 
 			if (nofargs < 0)
@@ -1874,7 +1874,7 @@ namespace Zorlock {
 
 				
 				std::string arga = func_def.substr(arrbegin, arrend - arrbegin);
-				printf("Array Arg %s \n", arga.c_str());
+				if (ZLSLDEBUG == true) printf("Array Arg %s \n", arga.c_str());
 				var.val_list.push_back(arga);
 
 				next_token();
@@ -1894,7 +1894,7 @@ namespace Zorlock {
 					nofbrackets--;
 					size_t arthend = current_token().position-2;
 					std::string arith = func_def.substr(arthbegin, arthend - arthbegin);
-					printf("Arithmetic Arg %s \n", arith.c_str());
+					if (ZLSLDEBUG == true) printf("Arithmetic Arg %s \n", arith.c_str());
 					var.arithmetic = arith;
 					fd.arguments.push_back(var);
 				}
@@ -1957,7 +1957,7 @@ namespace Zorlock {
 				//beginning of an array, capture variable name
 				captureb = current_token().position;
 				std::string arith = func_def.substr(capturea, captureb - capturea);
-				printf("Arithmetic Arg %s \n", arith.c_str());
+				if (ZLSLDEBUG == true) printf("Arithmetic Arg %s \n", arith.c_str());
 				var->arithmetic = arith;
 
 				size_t capturearr = current_token().position+1;
@@ -1997,7 +1997,7 @@ namespace Zorlock {
 					
 
 					std::string arith = func_def.substr(capturea, captureb - capturea);
-					printf("Arithmetic Arg %s \n", arith.c_str());
+					if (ZLSLDEBUG == true) printf("Arithmetic Arg %s \n", arith.c_str());
 					var->arithmetic = arith;
 
 					fd.arguments.push_back(*var);
@@ -2014,7 +2014,7 @@ namespace Zorlock {
 					{
 						captureb = current_token().position;
 						std::string arith = func_def.substr(capturea, captureb - capturea);
-						printf("Arithmetic Arg %s \n", arith.c_str());
+						if (ZLSLDEBUG == true) printf("Arithmetic Arg %s \n", arith.c_str());
 						var->arithmetic = arith;
 					}
 					fd.arguments.push_back(*var);
