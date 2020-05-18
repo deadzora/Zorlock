@@ -3,8 +3,6 @@
 
 namespace Zorlock {
 
-
-
 	
 
 	class VertexBuffer
@@ -15,15 +13,19 @@ namespace Zorlock {
 		virtual void Bind() const = 0;
 		virtual void Bind(void * i) = 0;
 		virtual void Unbind() const = 0;
-
 		virtual void SetData(const void* data, uint32_t size) = 0;
-
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
-
+		virtual void SetLayout(const BufferLayout& layout,  Shader * shader) = 0;
+		virtual void ApplyLayout() const = 0;
+		virtual Shader* GetShader() {
+			return vertexshader;
+		};
 		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 		static Ref<VertexBuffer> Create(void* vertices, uint32_t size);
+	protected:
+		Shader* vertexshader;
 	};
 
 	// Currently Zorlock only supports 32-bit index buffers

@@ -10,12 +10,12 @@ DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_ve
 bool DX11Raz::RazVertexBuffer::SetLayout()
 {
 	//Bind without Shader, very unoptimized way to bind layouts, data may get reinterpreted wrong with different shaders if the inputs do not match exactly.
-	UINT size_layout = (UINT)vlayout.size();
+	size_t size_layout = vlayout.size();
 	char buffer[100];
 	sprintf(buffer, "LayoutSize %zi \r\n", vlayout.size());
 
 	OutputDebugStringA(buffer);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(),(UINT)vlayout.size(), NULL, NULL, &this->m_layout);
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(),vlayout.size(), NULL, 0, &this->m_layout);
 	if (FAILED(hr))
 	{
 		OutputDebugString(L"Failed to Create Input Layout\r\n");
@@ -25,6 +25,27 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 	}
 	return true;
 }
+
+bool DX11Raz::RazVertexBuffer::SetLayout(ID3D10Blob* vshader)
+{
+	//Bind without Shader, very unoptimized way to bind layouts, data may get reinterpreted wrong with different shaders if the inputs do not match exactly.
+	size_t size_layout = vlayout.size();
+	char buffer[100];
+	sprintf(buffer, "LayoutSize %zi \r\n", vlayout.size());
+
+	OutputDebugStringA(buffer);
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), vlayout.size(), vshader->GetBufferPointer(), vshader->GetBufferSize(), &this->m_layout);
+	if (FAILED(hr))
+	{
+		OutputDebugString(L"Failed to Create Input Layout\r\n");
+		ZL_CORE_ASSERT(true, "Failed to Create Input Layout");
+		this->m_layout = 0;
+		return false;
+	}
+	return true;
+}
+
+
 
 void DX11Raz::RazVertexBuffer::Release()
 {
@@ -40,8 +61,8 @@ void DX11Raz::RazVertexBuffer::SetIndex(uint32_t index)
 {
 	if (index + 1 > vlayout.size())
 	{
-		//D3D11_INPUT_ELEMENT_DESC e;
-		vlayout.resize(index + 1);
+		D3D11_INPUT_ELEMENT_DESC e;
+		vlayout.resize(index + 1,e);
 	}
 
 

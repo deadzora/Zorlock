@@ -52,7 +52,7 @@ namespace Zorlock {
 		Compile(sources);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath) : m_RendererID(0)
 	{
 		CreateParser();
 		parser->Parse(filepath);
@@ -71,7 +71,7 @@ namespace Zorlock {
 
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& source, bool diff)
+	OpenGLShader::OpenGLShader(const std::string& source, bool diff) : m_RendererID(0)
 	{
 	}
 
@@ -253,44 +253,60 @@ namespace Zorlock {
 
 		UploadUniformFloat(name, value);
 	}
-
+	/*
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		UploadUniformFloat3(name, value);
 	}
-
+	*/
 	void OpenGLShader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
-	}
+		ZL_PROFILE_FUNCTION();
 
+		UploadUniformFloat3(name, value);
+	}
+	/*
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		UploadUniformFloat4(name, value);
 	}
-
+	*/
 	void OpenGLShader::SetFloat4(const std::string& name, const VECTOR4& value)
 	{
-	}
+		ZL_PROFILE_FUNCTION();
 
+		UploadUniformFloat4(name, value);
+	}
+	
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		UploadUniformMat4(name, value);
 	}
-
+	
 	void OpenGLShader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
+		ZL_PROFILE_FUNCTION();
+		UploadUniformMat4(name, value);
 	}
+
+	void* OpenGLShader::GetShaderID() const
+	{
+		return (void*)&m_RendererID;
+	}
+
+
+
 
 	void OpenGLShader::PostProcess()
 	{
 		
-		printf("COMPILE SHADERS!! \n");
+		/*
 		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
 		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::GLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
 		std::unordered_map<GLenum, std::string> shaderSources;
@@ -298,7 +314,7 @@ namespace Zorlock {
 		shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
 
 		Compile(shaderSources);
-		
+		*/
 	}
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)
@@ -318,7 +334,7 @@ namespace Zorlock {
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform1f(location, value);
 	}
-
+	/*
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
@@ -330,42 +346,60 @@ namespace Zorlock {
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform3f(location, value.x, value.y, value.z);
 	}
+	*/
+	void OpenGLShader::UploadUniformFloat2(const std::string& name, const VECTOR2& value)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform2f(location, value.x, value.y);
+	}
 
 	void OpenGLShader::UploadUniformFloat3(const std::string& name, const VECTOR3& value)
 	{
+
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform3f(location, value.x, value.y, value.z);
 	}
-
+	/*
 	void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
-
+	*/
 	void OpenGLShader::UploadUniformFloat4(const std::string& name, const VECTOR4& value)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
-
+	/*
 	void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
-
+	*/
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
+	
+
+
+	void OpenGLShader::UploadUniformMat3(const std::string& name, const MATRIX3& matrix)
+	{
+		MATRIX3 m = matrix;
+
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniformMatrix3fv(location, 1, GL_TRUE, m.To3x3Array());
+	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const MATRIX4& matrix)
 	{
 		MATRIX4 m = matrix;
+
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniformMatrix4fv(location, 1, GL_FALSE,*(m.ToArray()));
+		glUniformMatrix4fv(location, 1, GL_TRUE, m.To4x4Array());
 	}
 
 }

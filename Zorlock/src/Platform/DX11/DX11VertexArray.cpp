@@ -32,7 +32,7 @@ namespace Zorlock
 	DX11VertexArray::DX11VertexArray()
 	{
 		ZL_PROFILE_FUNCTION();
-		m_RendererID = DX11Raz::RazCreateVertexBuffer();
+		
 
 	}
 	DX11VertexArray::~DX11VertexArray()
@@ -56,7 +56,8 @@ namespace Zorlock
 
 		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		if (vertexBuffer->GetLayout().GetElements().size() == 0) return;
-		
+		m_RendererID = DX11Raz::RazCreateVertexBuffer();
+		vertexBuffer->Bind(m_RendererID);
 		const auto& layout = vertexBuffer->GetLayout();
 		int index = 0;
 		for (const auto& element : layout)
@@ -76,7 +77,7 @@ namespace Zorlock
 				
 				m_RendererID->SetIndex(m_VertexBufferIndex);
 				D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
-				l.SemanticName = element.Name.c_str();
+				l.SemanticName = element.SemanticName.c_str();				
 				l.SemanticIndex = 0;
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
@@ -85,7 +86,7 @@ namespace Zorlock
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
 				char buffer[100];
-				sprintf(buffer, "Layout NAME %s FORMAT %i INDEX %i STRIDE %i \r\n", element.Name.c_str(), l.Format, m_VertexBufferIndex, layout.GetStride());
+				sprintf(buffer, "Layout NAME %s FORMAT %i INDEX %i STRIDE %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, layout.GetStride());
 				OutputDebugStringA(buffer);
 				m_VertexBufferIndex++;
 				break;
@@ -116,11 +117,16 @@ namespace Zorlock
 			default:
 				ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			}
-
+			
 			index++;
 		}
+
+		vertexBuffer->ApplyLayout();
+
 		m_VertexBuffers.push_back(vertexBuffer);
-		m_RendererID->SetLayout();
+		
+		
+		
 		//call it after we have layout set in place, need to pass our buffer unlike opengl we are using the same buffer for verts and layout
 		vertexBuffer->Bind(m_RendererID);
 		ZL_PROFILE_FUNCTION();

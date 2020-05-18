@@ -17,6 +17,19 @@ namespace Zorlock
 	{
 	public:
 
+		enum ShaderOperators
+		{
+			OP_NONE,
+			MULT,
+			SUBT,
+			DIVID,
+			ADDIT,
+			MODU,
+			NOTEQ,
+			OPEQUAL
+
+		};
+
 		enum ShaderSyntax
 		{
 			SYNTAX_NONE,
@@ -57,7 +70,7 @@ namespace Zorlock
 			LESSTHANEQ,
 			GREATERTHAN,
 			GREATERTHANEQ,
-			EQUAL,
+			SYNEQUAL,
 			NOTEQUAL,
 			ANY,
 			ALL,
@@ -106,7 +119,8 @@ namespace Zorlock
 			Z_PointCoord,
 			Z_FragDepth,
 			Z_Return,
-			Z_NA
+			Z_Constructor,
+			Z_Mul
 			
 
 		};
@@ -150,7 +164,8 @@ namespace Zorlock
 			POSITIONT,
 			TANGENT,
 			FOG,
-			VFACE
+			VFACE,
+			PSIZE,
 			
 		};
 
@@ -179,6 +194,7 @@ namespace Zorlock
 			VariableTypes vartype;
 			std::string varname;
 			ShaderSyntax syntax;
+			ShaderOperators operators;
 			std::string original;
 			std::vector<ZLSLDeclaredVariables> functionArgVarList;
 			size_t begin;
@@ -291,6 +307,15 @@ namespace Zorlock
 			}
 		};
 
+
+		struct parse_functionbodygeneric_definition_impl : public lexertk::parser_helper
+		{
+		public:
+			ZLSLParser* parser;
+
+			bool process(std::string& func_def, functionbodyfunc_definition& fd, size_t nofargs);
+		};
+
 		struct parse_functionbodyfunc_definition_impl : public lexertk::parser_helper
 		{
 		public:
@@ -327,6 +352,8 @@ namespace Zorlock
 			bool ParseToken(syntax_definition& fd);
 		};
 
+		bool parse_functionbodygeneric_definition(std::string& func_def, functionbodyfunc_definition& fd, size_t numargs);
+
 		bool parse_functionbody_definition(std::string& func_def, syntax_definition& fd);
 		std::string Parsefunctionbodiess(std::string residual, syntax_definition& fd);
 		bool parse_function_definition(std::string& func_def, function_definition& fd);
@@ -360,11 +387,13 @@ namespace Zorlock
 		parse_function_definition_impl fparser;
 		parse_funcbody_decl_definition_impl fbodyparser;
 		parse_functionbodyfunc_definition_impl fbodyfuncparser;
+		parse_functionbodygeneric_definition_impl fbodygenparser;
 
 		bool isVertex;
 	public:
 		bool Parse(std::string filename);
 		bool ParseString(std::string shader);
+		ZLSLParser::functionbodyfunc_definition& ParseFunctionBodyGeneric(std::string func, size_t nofargs);
 		functionbodyfunc_definition& ParseFunctionBody(std::string func);
 		std::string GetShader(OutPutShaderType output, ShaderSection section);
 		void SaveShader(std::string shaderdata, std::string shaderfile);
@@ -392,7 +421,7 @@ namespace Zorlock
 		std::map<std::string, SemanticTypes> s_mapStringSemantics;
 		std::map<std::string, FunctionNames> s_mapFunctionNames;
 		std::map<std::string, ShaderSyntax> s_mapSyntaxNames;
-
+		std::map<std::string, ShaderOperators> s_mapOperatorNames;
 
 		std::map<VariableTypes,std::string> s_mapGLSLVariables;
 		std::map<VariableTypes, std::string> s_mapHLSLVariables;

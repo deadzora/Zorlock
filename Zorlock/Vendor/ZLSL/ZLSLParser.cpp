@@ -3,6 +3,12 @@
 
 
 namespace Zorlock {
+
+	bool ZLSLParser::parse_functionbodygeneric_definition(std::string& func_def, functionbodyfunc_definition& fd, size_t numargs)
+	{
+		return fbodygenparser.process(func_def, fd, numargs);
+	}
+
 	bool ZLSLParser::parse_functionbody_definition(std::string& func_def, syntax_definition& fd)
 	{
 		return fbodyparser.process(func_def, fd);
@@ -12,6 +18,7 @@ namespace Zorlock {
 	{
 		return std::string();
 	}
+
 
 	bool ZLSLParser::parse_function_definition(std::string& func_def, function_definition& fd)
 	{
@@ -213,7 +220,7 @@ namespace Zorlock {
 
 								synt.command = s_mapStringCommands[fbd.command];
 								synt.variable = IsDeclaredVar(fbd.varname);
-
+								synt.vartype = s_mapStringVariables[fbd.vartype];
 								if (synt.variable.empty())
 								{
 									for (size_t ii = 0; ii < func.functionArgVarList.size(); ii++)
@@ -227,6 +234,7 @@ namespace Zorlock {
 									}
 								}
 								synt.syntax = s_mapSyntaxNames[fbd.syntax];
+								synt.operators = s_mapOperatorNames[fbd.syntax];
 								std::stringstream(fbd.begin) >> synt.begin;
 								std::stringstream(fbd.end) >> synt.end;
 								synt.original = fbd.original;
@@ -352,6 +360,12 @@ namespace Zorlock {
 
 		std::cout << "***** End Shader *****" << std::endl;
 		return true;
+	}
+
+	ZLSLParser::functionbodyfunc_definition& ZLSLParser::ParseFunctionBodyGeneric(std::string func, size_t nofargs)
+	{
+		fbodygenparser.process(func, fbf, nofargs);
+		return fbf;
 	}
 
 	ZLSLParser::functionbodyfunc_definition& ZLSLParser::ParseFunctionBody(std::string func)
@@ -529,6 +543,23 @@ namespace Zorlock {
 				{
 					printf("Texture is : %s \n", func.functionBodySyntax[i].varname.c_str());
 				}
+				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
+				{
+					fbf.clear();
+					ParseFunctionBodyGeneric(func.functionBodySyntax[i].original,2);
+					//printf("Function : %s args %s val list size: %i \n", fbf.name.c_str(), fbf.arguments[0].varname.c_str(), fbf.arguments.size());
+					
+					
+
+					std::string finalf = fbf.arguments[0].arithmetic+"*"+ fbf.arguments[1].arithmetic;
+					
+					printf("Process Texture Function : %s \n", finalf.c_str());
+					ReplaceAll(fbody, func.functionBodySyntax[i].original, finalf);
+
+
+
+
+				}
 			}
 			else if (func.functionBodySyntax[i].vartype != VariableTypes::VAR_NONE)
 			{
@@ -577,7 +608,7 @@ namespace Zorlock {
 			{
 				if (isvert)
 				{
-					functions += "VS_OUTPUT  " + funcs[i].functionName + "(VS_INPUT input";
+					functions += "VS_OUTPUT " + funcs[i].functionName + "(VS_INPUT input";
 					if (funcs[i].functionArgVarList.size() > 0)
 					{
 						functions += ", ";
@@ -686,12 +717,33 @@ namespace Zorlock {
 					
 					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);
 				}
+				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
+				{
+					printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
+					ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
+					lexertk::generator generator;
+					if (generator.process(fbody))
+					{
+						for (size_t ii = 0; ii < generator.size(); ii++)
+						{
+							if (s_mapStringVariables[generator[ii].value] != VariableTypes::VAR_NONE)
+							{
+								fbody = replace_all_copy(fbody, s_mapGLSLVariables[s_mapStringVariables[generator[ii].value]], s_mapHLSLVariables[s_mapStringVariables[generator[ii].value]]);
+								
+							}
+							
+						}
+					}
+
+					
+				}
 				//parse_functiontexture_definition_impl
 			}
 			else if (func.functionBodySyntax[i].vartype != VariableTypes::VAR_NONE)
 			{
 				//change delcares - change declares from GLSL style to HLSL
-				printf("Replacing decls : %d \n", i);
+				printf("Replacing decls : %s to %s \n", s_mapGLSLVariables[func.functionBodySyntax[i].vartype].c_str(), s_mapHLSLVariables[func.functionBodySyntax[i].vartype].c_str());
+
 				fbody = replace_all_copy(fbody, s_mapGLSLVariables[func.functionBodySyntax[i].vartype], s_mapHLSLVariables[func.functionBodySyntax[i].vartype]);
 			}
 			else if (!func.functionBodySyntax[i].variable.empty())
@@ -792,7 +844,13 @@ namespace Zorlock {
 				return varname;
 			}
 		}
-
+		for (size_t i = 0; i < vertexUniforms.size(); i++)
+		{
+			if (vertexUniforms[i].varname.compare(varname) == 0)
+			{
+				return varname;
+			}
+		}
 		for (size_t i = 0; i < pixelVars.size(); i++)
 		{
 			if (pixelVars[i].varname.compare(varname) == 0)
@@ -813,6 +871,13 @@ namespace Zorlock {
 			if (pinVars[i].varname.compare(varname) == 0)
 			{
 
+				return varname;
+			}
+		}
+		for (size_t i = 0; i < pixelUniforms.size(); i++)
+		{
+			if (pixelUniforms[i].varname.compare(varname) == 0)
+			{
 				return varname;
 			}
 		}
@@ -1043,6 +1108,7 @@ namespace Zorlock {
 
 	void ZLSLParser::MapVariables()
 	{
+		s_mapStringCommands[""] = COM_NONE;
 		s_mapStringCommands["uniform"] = Uniform;
 		s_mapStringCommands["varying"] = Varying;
 		s_mapStringCommands["attribute"] = Attribute;
@@ -1056,8 +1122,9 @@ namespace Zorlock {
 		s_mapStringCommands["Z_Return"] = Z_Return;
 		s_mapStringCommands["texture"] = Texture;
 		s_mapStringCommands["int"] = Texture;
-		s_mapStringCommands[""] = COM_NONE;
+		s_mapStringCommands["Z_Mul"] = Z_Mul;
 
+		s_mapStringVariables[""] = VAR_NONE;
 		s_mapStringVariables["float"] = FLOAT;
 		s_mapStringVariables["int"] = INT;
 		s_mapStringVariables["bool"] = BOOL;
@@ -1079,8 +1146,8 @@ namespace Zorlock {
 		s_mapStringVariables["vertex"] = VARVERTEX;
 		s_mapStringVariables["fragment"] = PIXEL;
 		s_mapStringVariables["core"] = CORE;
-		s_mapStringVariables[""] = VAR_NONE;
-
+		
+		s_mapStringSemantics[""] = SEM_NONE;
 		s_mapStringSemantics["Z_Position"] = POSITION;
 		s_mapStringSemantics["Z_Color"] = COLOR;
 		s_mapStringSemantics["Z_Texcoord"] = TEXCOORD;
@@ -1092,7 +1159,17 @@ namespace Zorlock {
 		s_mapStringSemantics["Z_Tangent"] = TANGENT;
 		s_mapStringSemantics["Z_Fog"] = FOG;
 		s_mapStringSemantics["Z_Face"] = VFACE;
-		s_mapStringSemantics[""] = SEM_NONE;
+		s_mapStringSemantics["Z_Size"] = PSIZE;
+
+		s_mapOperatorNames[""] = ShaderOperators::OP_NONE;
+		s_mapOperatorNames["*"] = ShaderOperators::MULT;
+		s_mapOperatorNames["-"] = ShaderOperators::SUBT;
+		s_mapOperatorNames["/"] = ShaderOperators::DIVID;
+		s_mapOperatorNames["+"] = ShaderOperators::ADDIT;
+		s_mapOperatorNames["%"] = ShaderOperators::MODU;
+		s_mapOperatorNames["!"] = ShaderOperators::NOTEQ;
+		s_mapOperatorNames["="] = ShaderOperators::OPEQUAL;
+
 
 	}
 
@@ -1136,6 +1213,7 @@ namespace Zorlock {
 		s_mapGLSLCommands[Z_FrontFacing] = "gl_FrontFacing";
 		s_mapGLSLCommands[Z_PointCoord] = "gl_PointCoord";
 		s_mapGLSLCommands[Z_FragDepth] = "gl_FragDepth";
+		s_mapGLSLCommands[Z_Mul] = "";
 
 		s_mapGLSLLayouts[POSITION] = "";
 		s_mapGLSLLayouts[COLOR] = "";
@@ -1148,7 +1226,7 @@ namespace Zorlock {
 		s_mapGLSLLayouts[TANGENT] = "";
 		s_mapGLSLLayouts[FOG] = "";
 		s_mapGLSLLayouts[VFACE] = "";
-
+		s_mapGLSLLayouts[PSIZE] = "";
 
 
 	}
@@ -1190,6 +1268,7 @@ namespace Zorlock {
 		s_mapHLSLCommands[Z_FrontFacing] = "SV_ISFRONTFACE";
 		s_mapHLSLCommands[Z_PointCoord] = "SV_POSITION";
 		s_mapHLSLCommands[Z_FragDepth] = "SV_DEPTH";
+		s_mapHLSLCommands[Z_Mul] = "mul";
 
 		s_mapHLSLLayouts[POSITION] = "POSITION";
 		s_mapHLSLLayouts[COLOR] = "COLOR";
@@ -1202,6 +1281,7 @@ namespace Zorlock {
 		s_mapHLSLLayouts[TANGENT] = "TANGENT";
 		s_mapHLSLLayouts[FOG] = "FOG";
 		s_mapHLSLLayouts[VFACE] = "VFACE";
+		s_mapHLSLLayouts[PSIZE] = "PSIZE";
 		s_mapHLSLLayouts[SEM_NONE] = "";
 	}
 
@@ -1244,7 +1324,7 @@ namespace Zorlock {
 		s_mapSyntaxNames["lessthaneq"] = LESSTHANEQ;
 		s_mapSyntaxNames["greaterthan"] = GREATERTHAN;
 		s_mapSyntaxNames["greaterthaneq"] = GREATERTHANEQ;
-		s_mapSyntaxNames["equal"] = EQUAL;
+		s_mapSyntaxNames["equal"] = SYNEQUAL;
 		s_mapSyntaxNames["notequal"] = NOTEQUAL;
 		s_mapSyntaxNames["any"] = ANY;
 		s_mapSyntaxNames["all"] = ALL;
@@ -1639,30 +1719,75 @@ namespace Zorlock {
 
 				break;
 			}
+			case Z_Mul:
+			{
+				size_t bodybegin = 0;
+				size_t bodyend = 0;
+				bodybegin = current_token().position;
+				printf("is Multiply Function \n");
+				next_token();
 
+				if (!token_is(token_t::e_lbracket))
+					return false;
+				size_t nofbrackets = 1;
+				do {
+					ZLSLDeclaredVariables vars;
+					vars.varname = current_token().value;
+					fd.var_list.push_back(vars);
+					printf("Token: %s  \n", current_token().value.c_str());
+					next_token();
+					if (current_token().type == token_t::e_lbracket)
+					{
+						nofbrackets++;
+					}
+					if (current_token().type == token_t::e_rbracket)
+					{
+						nofbrackets--;
+					}
+				} while (nofbrackets > 0);
+				next_token();
+				bodyend = current_token().position;
+				fd.end = std::to_string(bodyend);
+				fd.original = var_def.substr(bodybegin, bodyend - bodybegin);
+
+				break;
+			}
 			}
 
 
 		}
-		else if (parser->s_mapStringVariables[current_token().value] != VAR_NONE) {
+		else if (parser->s_mapStringVariables[current_token().value] != VAR_NONE) 
+		{
 			printf("Variable Declare: %s\n", current_token().value.c_str());
 
 			fd.vartype = current_token().value;
-
+			
 			if (token_is(token_t::e_lbracket))
 			{
-				fd.vartype = "";
+				//must be a declare with constructor - copy args
+				//capture
+				/*
+				size_t varbegin = current_token().position;				 
+				do {
+					next_token();
+				} while (!token_is(token_t::e_rbracket));
+				size_t varend = current_token().position;
+				fd.original = var_def.substr(varend, varend - varend);
+				*/
 			}
 			else if (token_is(token_t::e_lsqrbracket))
 			{
 				fd.vartype = "";
 				return true;
+				
 			}
 			else if (token_is(token_t::e_number))
 			{
 				fd.vartype = "";
 				return true;
+				
 			}
+
 
 			if (!token_is_then_assign(token_t::e_symbol, fd.varname))
 				return false;
@@ -1676,6 +1801,16 @@ namespace Zorlock {
 			fd.syntax = current_token().value;
 
 		}
+		else if (parser->s_mapOperatorNames[current_token().value] != OP_NONE)
+		{
+
+
+			fd.syntax = current_token().value;
+			printf("Syntax: operator %s\n", current_token().value.c_str());
+
+
+
+		}
 		else if (current_token().type == lexertk::parser_helper::token_t::e_symbol) {
 			std::string v = current_token().value;
 			fd.varname = parser->IsDeclaredVar(v);
@@ -1687,7 +1822,7 @@ namespace Zorlock {
 
 
 		std::size_t body_begin = current_token().position;
-		printf("Remaining size: %d Index %d \n", var_def.length(), body_begin);
+		printf("Remaining size: %i Index %i \n", var_def.length(), body_begin);
 		if (body_begin < var_def.length())
 			var_def = var_def.substr(body_begin, var_def.length() - body_begin);
 		else
@@ -1791,6 +1926,69 @@ namespace Zorlock {
 
 		} while (nofbrackets > 0);
 
+
+
+		return true;
+	}
+	bool ZLSLParser::parse_functionbodygeneric_definition_impl::process(std::string& func_def, functionbodyfunc_definition& fd, size_t nofargs)
+	{
+		if (!init(func_def))
+			return false;
+		fd.name = current_token().value;
+		next_token();
+		if (!token_is(token_t::e_lbracket))
+			return false;
+		size_t nofbrackets = 1;
+		size_t capturea = 0;
+		size_t captureb = 0;
+		ZLSLDeclaredVariables * var = 0;
+		
+		capturea = current_token().position;
+		
+		do {
+			
+
+			if (current_token().type == token_t::e_lbracket)
+			{
+				nofbrackets++;
+			}
+
+			if (current_token().type == token_t::e_rbracket)
+			{
+				nofbrackets--;
+				if (nofbrackets == 0)
+				{
+					captureb = current_token().position;
+					var = new ZLSLDeclaredVariables();
+
+					std::string arith = func_def.substr(capturea, captureb - capturea);
+					printf("Arithmetic Arg %s \n", arith.c_str());
+					var->arithmetic = arith;
+
+					fd.arguments.push_back(*var);
+					return true;
+				}
+			}
+
+			if (nofbrackets == 1)
+			{
+				if (current_token().type == token_t::e_comma)
+				{
+					captureb = current_token().position-1;
+					var = new ZLSLDeclaredVariables();
+					
+					std::string arith = func_def.substr(capturea, captureb - capturea);
+					printf("Arithmetic Arg %s \n", arith.c_str());
+					var->arithmetic = arith;
+
+					fd.arguments.push_back(*var);
+					next_token();
+					capturea = current_token().position;
+					nofargs--;
+				}
+			}
+			next_token();
+		} while (nofbrackets > 0);
 
 
 		return true;

@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Zorlock/Renderer/RendererAPI.h"
+#include "Color.h"
 
 namespace Zorlock {
 
@@ -17,7 +17,7 @@ namespace Zorlock {
 			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
-		static void SetClearColor(const glm::vec4& color)
+		static void SetClearColor(const COLOR4& color)
 		{
 			s_RendererAPI->SetClearColor(color);
 		}

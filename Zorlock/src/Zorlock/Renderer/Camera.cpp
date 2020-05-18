@@ -5,21 +5,18 @@
 
 
 namespace Zorlock {
+	Camera::Camera() : viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
+	{
+	}
+	Camera::Camera(MATRIX4 proj, MATRIX4 view) : viewMatrix(view), projectionMatrix(proj)
+	{
 
-
+	}
 	void Zorlock::Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
 	}
 
-	const MATRIX4& Zorlock::Camera::GetViewMatrix() const
-	{
-		return this->viewMatrix;
-	}
 
-	const MATRIX4& Zorlock::Camera::GetProjectionMatrix() const
-	{
-		return this->projectionMatrix;
-	}
 
 	void Zorlock::Camera::SetLookAtPos(VECTOR3 lookAtPos)
 	{

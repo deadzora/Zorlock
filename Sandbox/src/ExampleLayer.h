@@ -23,10 +23,10 @@ private:
 
 	Zorlock::Ref<Zorlock::Shader> m_FlatColorShader;
 	Zorlock::Ref<Zorlock::VertexArray> m_SquareVA;
-
+	Zorlock::Ref<Zorlock::Shader> textureShader;
 	Zorlock::Ref<Zorlock::Texture2D> m_Texture, m_ChernoLogoTexture;
 
 	Zorlock::OrthographicCameraController m_CameraController;
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	COLOR m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 

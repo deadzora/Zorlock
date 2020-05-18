@@ -1,7 +1,7 @@
 #pragma once
-
 #include <string>
 #include <unordered_map>
+
 #include "Zorlock/Core/Math.h"
 //Need to Phase out GLM from base classes
 #include <glm/glm.hpp>
@@ -40,6 +40,7 @@ namespace Zorlock {
 	struct BufferElement
 	{
 		std::string Name;
+		std::string SemanticName;
 		ShaderDataType Type;
 		uint32_t Size;
 		size_t Offset;
@@ -118,6 +119,7 @@ namespace Zorlock {
 
 	struct ShaderVariable {
 		std::string Name;
+		std::string SemanticName;
 		ShaderDataType Type;
 		uint32_t Size;
 		uint32_t Slot;
@@ -190,16 +192,25 @@ namespace Zorlock {
 		virtual void SetInt(const std::string& name, int value) {};
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) {};
 		virtual void SetFloat(const std::string& name, float value) {};
-		ZL_DEPRECATED("No longer using glm in base classes")
-			virtual void SetFloat3(const std::string& name, const glm::vec3& value) {}; //making them non abstract so there's no need to override
+		
+		//ZL_DEPRECATED("No longer using glm in base classes")
+		//virtual void SetFloat3(const std::string& name, const glm::vec3& value) {}; //making them non abstract so there's no need to override
+		
 		virtual void SetFloat3(const std::string& name, const VECTOR3& value) {};
-		ZL_DEPRECATED("No longer using glm in base classes")
-			virtual void SetFloat4(const std::string& name, const glm::vec4& value) {}; //making them non abstract so there's no need to override
+		
+		//ZL_DEPRECATED("No longer using glm in base classes")
+		//virtual void SetFloat4(const std::string& name, const glm::vec4& value) {}; //making them non abstract so there's no need to override
+		
 		virtual void SetFloat4(const std::string& name, const VECTOR4& value) {};
-		ZL_DEPRECATED("No longer using glm in base classes")
-			virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
+		
+		//ZL_DEPRECATED("No longer using glm in base classes")
+		virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
+		
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) {};
-		virtual void PostProcess() = 0;
+		virtual void PostProcess() {};
+		//Helper function across graphics API
+		virtual void* GetShaderID() const =0;
+
 		void Process();
 		virtual const std::string& GetName() const { return "";  };
 		void CreateParser();
@@ -210,8 +221,10 @@ namespace Zorlock {
 
 		ZL_DEPRECATED("Using Material to Initialize Shader")
 		static Ref<Shader> Create(const std::string& filepath);
+
 		ZL_DEPRECATED("Using Material to Initialize Shader")
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+
 
 		static Ref<Shader> Create(const std::string& name, const std::string& filepath);
 	protected:

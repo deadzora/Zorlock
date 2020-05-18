@@ -18,6 +18,7 @@ namespace Zorlock {
 
 				ShaderVariable s;
 				s.Name = parser->vlayoutVars[i].varname;
+				s.SemanticName = parser->s_mapHLSLLayouts[parser->vlayoutVars[i].semantic];
 				s.Slot = parser->vlayoutVars[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vlayoutVars[i].vartype);
 				s.Size = ShaderDataTypeSize(s.Type);
@@ -70,6 +71,7 @@ namespace Zorlock {
 			ShaderVariable s = GetSlotVariable(i);
 			BufferElement a;
 			a.Name = s.Name;
+			a.SemanticName = s.SemanticName;
 			a.Type = s.Type;
 			a.Size = s.Size;
 			ShaderLayout.Add(a);
@@ -201,7 +203,7 @@ namespace Zorlock {
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 	{
-		auto shader = Shader::Create(filepath);
+		auto shader = Shader::Create(name, filepath);
 		Add(name, shader);
 		return shader;
 	}

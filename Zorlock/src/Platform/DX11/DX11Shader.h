@@ -34,22 +34,10 @@ namespace Zorlock {
 		//virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) override;
 		virtual void PostProcess() override;
+		virtual void* GetShaderID() const override;
 		virtual const std::string& GetName() const override { return m_Name; }
-		/*
-		void UploadUniformInt(const std::string& name, int value);
-		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
 
-		void UploadUniformFloat(const std::string& name, float value);
-		void UploadUniformFloat2(const std::string& name, const glm::vec2& value);
-		void UploadUniformFloat3(const std::string& name, const glm::vec3& value);
-		void UploadUniformFloat4(const std::string& name, const glm::vec4& value);
-
-		void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
-		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
-		*/
-		/* Each offset is measured in shader constants, which are 16 bytes (4*32-bit components). 
-		Therefore, an offset of 16 indicates that the start of the associated constant buffer is 
-		256 bytes into the constant buffer. Each offset must be a multiple of 16 constants.*/
+		void Compile(std::string vertexshadersource, std::string pixelshadersource);
 
 		template <class T>
 		UINT CreateVertexBufferData(T* bufferblob)

@@ -8,14 +8,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Zorlock {
+	typedef float QUADARRAY[11];
 
 	struct QuadVertex
 	{
-		glm::vec3 Position;
-		glm::vec4 Color;
-		glm::vec2 TexCoord;
+	public:
+		QuadVertex() = default;
+		QuadVertex(float x, float y, float z, float r, float g, float b, float a, float u, float v, float ti, float tf) : Position(VECTOR3(x,y,z)), Color(COLOR4(r,g,b,a)), TexCoord(VECTOR2(u,v)), TexIndex(ti), TilingFactor(tf)
+		{}
+		QuadVertex(VECTOR3 pos, COLOR4 col, VECTOR2 uv, float ti, float tf) : Position(pos), Color(col), TexCoord(uv), TexIndex(ti), TilingFactor(tf)
+		{}
+		VECTOR3 Position;
+		COLOR4 Color;
+		VECTOR2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
+
 	};
 
 	struct Renderer2DData
@@ -33,11 +41,11 @@ namespace Zorlock {
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
-
+		//std::vector<QuadVertex*> QuadVertexBufferList;
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
 
-		glm::vec4 QuadVertexPositions[4];
+		VECTOR4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;
 	};
@@ -53,11 +61,10 @@ namespace Zorlock {
 
 		//s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 		s_Data.TextureShader = Shader::Create("2dShader","assets/shaders/Texture.zlsl");
-
 		s_Data.TextureShader->Bind();
 		s_Data.QuadVertexArray = VertexArray::Create();
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.QuadVertexBuffer->SetLayout(s_Data.TextureShader->GetLayout());
+		s_Data.QuadVertexBuffer->SetLayout(s_Data.TextureShader->GetLayout(),s_Data.TextureShader.get());
 		/*
 		s_Data.QuadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
@@ -115,12 +122,13 @@ namespace Zorlock {
 		ZL_PROFILE_FUNCTION();
 	}
 
-	void Renderer2D::BeginScene(const OrthographicCamera& camera)
+	void Renderer2D::BeginScene(OrthographicCamera& camera)
 	{
 		ZL_PROFILE_FUNCTION();
-
+		camera.UpdateViewMatrix();
 		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+		s_Data.TextureShader->SetMat4("u_ViewProjection", (camera.GetProjectionMatrix()* camera.GetViewMatrix()));
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -131,8 +139,9 @@ namespace Zorlock {
 	void Renderer2D::EndScene()
 	{
 		ZL_PROFILE_FUNCTION();
-
-		uint32_t dataSize = (uint32_t)( (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase );
+		
+		//uint32_t dataSize = (uint32_t)( (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase );
+		uint32_t dataSize = sizeof(QuadVertex) * s_Data.QuadIndexCount;
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		Flush();
@@ -146,6 +155,13 @@ namespace Zorlock {
 		
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
+		/*
+		for (size_t i = 0; i < s_Data.QuadVertexBufferList.size(); i++)
+		{
+			delete s_Data.QuadVertexBufferList[i];
+		}
+		s_Data.QuadVertexBufferList.clear();
+		*/
 	}
 
 	void Renderer2D::FlushAndReset()
@@ -158,34 +174,48 @@ namespace Zorlock {
 		s_Data.TextureSlotIndex = 1;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const VECTOR2& position, const VECTOR2& size, const COLOR4& color)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, color);
+		DrawQuad(VECTOR3( position.x, position.y, 0.0f ), size, color);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const VECTOR3& position, const VECTOR2& size, const COLOR4& color)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
 		const float textureIndex = 0.0f; // White Texture
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr VECTOR2ARRAY textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 		const float tilingFactor = 1.0f;
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
+		//opengl is position * rotation * scale
+		//direct x is rotation * scale * position
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		//MATRIX4 transform = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x, size.y, 1.0f));
+
+		//MATRIX4 transform = MATRIX4::IDENTITY(); 
+		MATRIX4 transform = MATRIX4::TRS(position, QUATERNION::IDENTITY(), VECTOR3(size.x, size.y, 1.0f));// = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x,size.y,1.0f));  //glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			
+			VECTOR3 pos = transform.multiply(s_Data.QuadVertexPositions[i].ToVector3());
+
+			//QuadVertexBufferList
+
+
+			//QuadVertex* vdata = new QuadVertex(pos, color, { textureCoords[i][0], textureCoords[i][0] }, textureIndex, tilingFactor);
+			//s_Data.QuadVertexBufferList.push_back(vdata);
+			
+			s_Data.QuadVertexBufferPtr->Position = pos;
 			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexCoord = { textureCoords[i][0],textureCoords[i][1] };
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
+			
 		}
 
 		s_Data.QuadIndexCount += 6;
@@ -193,18 +223,24 @@ namespace Zorlock {
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+
+
+
+
+	void Renderer2D::DrawQuad(const VECTOR2& position, const VECTOR2& size, const Ref<Texture2D>& texture, float tilingFactor, const COLOR4& tintColor)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+		DrawQuad(VECTOR3( position.x, position.y, 0.0f ), size, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+
+
+	void Renderer2D::DrawQuad(const VECTOR3& position, const VECTOR2& size, const Ref<Texture2D>& texture, float tilingFactor, const COLOR4& tintColor)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr COLOR4ARRAY color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		constexpr VECTOR2ARRAY textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
@@ -228,18 +264,28 @@ namespace Zorlock {
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
+		//opengl is position * rotation * scale
+		//direct x is rotation * scale * position
+		//MATRIX4 transform = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x, size.y, 1.0f));
+		//MATRIX4 transform = MATRIX4::IDENTITY();
+		//transform.SetTransRotScale(position, QUATERNION::ZERO(), VECTOR3(size.x, size.y, 1.0f));
+		MATRIX4 transform = MATRIX4::TRS(position, QUATERNION::IDENTITY(), VECTOR3(size.x, size.y, 1.0f));// = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x,size.y,1.0f));  //glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
+		transform.inverse();
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			
+			VECTOR3 pos = transform.multiply(s_Data.QuadVertexPositions[i].ToVector3());
+			//QuadVertex* vdata = new QuadVertex(pos, { color[0],color[1],color[2],color[3] }, { textureCoords[i][0], textureCoords[i][0] }, textureIndex, tilingFactor);
+			//s_Data.QuadVertexBufferList.push_back(vdata);
+			
+			s_Data.QuadVertexBufferPtr->Position = pos;
+			s_Data.QuadVertexBufferPtr->Color = { color[0],color[1],color[2],color[3] };
+			s_Data.QuadVertexBufferPtr->TexCoord = { textureCoords[i][0],textureCoords[i][1] };
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
+			
 		}
 
 		s_Data.QuadIndexCount += 6;
@@ -247,35 +293,46 @@ namespace Zorlock {
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const VECTOR2& position, const VECTOR2& size, float rotation, const COLOR4& color)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+		DrawRotatedQuad(VECTOR3( position.x, position.y, 0.0f ), size, rotation, color);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const VECTOR3& position, const VECTOR2& size, float rotation, const COLOR4& color)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
 		const float textureIndex = 0.0f; // White Texture
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr VECTOR2ARRAY textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 		const float tilingFactor = 1.0f;
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		//opengl is position * rotation * scale
+		//direct x is rotation * scale * position
+		//MATRIX4 transform = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().rotation(QUATERNION::EulerAngles(VECTOR3(0.0f, 0.0f, rotation * RAD_TO_DEG))) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x, size.y, 1.0f));
+		//transform.inverse();
+		//MATRIX4 transform = MATRIX4::IDENTITY();
+		//transform.SetTransRotScale(position, QUATERNION::IDENTITY().FromEulerAngles(VECTOR3(0.0f, 0.0f, rotation * RAD_TO_DEG)), VECTOR3(size.x, size.y, 1.0f));
+
+		MATRIX4 transform = MATRIX4::TRS(position, QUATERNION::EulerAngles(VECTOR3(0.0f, 0.0f, rotation)), VECTOR3(size.x, size.y, 1.0f)); 
+
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			VECTOR3 pos = transform.multiply(s_Data.QuadVertexPositions[i].ToVector3());
+			//QuadVertex* vdata = new QuadVertex(pos, color, { textureCoords[i][0], textureCoords[i][0] }, textureIndex, tilingFactor);
+			//s_Data.QuadVertexBufferList.push_back(vdata);
+			
+			s_Data.QuadVertexBufferPtr->Position = pos;
 			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexCoord = { textureCoords[i][0],textureCoords[i][1] };
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
+			
 		}
 
 		s_Data.QuadIndexCount += 6;
@@ -283,18 +340,20 @@ namespace Zorlock {
 		s_Data.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+
+
+	void Renderer2D::DrawRotatedQuad(const VECTOR2& position, const VECTOR2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const COLOR4& tintColor)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
+		DrawRotatedQuad(VECTOR3( position.x, position.y, 0.0f ), size, rotation, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+	void Renderer2D::DrawRotatedQuad(const VECTOR3& position, const VECTOR2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const COLOR4& tintColor)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr COLOR4ARRAY color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		constexpr VECTOR2ARRAY textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
@@ -318,19 +377,28 @@ namespace Zorlock {
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
+		//opengl is position * rotation * scale
+		//direct x is rotation * scale * position
+		//MATRIX4 transform = MATRIX4::IDENTITY().translation(position) * MATRIX4::IDENTITY().rotation(QUATERNION::EulerAngles(VECTOR3(0.0f, 0.0f, rotation * RAD_TO_DEG))) * MATRIX4::IDENTITY().scaling(VECTOR3(size.x, size.y, 1.0f));
+		//transform.inverse();
+		//MATRIX4 transform = MATRIX4::IDENTITY();
+		//transform.SetTransRotScale(position, QUATERNION::IDENTITY().FromEulerAngles(VECTOR3(0.0f, 0.0f, rotation* RAD_TO_DEG)), VECTOR3(size.x, size.y, 1.0f));
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		MATRIX4 transform = MATRIX4::TRS(position, QUATERNION::EulerAngles(VECTOR3(0.0f, 0.0f, rotation)), VECTOR3(size.x, size.y, 1.0f));
+		
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			VECTOR3 pos = transform.multiply(s_Data.QuadVertexPositions[i].ToVector3());
+
+			
+			s_Data.QuadVertexBufferPtr->Position = pos;
+			s_Data.QuadVertexBufferPtr->Color = { color[0],color[1],color[2],color[3] };
+			s_Data.QuadVertexBufferPtr->TexCoord = { textureCoords[i][0],textureCoords[i][1] };
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
+			
 		}
 
 		s_Data.QuadIndexCount += 6;
