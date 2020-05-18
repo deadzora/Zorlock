@@ -4,6 +4,7 @@
 #include "DX11IBuffer.h"
 #include "DX11Vertex.h"
 #include "DX11Raz.h"
+#include "DX11Shaders.h"
 
 
 namespace Zorlock
@@ -58,7 +59,9 @@ namespace Zorlock
 
 	void DX11VertexBuffer::Bind(void* buffer)
 	{
+		ZL_PROFILE_FUNCTION();
 		m_RendererID = static_cast<DX11Raz::RazVertexBuffer*>(buffer);
+		
 	}
 
 
@@ -73,6 +76,35 @@ namespace Zorlock
 	{
 		ZL_PROFILE_FUNCTION();
 		//have no idea what the hell i'm gonna cast to. 
+	}
+
+	void DX11VertexBuffer::SetLayout(const BufferLayout& layout)
+	{
+		 m_Layout = layout; 
+		 if (vertexshader != nullptr)
+		 {
+
+		 }
+	}
+
+	void DX11VertexBuffer::SetLayout(const BufferLayout& layout, Shader* shader)
+	{
+		m_Layout = layout;
+		vertexshader = shader;
+
+	}
+
+	void DX11VertexBuffer::ApplyLayout() const
+	{
+		if (vertexshader != nullptr)
+		{
+			if (m_RendererID != 0)
+			{
+				DX11Raz::RazShader* vshader = static_cast<DX11Raz::RazShader*>(vertexshader->GetShaderID());
+
+				m_RendererID->SetLayout(vshader->GetBuffer());
+			}
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

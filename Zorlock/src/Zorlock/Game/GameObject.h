@@ -38,8 +38,7 @@ namespace Zorlock {
 
 		void Destroy();
 	protected:
-		std::vector<Component> components;
-	
+		std::vector<Component> components;	
 	};
 
 

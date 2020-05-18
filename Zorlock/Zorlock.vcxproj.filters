@@ -19,6 +19,9 @@
     <Filter Include="src\Zorlock">
       <UniqueIdentifier>{E09E2B28-4C54-A41D-D548-9EF441FD9A21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Zorlock\Components">
+      <UniqueIdentifier>{F5770B3D-E171-348F-CADE-CA9FB6779AFB}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Zorlock\Core">
       <UniqueIdentifier>{380F1B98-2408-3AEA-4D3A-1F6F399219F6}</UniqueIdentifier>
     </Filter>
@@ -48,6 +51,9 @@
     </Filter>
     <Filter Include="vendor\DX11\src">
       <UniqueIdentifier>{F7AF6F26-633B-DDEA-6C4C-60DFD85639EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ZLSL">
+      <UniqueIdentifier>{A7E371C1-1399-EAB6-9C8D-E48D0842E1BA}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -138,6 +144,12 @@
     <ClInclude Include="src\Zorlock.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Components\MeshRenderer.h">
+      <Filter>src\Zorlock\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Components\ObjectRenderer.h">
+      <Filter>src\Zorlock\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Core\Application.h">
       <Filter>src\Zorlock\Core</Filter>
     </ClInclude>
@@ -189,13 +201,46 @@
     <ClInclude Include="src\Zorlock\Events\MouseEvent.h">
       <Filter>src\Zorlock\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Behavior.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Component.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\GameObject.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Object.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Scene.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\SceneManager.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Game\Transform.h">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h">
       <Filter>src\Zorlock\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Camera.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Color.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\GraphicsContext.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Material.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Mesh.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCamera.h">
@@ -214,6 +259,9 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Shader.h">
@@ -266,6 +314,15 @@
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\ZWindow.h">
       <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\ZLSL.h">
+      <Filter>vendor\ZLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\ZLSLParser.h">
+      <Filter>vendor\ZLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ZLSL\lexertk.hpp">
+      <Filter>vendor\ZLSL</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -2718,19 +2775,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Game\Component.h" />
-    <ClInclude Include="src\Zorlock\Game\GameObject.h" />
-    <ClInclude Include="src\Zorlock\Game\Object.h" />
-    <ClInclude Include="src\Zorlock\Game\Scene.h" />
-    <ClInclude Include="src\Zorlock\Game\SceneManager.h" />
-    <ClInclude Include="src\Zorlock\Game\Transform.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Color.h">
-      <Filter>src\Zorlock\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Zorlock\Game\Behavior.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Material.h" />
-    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2781,6 +2825,12 @@
     <ClCompile Include="src\ZLpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Components\MeshRenderer.cpp">
+      <Filter>src\Zorlock\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Components\ObjectRenderer.cpp">
+      <Filter>src\Zorlock\Components</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Core\Application.cpp">
       <Filter>src\Zorlock\Core</Filter>
     </ClCompile>
@@ -2796,8 +2846,20 @@
     <ClCompile Include="src\Zorlock\Core\Log.cpp">
       <Filter>src\Zorlock\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Core\Math.cpp">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Core\Window.cpp">
       <Filter>src\Zorlock\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Game\GameObject.cpp">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Game\Object.cpp">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Game\Transform.cpp">
+      <Filter>src\Zorlock\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\ImGui\ImGuiBuild.cpp">
       <Filter>src\Zorlock\ImGui</Filter>
@@ -2808,7 +2870,16 @@
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Camera.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\GraphicsContext.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Material.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Mesh.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCamera.cpp">
@@ -2871,14 +2942,12 @@
     <ClCompile Include="vendor\DX11\src\ZWindow.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\ZLSL\ZLSLParser.cpp">
+      <Filter>vendor\ZLSL</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Game\GameObject.cpp" />
-    <ClCompile Include="src\Zorlock\Game\Transform.cpp" />
-    <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />
-    <ClCompile Include="src\Zorlock\Game\Object.cpp" />
-    <ClCompile Include="src\Zorlock\Core\Math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">
@@ -2887,6 +2956,5 @@
     <None Include="src\Zorlock\Game\readme.md">
       <Filter>src\Zorlock\Game</Filter>
     </None>
-    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

@@ -27,14 +27,14 @@ namespace Zorlock {
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
 	}
 
 	void Renderer::EndScene()
 	{
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
 		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);

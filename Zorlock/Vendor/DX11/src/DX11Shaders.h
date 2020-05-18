@@ -18,6 +18,7 @@ namespace DX11Raz
 		bool InitPixel(const wchar_t* filename);
 		bool InitPixel(const std::string shadertext);
 		bool InitPixel(const void* shader_byte_code, size_t byte_code_size);
+
 		//constant buffers
 		UINT CreateVertexCB(void * bufferdata, UINT buffersize);
 		UINT CreatePixelCB(void* bufferdata, UINT buffersize);
@@ -30,6 +31,8 @@ namespace DX11Raz
 		bool ApplyAllVertexCB();
 		bool ApplyAllPixelCB();
 		ID3D10Blob* GetBuffer();
+		ID3D10Blob* GetPBuffer();
+
 	protected:
 		std::vector<void*> vdata;
 		std::vector<void*> pdata;
@@ -37,7 +40,8 @@ namespace DX11Raz
 		std::vector <UINT> pbsize;
 		std::vector < ID3D11Buffer*> vc_buffer;
 		std::vector < ID3D11Buffer*> pc_buffer;
-		ID3D10Blob* m_buffer;
+		ID3D10Blob* mv_buffer;
+		ID3D10Blob* mp_buffer;
 		ID3D11VertexShader* m_vs;
 		ID3D11PixelShader* m_ps;
 

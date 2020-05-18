@@ -27,11 +27,11 @@
 #include "Zorlock/Renderer/Texture.h"
 #include "Zorlock/Renderer/VertexArray.h"
 
-#include "Zorlock/Renderer/OrthographicCamera.h"
+//#include "Zorlock/Renderer/OrthographicCamera.h"
 // -----------------------------------
 
 
-//---Game------------------------------
+//---Utility------------------------------
 
 #include "Zorlock/Core/Math.h"
-
+#include "Zorlock/Renderer/Color.h"

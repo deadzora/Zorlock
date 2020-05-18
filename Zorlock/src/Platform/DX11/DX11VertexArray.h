@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Zorlock/Renderer/VertexArray.h"
-
+#include "Zorlock/Renderer/Shader.h"
 
 namespace DX11Raz {
 	class RazVertexBuffer;

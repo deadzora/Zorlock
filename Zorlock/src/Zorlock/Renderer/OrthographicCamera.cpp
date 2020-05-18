@@ -1,35 +1,40 @@
 #include "ZLpch.h"
 #include "Zorlock/Renderer/OrthographicCamera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace Zorlock {
 
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
-		: m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.0f, 1.0f)), m_ViewMatrix(1.0f)
 	{
 		ZL_PROFILE_FUNCTION();
 
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+
+		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, -1.0f, 1.0f);
+		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
+
 	}
 
 	void OrthographicCamera::SetProjection(float left, float right, float bottom, float top)
 	{
 		ZL_PROFILE_FUNCTION();
 
-		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, -1.0f, 1.0f);
+		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
+
 	}
 
 	void OrthographicCamera::RecalculateViewMatrix()
 	{
 		ZL_PROFILE_FUNCTION();
+		UpdateViewMatrix();
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
+	}
 
-		m_ViewMatrix = glm::inverse(transform);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	void OrthographicCamera::UpdateViewMatrix()
+	{
+
+		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
+		this->UpdateDirectionVectors();
 	}
 
 }

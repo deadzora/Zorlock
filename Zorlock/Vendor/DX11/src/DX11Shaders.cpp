@@ -4,7 +4,7 @@
 #include "DX11DeviceContext.h"
 #include <d3dcompiler.h>
 
-DX11Raz::RazShader::RazShader() : m_buffer(0), m_ps(0), m_vs(0), pc_buffer(0), vc_buffer(0)
+DX11Raz::RazShader::RazShader() : mv_buffer(0), mp_buffer(0), m_ps(0), m_vs(0), pc_buffer(0), vc_buffer(0)
 {
 }
 
@@ -14,7 +14,8 @@ DX11Raz::RazShader::~RazShader()
 
 void DX11Raz::RazShader::Release()
 {
-	if (m_buffer != 0)m_buffer->Release();
+	if (mv_buffer != 0)mv_buffer->Release();
+	if (mp_buffer != 0)mp_buffer->Release();
 	if (m_ps != 0)m_ps->Release();
 	if (m_vs != 0)m_vs->Release();
 	for (size_t i = 0; i < pc_buffer.size(); i++)
@@ -40,16 +41,16 @@ void DX11Raz::RazShader::Release()
 bool DX11Raz::RazShader::InitVertex(const wchar_t* filename)
 {
 	ID3DBlob* error_blob = nullptr;
-	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "vsmain", "vs_5_0", 0, 0, &this->m_buffer, &error_blob);
+	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "vsmain", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mv_buffer, &error_blob);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Compile Vertex Shader");
+		OutputDebugStringW(L"Failed to Compile Vertex Shader from file \n");
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->m_buffer->GetBufferPointer(), this->m_buffer->GetBufferSize(), NULL, &this->m_vs);
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &this->m_vs);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Vertex Shader");
+		OutputDebugStringW(L"Failed to Create Vertex Shader from file \n");
 		return false;
 	}
 	return true;
@@ -59,16 +60,22 @@ bool DX11Raz::RazShader::InitVertex(const std::string shadertext)
 {
 	ID3DBlob* error_blob = nullptr;
 	LPCSTR shader = shadertext.c_str();
-	HRESULT hr = D3DCompile(&shader, shadertext.size(), NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "vsmain", "vs_5_0", 0, 0, &this->m_buffer, &error_blob);
+	HRESULT hr = D3DCompile(shader, shadertext.size(), "VertexShader", NULL, NULL, "main", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mv_buffer, &error_blob);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Compile Vertex Shader");
+		OutputDebugStringW(L"Failed to Compile Vertex Shader from text \n");
+		
+		HRESULT hrr = D3DWriteBlobToFile(
+			error_blob,
+			L"vertexshadererror.txt",
+			true
+		);
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->m_buffer->GetBufferPointer(), this->m_buffer->GetBufferSize(), NULL, &this->m_vs);
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &this->m_vs);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Vertex Shader");
+		OutputDebugStringW(L"Failed to Create Vertex Shader \n");
 		return false;
 	}
 	return true;
@@ -79,7 +86,7 @@ bool DX11Raz::RazShader::InitVertex(const void* shader_byte_code, size_t byte_co
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(shader_byte_code, byte_code_size, nullptr, &this->m_vs);
 	if (!SUCCEEDED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Vertex Shader");
+		OutputDebugStringW(L"Failed to Create Vertex Shader from void* \n");
 		return false;
 	}
 
@@ -89,13 +96,13 @@ bool DX11Raz::RazShader::InitVertex(const void* shader_byte_code, size_t byte_co
 bool DX11Raz::RazShader::InitPixel(const wchar_t* filename)
 {
 	ID3DBlob* error_blob = nullptr;
-	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "psmain", "ps_5_0", 0, 0, &this->m_buffer, &error_blob);
+	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mp_buffer, &error_blob);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Compile Pixel Shader");
+		OutputDebugStringW(L"Failed to Compile Pixel Shader from file \n");
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->m_buffer->GetBufferPointer(), this->m_buffer->GetBufferSize(), NULL, &m_ps);
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &m_ps);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Pixel Shader");
@@ -108,16 +115,23 @@ bool DX11Raz::RazShader::InitPixel(const std::string shadertext)
 {
 	ID3DBlob* error_blob = nullptr;
 	LPCSTR shader = shadertext.c_str();
-	HRESULT hr = D3DCompile(&shader, shadertext.size(), NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "vsmain", "vs_5_0", 0, 0, &this->m_buffer, &error_blob);
+
+	HRESULT hr = D3DCompile(shader, shadertext.size(), "PixelShader", NULL, NULL, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mp_buffer, &error_blob);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Compile Vertex Shader");
+		OutputDebugStringW(L"Failed to Compile Pixel Shader from text \n");
+		
+		HRESULT hrr = D3DWriteBlobToFile(
+			error_blob,
+			L"pixelshadererror.txt",
+			true
+		);
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->m_buffer->GetBufferPointer(), this->m_buffer->GetBufferSize(), NULL, &m_ps);
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &m_ps);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Pixel Shader");
+		OutputDebugStringW(L"Failed to Create Pixel Shader \n");
 		return false;
 	}
 	return true;
@@ -128,11 +142,12 @@ bool DX11Raz::RazShader::InitPixel(const void* shader_byte_code, size_t byte_cod
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &m_ps);
 	if (!SUCCEEDED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Pixel Shader");
+		OutputDebugStringW(L"Failed to Create Pixel Shader \n");
 		return false;
 	}
 	return true;
 }
+
 
 UINT DX11Raz::RazShader::CreateVertexCB(void* bufferdata, UINT buffersize)
 {
@@ -151,7 +166,7 @@ UINT DX11Raz::RazShader::CreateVertexCB(void* bufferdata, UINT buffersize)
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &v);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Vertex Constant Buffer");
+		OutputDebugStringW(L"Failed to Create Vertex Constant Buffer \n");
 		return -1;
 	}
 	vc_buffer.push_back(v);
@@ -177,7 +192,7 @@ UINT DX11Raz::RazShader::CreatePixelCB(void* bufferdata, UINT buffersize)
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &p);
 	if (FAILED(hr))
 	{
-		OutputDebugStringW(L"Failed to Create Pixel Constant Buffer");
+		OutputDebugStringW(L"Failed to Create Pixel Constant Buffer \n");
 		return -1;
 	}
 	pc_buffer.push_back(p);
@@ -345,7 +360,12 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 
 ID3D10Blob* DX11Raz::RazShader::GetBuffer()
 {
-	return m_buffer;
+	return mv_buffer;
+}
+
+ID3D10Blob* DX11Raz::RazShader::GetPBuffer()
+{
+	return mp_buffer;
 }
 
 

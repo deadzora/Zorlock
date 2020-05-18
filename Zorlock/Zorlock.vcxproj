@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -100,7 +100,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -164,6 +164,8 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\ZLpch.h" />
     <ClInclude Include="src\Zorlock.h" />
+    <ClInclude Include="src\Zorlock\Components\MeshRenderer.h" />
+    <ClInclude Include="src\Zorlock\Components\ObjectRenderer.h" />
     <ClInclude Include="src\Zorlock\Core\Application.h" />
     <ClInclude Include="src\Zorlock\Core\Core.h" />
     <ClInclude Include="src\Zorlock\Core\EntryPoint.h" />
@@ -187,25 +189,26 @@
     <ClInclude Include="src\Zorlock\Game\Object.h" />
     <ClInclude Include="src\Zorlock\Game\Scene.h" />
     <ClInclude Include="src\Zorlock\Game\SceneManager.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
-    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h" />
     <ClInclude Include="src\Zorlock\Game\Transform.h" />
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Color.h" />
     <ClInclude Include="src\Zorlock\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Zorlock\Renderer\Material.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Mesh.h" />
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="src\Zorlock\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Zorlock\Renderer\Renderer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
     <ClInclude Include="src\Zorlock\Renderer\Texture.h" />
     <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
     <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Color.h" />
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h" />
     <ClInclude Include="vendor\DX11\src\DX11IBuffer.h" />
     <ClInclude Include="vendor\DX11\src\DX11Raz.h" />
@@ -218,6 +221,9 @@
     <ClInclude Include="vendor\DX11\src\Mouse.h" />
     <ClInclude Include="vendor\DX11\src\MouseEvent.h" />
     <ClInclude Include="vendor\DX11\src\ZWindow.h" />
+    <ClInclude Include="vendor\ZLSL\ZLSL.h" />
+    <ClInclude Include="vendor\ZLSL\ZLSLParser.h" />
+    <ClInclude Include="vendor\ZLSL\lexertk.hpp" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -1055,6 +1061,8 @@
     <ClCompile Include="src\ZLpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Components\MeshRenderer.cpp" />
+    <ClCompile Include="src\Zorlock\Components\ObjectRenderer.cpp" />
     <ClCompile Include="src\Zorlock\Core\Application.cpp" />
     <ClCompile Include="src\Zorlock\Core\Input.cpp" />
     <ClCompile Include="src\Zorlock\Core\Layer.cpp" />
@@ -1070,6 +1078,8 @@
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Material.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Mesh.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\RenderCommand.cpp" />
@@ -1090,10 +1100,10 @@
     <ClCompile Include="vendor\DX11\src\Mouse.cpp" />
     <ClCompile Include="vendor\DX11\src\MouseEvent.cpp" />
     <ClCompile Include="vendor\DX11\src\ZWindow.cpp" />
+    <ClCompile Include="vendor\ZLSL\ZLSLParser.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
     <None Include="src\Zorlock\Editor\readme.md" />
     <None Include="src\Zorlock\Game\readme.md" />
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include "DX11Raz.h"
 #include "DX11Shaders.h"
 #include "DX11RendererAPI.h"
-
+#include <ZLSLParser.h>
 namespace Zorlock
 {
 	enum class shaderType
@@ -29,12 +29,13 @@ namespace Zorlock
 		return shaderType::Unknown;
 	}
 
-	DX11Shader::DX11Shader() : m_RendererID(0)
+	DX11Shader::DX11Shader() : Shader(), m_RendererID(0)
 	{
+		CreateParser();
 		m_RendererID = DX11Raz::RazCreateShader();
 	}
 
-	DX11Shader::DX11Shader(const std::string& filepath) 
+	DX11Shader::DX11Shader(const std::string& filepath)  : Shader()
 	{
 		ZL_PROFILE_FUNCTION();
 		m_RendererID = DX11Raz::RazCreateShader();
@@ -45,17 +46,38 @@ namespace Zorlock
 
 	}
 
-	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name)
+	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name), Shader()
 	{
-		ZL_PROFILE_FUNCTION();
+
+
+
 		m_RendererID->InitVertex(vertexSrc);
 		m_RendererID->InitPixel(fragmentSrc);
+	}
+
+	DX11Shader::DX11Shader(const std::string& name, const std::string& filepath)
+	{
+		ZL_PROFILE_FUNCTION();
+		CreateParser();
+		parser->Parse(filepath);
+		Process();
+		printf("COMPILE SHADERS!! \n");
+		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
+		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
+		parser->SaveShader(vertexSrc, filepath + "_vertex.hlsl");
+		parser->SaveShader(fragmentSrc, filepath + "_pixel.hlsl");
+		m_RendererID = DX11Raz::RazCreateShader();
+		Compile(vertexSrc, fragmentSrc);
+	}
+
+	DX11Shader::DX11Shader(const std::string& source, bool diff)
+	{
 	}
 
 	DX11Shader::~DX11Shader()
 	{
 		ZL_PROFILE_FUNCTION();
-		m_RendererID->Release();
+		//m_RendererID->Release();
 	}
 
 	void DX11Shader::Bind() const
@@ -97,19 +119,38 @@ namespace Zorlock
 		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetFloat3(const std::string& name, const glm::vec3& value)
+
+
+	void DX11Shader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
-		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetFloat4(const std::string& name, const glm::vec4& value)
+
+
+	void DX11Shader::SetFloat4(const std::string& name, const VECTOR4& value)
 	{
-		ZL_PROFILE_FUNCTION();
 	}
 
-	void DX11Shader::SetMat4(const std::string& name, const glm::mat4& value)
+
+
+	void DX11Shader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
-		ZL_PROFILE_FUNCTION();
+	}
+
+	void DX11Shader::PostProcess()
+	{
+
+	}
+
+	void* DX11Shader::GetShaderID() const
+	{
+		return (void*)m_RendererID;
+	}
+
+	void DX11Shader::Compile(std::string vertexshadersource, std::string pixelshadersource)
+	{
+		m_RendererID->InitVertex(vertexshadersource);
+		m_RendererID->InitPixel(pixelshadersource);
 	}
 
 

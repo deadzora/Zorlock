@@ -13,6 +13,13 @@
 #define MATHTRANSFORM Zorlock::MathTransform
 #define BOX Zorlock::Box
 #define QUATERNION Zorlock::Quaternion
+typedef float MATRIX3ARRAY[3][3];
+typedef float MATRIX4ARRAY[4][4];
+typedef float MATRIX3X3ARRAY[9];
+typedef float MATRIX4X4ARRAY[16];
+typedef float VECTOR2ARRAY[2];
+typedef float VECTOR3ARRAY[3];
+typedef float VECTOR4ARRAY[4];
 
 #ifndef M_PI
 // You can extend this approximation as far as you need to;
@@ -26,6 +33,8 @@
 #define HALFPI M_PI * .5f;			//90  degrees
 #define QUARTERPI  M_PI * .25f;		//45  degrees
 #define EPSILON 0.000001f
+#define DEGREES_FROM_RADIANS(r) MathF::DegreesFromRadians(r)
+#define RADIANS_FROM_DEGREES(r) MathF::RadiansFromDegrees(r)
 
 
 namespace Zorlock {
@@ -36,9 +45,10 @@ namespace Zorlock {
 
 	struct Vector2
 	{
+	public:
 		float x, y;
 
-		Vector2() : x(0), y(0) {}
+		Vector2() = default;
 		Vector2(float x, float y) : x(x), y(y)
 		{}
 		//for template compatability
@@ -50,20 +60,33 @@ namespace Zorlock {
 		{
 			//we ignore Z and W
 		}
+		VECTOR2ARRAY& ToArray()
+		{
+			VECTOR2ARRAY vec2;
+			vec2[0] = x;
+			vec2[1] = y;
+			
+			return vec2;
+
+		}
+
 		float distance(const Vector2* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
 				pow(vec->y - this->y, 2) * 1.0f);
 			return d;
 		}
-
+		Vector2& operator=(const VECTOR2ARRAY q) {
+			x = q[0]; y = q[1]; return *this;
+		}
 
 		
 	};
 
-	struct Vector3 : public Vector2
+	struct Vector3
 	{
-		float z;
+	public:
+		float x,y,z;
 
 		float distance(const Vector3* vec)
 		{
@@ -72,19 +95,31 @@ namespace Zorlock {
 				pow(vec->z - this->z, 2) * 1.0f);
 			return d;
 		}
+		Vector3() = default;
 
-		Vector3() : Vector2() , z(0) {
+		Vector3(Vector2 v) : x(v.x), y(v.y), z(0) {
 
 		}
 
-
-		Vector3(float x, float y, float z) : Vector2(x, y), z(z) 
+		Vector3(float x, float y, float z) : x(x), y(y), z(z) 
 		{				
 		}
 		//for template compatability
-		Vector3(float x, float y, float z, float w) : Vector2(x, y), z(z)
+		Vector3(float x, float y, float z, float w) : x(x), y(y), z(z)
 		{
 			//we ignore Z and W
+		}
+
+		VECTOR3ARRAY& ToArray()
+		{
+			VECTOR3ARRAY vec3;
+			vec3[0] = x;
+			vec3[1] = y;
+			vec3[2] = z;
+
+
+			return vec3;
+
 		}
 
 		Vector3 operator-()const {
@@ -126,6 +161,35 @@ namespace Zorlock {
 		Vector3& operator-=(const Vector3& q) {
 			x -= q.x; y -= q.y; z -= q.z; return *this;
 		}
+
+		float operator[](unsigned int index) {
+			switch (index)
+			{
+			case 0:
+			{
+				return x;
+				break;
+			}
+			case 1:
+			{
+				return y;
+				break;
+			}
+			case 2:
+			{
+				return z;
+				break;
+			}
+			}
+			return 0.0f;
+		}
+		Vector3& operator=(const Vector3 q) {
+			x = q.x; y = q.y; z = q.z; return *this;
+		}
+		Vector3& operator=(const VECTOR3ARRAY q) {
+			x = q[0]; y = q[1]; z = q[2]; return *this;
+		}
+
 		bool operator<(const Vector3& q)const {
 			if (fabs(x - q.x) > EPSILON) return x < q.x ? true : false;
 			if (fabs(y - q.y) > EPSILON) return y < q.y ? true : false;
@@ -194,17 +258,17 @@ namespace Zorlock {
 		}
 	};
 
-	struct Vector4 : public Vector3
+	struct Vector4
 	{
-		float w;
+	public:
+		float x,y,z,w;
 
-		Vector4() : Vector3(), w(0)
-		{}
-		Vector4(float x, float y, float z, float w) : Vector3(x,y,z), w(0)
+		Vector4() = default;
+		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(0)
 		{
 
 		}
-		Vector4(Vector3 a, float w) : Vector3(a), w(w)
+		Vector4(Vector3 a, float w) : x(a.x), y(a.y), z(a.z), w(w)
 		{
 
 		}
@@ -218,10 +282,55 @@ namespace Zorlock {
 		}
 		static Vector4 Zero()
 		{
-			return Vector4(0,0, 0, 0);
+			return Vector4(0, 0, 0, 0);
+		}
+		Vector4 operator-()const {
+			return Vector4(-x, -y, -z, -w);
+		}
+		Vector4 operator*(float scale)const {
+			return Vector4(x * scale, y * scale, z * scale, w *scale);
+		}
+		Vector4 operator*(const Vector4& q)const {
+			return Vector4(x * q.x, y * q.y, z * q.z, w * q.w);
+		}
+		Vector4 operator/(float scale)const {
+			return Vector4(x / scale, y / scale, z / scale, w / scale);
+		}
+		Vector4 operator/(const Vector4& q)const {
+			return Vector4(x / q.x, y / q.y, z / q.z, w / q.w);
+		}
+		Vector4 operator+(const Vector4& q)const {
+			return Vector4(x + q.x, y + q.y, z + q.z, w + q.w);
+		}
+		Vector4 operator-(const Vector4& q)const {
+			return Vector4(x - q.x, y - q.y, z - q.z, w - q.z);
+		}
+		Vector4& operator*=(float scale) {
+			x *= scale; y *= scale; z *= scale; w *= scale; return *this;
+		}
+		Vector4& operator*=(const Vector4& q) {
+			x *= q.x; y *= q.y; z *= q.z; w *= q.w; return *this;
+		}
+		Vector4& operator/=(float scale) {
+			x /= scale; y /= scale; z /= scale; w /= scale; return *this;
+		}
+		Vector4& operator/=(const Vector4& q) {
+			x /= q.x; y /= q.y; z /= q.z; w /= q.w; return *this;
+		}
+		Vector4& operator+=(const Vector4& q) {
+			x += q.x; y += q.y; z += q.z; w += q.w; return *this;
+		}
+		Vector4& operator-=(const Vector4& q) {
+			x -= q.x; y -= q.y; z -= q.z; w -= q.w; return *this;
+		}
+		Vector4& operator=(const Vector4 q) {
+			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
 
-		
+		Vector3 ToVector3()
+		{
+			return Vector3(x, y, z);
+		}
 	};
 
 	struct VertexP
@@ -476,12 +585,44 @@ namespace Zorlock {
 
 	struct Quaternion
 	{
-		float w;
-		Vector3 v;
+		float x, y, z, w;
 
-		Quaternion() :v(Vector3()), w(1) {
+		Quaternion() : x(0),y(0),z(0),w(0) {
 		}
-		Quaternion(float w, const Vector3& v) :w(w), v(v) {
+		Quaternion(const Vector4& v) : x(v.x),y(v.y),z(v.z),w(v.w) {
+		}
+		Quaternion(float w, const Vector3& v) : x(v.x), y(v.y), z(v.z) ,w(w) {
+		}
+		Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {
+		}
+		static Quaternion ZERO()
+		{
+			return Quaternion();
+		}
+		static Quaternion IDENTITY()
+		{
+			return Quaternion(0, 0, 0, 1);
+		}
+		static Quaternion EulerAngles(const Vector3& q) {
+			Vector3 ypr = Vector3(q);
+			ypr.y *= DEG_TO_RAD;
+			ypr.x *= DEG_TO_RAD;
+			ypr.z *= DEG_TO_RAD;
+			float rollOver2 = ypr.z * 0.5f;
+			float sinRollOver2 = (float)sin((double)rollOver2);
+			float cosRollOver2 = (float)cos((double)rollOver2);
+			float pitchOver2 = ypr.x * 0.5f;
+			float sinPitchOver2 = (float)sin((double)pitchOver2);
+			float cosPitchOver2 = (float)cos((double)pitchOver2);
+			float yawOver2 = ypr.y * 0.5f;
+			float sinYawOver2 = (float)sin((double)yawOver2);
+			float cosYawOver2 = (float)cos((double)yawOver2);
+			Quaternion result;
+			result.w = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
+			result.x = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
+			result.y = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
+			result.z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
+			return result;
 		}
 		Quaternion FromEulerAngles(const Vector3& q) const {
 			Vector3 ypr = Vector3(q);
@@ -499,37 +640,41 @@ namespace Zorlock {
 			float cosYawOver2 = (float)cos((double)yawOver2);
 			Quaternion result;
 			result.w = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
-			result.v.x = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
-			result.v.y = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
-			result.v.z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
+			result.x = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
+			result.y = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
+			result.z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
 			return result;
 		}
 		Quaternion operator-()const {
-			return Quaternion(w, -v);
+			return Quaternion(w, -Vector3(x,y,z));
 		}
 		Quaternion operator+(const Quaternion& q)const {
-			return Quaternion(w + q.w, v + q.v);
+			return Quaternion(Vector4(x,y,z,w) + Vector4(q.x, q.y, q.z, q.w));
 		}
 		Quaternion operator-(const Quaternion& q)const {
-			return Quaternion(w - q.w, v - q.v);
+			return Quaternion(Vector4(x, y, z, w) - Vector4(q.x, q.y, q.z, q.w));
 		}
 		Quaternion operator*(const Quaternion& q)const {
-			return Quaternion(w * q.w - v.dot(q.v), q.v.cross(v) + q.v * w + v * q.w);
+			return Quaternion(
+
+				w * q.w - x * q.x - y * q.y - z * q.z,
+				w * q.x + x * q.w + y * q.z - z * q.y,
+				w * q.y + y * q.w + z * q.x - x * q.z,
+				w * q.z + z * q.w + x * q.y - y * q.x
+			);
 		}
-		Vector3 operator*(const Vector3& q)const {
-			return (*this * Quaternion(0, q) * -*this).v;
-		}
+
 		Quaternion operator*(float q)const {
-			return Quaternion(w * q, v * q);
+			return Quaternion(Vector4(x, y, z, w) * q);
 		}
 		Quaternion operator/(float q)const {
-			return Quaternion(w / q, v / q);
+			return Quaternion(Vector4(x, y, z, w) / q);
 		}
 		float dot(const Quaternion& q)const {
-			return v.x * q.v.x + v.y * q.v.y + v.z * q.v.z + w * q.w;
+			return x * q.x + y * q.y + z * q.z + w * q.w;
 		}
 		float length()const {
-			return sqrtf(w * w + v.x * v.x + v.y * v.y + v.z * v.z);
+			return sqrtf(w * w + x * x + y * y + z * z);
 		}
 		void normalize() {
 			*this = *this / length();
@@ -540,7 +685,7 @@ namespace Zorlock {
 		Quaternion slerpTo(const Quaternion& q, float a)const {
 			Quaternion t = q;
 			float d = dot(q), b = 1 - a;
-			if (d < 0) { t.w = -t.w; t.v = -t.v; d = -d; }
+			if (d < 0) { t = -t; d = -d; }
 			if (d < 1 - EPSILON) {
 				float om = acosf(d);
 				float si = sinf(om);
@@ -549,50 +694,71 @@ namespace Zorlock {
 			}
 			return *this * b + t * a;
 		}
+
+		Quaternion Quaternion::inverse() const
+		{
+			float fNorm = w * w + x * x + y * y + z * z;
+			if (fNorm > 0.0f)
+			{
+				float fInvNorm = 1.0f / fNorm;
+				return Quaternion(w * fInvNorm, -x * fInvNorm, -y * fInvNorm, -z * fInvNorm);
+			}
+			else
+			{
+				// Return an invalid result to flag the error
+				return ZERO();
+			}
+		}
+
+
 		Vector3 i()const {
-			float xz = v.x * v.z, wy = w * v.y;
-			float xy = v.x * v.y, wz = w * v.z;
-			float yy = v.y * v.y, zz = v.z * v.z;
+			float xz = x * z, wy = w * y;
+			float xy = x * y, wz = w * z;
+			float yy = y * y, zz = z * z;
 			return Vector3(1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy));
 		}
 		Vector3 j()const {
-			float yz = v.y * v.z, wx = w * v.x;
-			float xy = v.x * v.y, wz = w * v.z;
-			float xx = v.x * v.x, zz = v.z * v.z;
+			float yz = y * z, wx = w * x;
+			float xy = x * y, wz = w * z;
+			float xx = x * x, zz = z * z;
 			return Vector3(2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx));
 		}
 		Vector3 k()const {
-			float xz = v.x * v.z, wy = w * v.y;
-			float yz = v.y * v.z, wx = w * v.x;
-			float xx = v.x * v.x, yy = v.y * v.y;
+			float xz = x * z, wy = w * y;
+			float yz = y * z, wx = w * x;
+			float xx = x * x, yy = y * y;
 			return Vector3(2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
 		}
 
 		Vector3 ToEulerAngles()const {
 			Vector3 pitchYawRoll;
-			pitchYawRoll.y = (float)atan2(2.0f * v.x * w + 2.0f * v.y * v.z, 1 - 2.0f * (v.z * v.z + w * w));     // Yaw 
-			pitchYawRoll.x = (float)asin(2.0f * (v.x * v.z - w * v.y));                             // Pitch 
-			pitchYawRoll.z = (float)atan2(2.0f * v.x * v.y + 2.0f * v.z * w, 1 - 2.0f * (v.y * v.y + v.z * v.z));      // Roll 
+			pitchYawRoll.y = (float)atan2(2.0f * x * w + 2.0f * y * z, 1 - 2.0f * (z * z + w * w));     // Yaw 
+			pitchYawRoll.x = (float)asin(2.0f * (x * z - w * y));                             // Pitch 
+			pitchYawRoll.z = (float)atan2(2.0f * x * y + 2.0f * z * w, 1 - 2.0f * (y * y + z * z));      // Roll 
 			return pitchYawRoll;
 		}
+
+
 
 	};
 
 	class Matrix {
+		
 		static Matrix tmps[64];
 		//static Matrix& alloc_tmp() { static int tmp = 0; return tmps[tmp++ & 63]; }
 		friend class Transform;
 	public:
 		Vector3 i, j, k;
+		Matrix() = default;
 
-		Matrix() :i(Vector3(1, 0, 0)), j(Vector3(0, 1, 0)), k(Vector3(0, 0, 1)) {
-		}
 		Matrix(const Vector3& i, const Vector3& j, const Vector3& k) :i(i), j(j), k(k) {
 		}
+		Matrix(const Vector4& i, const Vector4& j, const Vector4& k) :i(Vector3(i.x,i.y,i.z)), j(Vector3(j.x,j.y,j.z)), k(Vector3(k.x,k.y,k.z)) {
+		}
 		Matrix(const Quaternion& q) {
-			float xx = q.v.x * q.v.x, yy = q.v.y * q.v.y, zz = q.v.z * q.v.z;
-			float xy = q.v.x * q.v.y, xz = q.v.x * q.v.z, yz = q.v.y * q.v.z;
-			float wx = q.w * q.v.x, wy = q.w * q.v.y, wz = q.w * q.v.z;
+			float xx = q.x * q.x, yy = q.y * q.y, zz = q.z * q.z;
+			float xy = q.x * q.y, xz = q.x * q.z, yz = q.y * q.z;
+			float wx = q.w * q.x, wy = q.w * q.y, wz = q.w * q.z;
 			i = Vector3(1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy)),
 				j = Vector3(2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx)),
 				k = Vector3(2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
@@ -605,6 +771,54 @@ namespace Zorlock {
 			j = Vector3(u.x * u.y * (1 - c) + u.z * s, y2 + c * (1 - y2), u.y * u.z * (1 - c) - u.x * s);
 			k = Vector3(u.z * u.x * (1 - c) - u.y * s, u.y * u.z * (1 - c) + u.x * s, z2 + c * (1 - z2));
 		}
+
+		MATRIX3ARRAY& ToArray()
+		{
+			MATRIX3ARRAY mat3;
+			mat3[0][0] = i.x; mat3[0][1] = i.y; mat3[0][2] = i.z;
+			mat3[1][0] = j.x; mat3[1][1] = j.y; mat3[1][2] = j.z;
+			mat3[2][0] = k.x; mat3[2][1] = k.y; mat3[2][2] = k.z;
+			
+
+			return mat3;
+
+		}
+
+		MATRIX3X3ARRAY& To3x3Array()
+		{
+			MATRIX3X3ARRAY mat3;
+
+			mat3[0] = i.x; mat3[1] = i.y; mat3[2] = i.z; 
+			mat3[3] = j.x; mat3[4] = j.y; mat3[5] = j.z; 
+			mat3[6] = k.x; mat3[7] = k.y; mat3[8] = k.z; 
+
+			return mat3;
+		}
+
+		MATRIX3X3ARRAY* To3x3PtrArray()
+		{
+			MATRIX3X3ARRAY mat3;
+
+			mat3[0] = i.x; mat3[1] = i.y; mat3[2] = i.z;
+			mat3[3] = j.x; mat3[4] = j.y; mat3[5] = j.z;
+			mat3[6] = k.x; mat3[7] = k.y; mat3[8] = k.z;
+
+			return &mat3;
+		}
+
+
+		MATRIX3ARRAY* ToPtrArray()
+		{
+			MATRIX3ARRAY mat3;
+			mat3[0][0] = i.x; mat3[0][1] = i.y; mat3[0][2] = i.z;
+			mat3[1][0] = j.x; mat3[1][1] = j.y; mat3[1][2] = j.z;
+			mat3[2][0] = k.x; mat3[2][1] = k.y; mat3[2][2] = k.z;
+
+
+			return &mat3;
+
+		}
+
 		Vector3& operator[](int n) {
 			return (&i)[n];
 		}
@@ -673,6 +887,63 @@ namespace Zorlock {
 			return Matrix(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1));
 		}
 
+		static Matrix ToRotationMatrix(const Quaternion& q)
+		{
+			float tx = q.x + q.x;
+			float ty = q.y + q.y;
+			float tz = q.z + q.z;
+			float twx = tx * q.w;
+			float twy = ty * q.w;
+			float twz = tz * q.w;
+			float txx = tx * q.x;
+			float txy = ty * q.x;
+			float txz = tz * q.x;
+			float tyy = ty * q.y;
+			float tyz = tz * q.y;
+			float tzz = tz * q.z;
+			Matrix mat;
+			mat.i.x = 1.0f - (tyy + tzz);
+			mat.i.y = txy - twz;
+			mat.i.z = txz + twy;
+			mat.j.x = txy + twz;
+			mat.j.y = 1.0f - (txx + tzz);
+			mat.j.z = tyz - twx;
+			mat.k.x = txz - twy;
+			mat.k.y = tyz + twx;
+			mat.k.z = 1.0f - (txx + tyy);
+			return mat;
+		};
+
+		static Vector3 RotateQuat(const Vector3& v, const Quaternion& q)
+		{
+
+			Matrix rot = Matrix::ToRotationMatrix(q);
+			
+			return rot * v;
+		}
+
+		Matrix transpose() const
+		{
+			Matrix matTranspose;
+
+			matTranspose.i.x = i.x; matTranspose.j.x = i.y; matTranspose.k.x = i.z;
+			matTranspose.i.y = j.x; matTranspose.j.y = j.y; matTranspose.k.y = j.z;
+			matTranspose.i.z = k.x; matTranspose.j.z = k.y; matTranspose.k.z = k.z;
+
+			return matTranspose;
+		}
+
+		Vector3 multiply(const Vector3& vec) const
+		{
+			Vector3 prod;
+
+			prod.x = i.x * vec.x + i.y * vec.y + i.z * vec.z;
+			prod.x = j.x * vec.x + j.y * vec.y + j.z * vec.z;
+			prod.x = k.x * vec.x + k.y * vec.y + k.z * vec.z;
+
+			return prod;
+		}
+
 	};
 
 	class Matrix4 {
@@ -681,6 +952,7 @@ namespace Zorlock {
 		Matrix4() = default;
 		constexpr Matrix4(const Matrix4&) = default;
 		constexpr Matrix4& operator=(const Matrix4&) = default;
+
 
 
 		Matrix4(const Matrix& mat3)
@@ -705,6 +977,53 @@ namespace Zorlock {
 
 		}
 
+		MATRIX4ARRAY& ToArray()
+		{
+			MATRIX4ARRAY mat4;
+			mat4[0][0] = i.x; mat4[0][1] = i.y; mat4[0][2] = i.z; mat4[0][3] = i.w;
+			mat4[1][0] = j.x; mat4[1][1] = j.y; mat4[1][2] = j.z; mat4[1][3] = j.w;
+			mat4[2][0] = k.x; mat4[2][1] = k.y; mat4[2][2] = k.z; mat4[2][3] = k.w;
+			mat4[3][0] = l.x; mat4[3][1] = l.y; mat4[3][2] = l.z; mat4[3][3] = l.w;
+
+			return mat4;
+
+		}
+
+		MATRIX4X4ARRAY& To4x4Array()
+		{
+			MATRIX4X4ARRAY mat4;
+
+			mat4[0] = i.x; mat4[1] = i.y; mat4[2] = i.z; mat4[3] = i.w;
+			mat4[4] = j.x; mat4[5] = j.y; mat4[6] = j.z; mat4[7] = j.w;
+			mat4[8] = k.x; mat4[9] = k.y; mat4[10] = k.z; mat4[11] = k.w;
+			mat4[12] = l.x; mat4[13] = l.y; mat4[14] = l.z; mat4[15] = l.w;
+			return mat4;
+		}
+
+
+		MATRIX4X4ARRAY* To4x4PtrArray()
+		{
+			MATRIX4X4ARRAY mat4;
+
+			mat4[0] = i.x; mat4[1] = i.y; mat4[2] = i.z; mat4[3] = i.w;
+			mat4[4] = j.x; mat4[5] = j.y; mat4[6] = j.z; mat4[7] = j.w;
+			mat4[8] = k.x; mat4[9] = k.y; mat4[10] = k.z; mat4[11] = k.w;
+			mat4[12] = l.x; mat4[13] = l.y; mat4[14] = l.z; mat4[15] = l.w;
+			return &mat4;
+		}
+
+
+		MATRIX4ARRAY* ToPtrArray()
+		{
+			MATRIX4ARRAY mat4;
+			mat4[0][0] = i.x; mat4[0][1] = i.y; mat4[0][2] = i.z; mat4[0][3] = i.w;
+			mat4[1][0] = j.x; mat4[1][1] = j.y; mat4[1][2] = j.z; mat4[1][3] = j.w;
+			mat4[2][0] = k.x; mat4[2][1] = k.y; mat4[2][2] = k.z; mat4[2][3] = k.w;
+			mat4[3][0] = l.x; mat4[3][1] = l.y; mat4[3][2] = l.z; mat4[3][3] = l.w;
+
+			return &mat4;
+
+		}
 		bool operator==(const Matrix4& rhs) const
 		{
 			if (i.x != rhs.i.x || i.y != rhs.i.y || i.z != rhs.i.z || i.w != rhs.i.w ||
@@ -721,6 +1040,26 @@ namespace Zorlock {
 		bool operator!=(const Matrix4& rhs) const
 		{
 			return !operator==(rhs);
+		}
+
+		static Matrix4 Matrix4::translation(const Vector3& translation)
+		{
+			Matrix4 mat;
+
+			mat.i.x = 1.0f; mat.i.y = 0.0f; mat.i.z = 0.0f; mat.i.w = translation.x;
+			mat.j.x = 0.0f; mat.j.y = 1.0f; mat.j.z = 0.0f; mat.j.w = translation.y;
+			mat.k.x = 0.0f; mat.k.y = 0.0f; mat.k.z = 1.0f; mat.k.w = translation.z;
+			mat.l.x = 0.0f; mat.l.y = 0.0f; mat.l.z = 0.0f; mat.l.w = 1.0f;
+
+			return mat;
+		}
+
+		static Matrix4 Matrix4::rotation(const Quaternion& quat)
+		{
+			Matrix mat = Matrix4::IDENTITY().toRotationMatrix(quat);
+			
+
+			return Matrix4(mat);
 		}
 
 		Matrix4 operator*(const Matrix4& rhs)const {
@@ -825,6 +1164,7 @@ namespace Zorlock {
 
 			return r;
 		}
+
 		Vector4 operator*(const Vector4& v)const {
 
 			return Vector4(
@@ -835,6 +1175,45 @@ namespace Zorlock {
 			);
 		}
 
+		Vector3 multiplyDirection(const Vector3& v) const
+		{
+			return Vector3(
+				i.x * v.x + i.y * v.y + i.z * v.z,
+				j.x * v.x + j.y * v.y + j.z * v.z,
+				k.x * v.x + k.y * v.y + k.z * v.z);
+		}
+
+		Vector3 multiply(const Vector3& v) const
+		{
+			Vector3 r = Vector3::Zero();
+
+			float fInvW = 1.0f / (l.x * v.x + l.y * v.y + l.z * v.z + l.w);
+
+			r.x = (i.x * v.x + i.y * v.y + i.z * v.z + i.w) * fInvW;
+			r.y = (j.x * v.x + j.y * v.y + j.z * v.z + j.w) * fInvW;
+			r.z = (k.x * v.x + k.y * v.y + k.z * v.z + k.w) * fInvW;
+
+			return r;
+		}
+
+		Vector4 multiply(const Vector4& v) const
+		{
+			return Vector4(
+				i.x * v.x + i.y * v.y + i.z * v.z + i.w * v.w,
+				j.x * v.x + j.y * v.y + j.z * v.z + j.w * v.w,
+				k.x * v.x + k.y * v.y + k.z * v.z + k.w * v.w,
+				l.x * v.x + l.y * v.y + l.z * v.z + l.w * v.w
+			);
+		}
+
+		Vector4 multiplyA(const Vector4& v) const
+		{
+			return Vector4(
+				i.x * v.x + i.y * v.y + i.z * v.z + i.w * v.w,
+				j.x * v.x + j.y * v.y + j.z * v.z + j.w * v.w,
+				k.x * v.x + k.y * v.y + k.z * v.z + k.w * v.w,
+				v.w);
+		}
 
 		Matrix4 transpose() const
 		{
@@ -859,6 +1238,88 @@ namespace Zorlock {
 
 			return m3x3;
 		}
+
+
+		void Matrix4::makeProjectionOrtho(float left, float right, float top,
+			float bottom, float fnear, float ffar)
+		{
+			// Create a matrix that transforms coordinate to normalized device coordinate in range:
+			// Left -1 - Right 1
+			// Bottom -1 - Top 1
+			// Near -1 - Far 1
+
+			float deltaX = right - left;
+			float deltaY = bottom - top;
+			float deltaZ = ffar - fnear;
+
+			i.x = 2.0F / deltaX;
+			i.y = 0.0f;
+			i.z = 0.0f;
+			i.w = -(right + left) / deltaX;
+
+			j.x = 0.0f;
+			j.y = -2.0F / deltaY;
+			j.z = 0.0f;
+			j.w = (top + bottom) / deltaY;
+
+			k.x = 0.0f;
+			k.y = 0.0f;
+
+			if (ffar == 0.0f)
+			{
+				k.z = 1.0f;
+				k.w = 0.0f;
+			}
+			else
+			{
+				k.z = -2.0F / deltaZ;
+				k.w = -(ffar + fnear) / deltaZ;
+			}
+
+			l.x = 0.0f;
+			l.y = 0.0f;
+			l.z = 0.0f;
+			l.w = 1.0f;
+
+		}
+
+		Matrix4 Matrix4::projectionOrthographic(float left, float right, float top, float bottom, float fnear, float ffar)
+		{
+			Matrix4 output;
+			output.makeProjectionOrtho(left, right, top, bottom, fnear, ffar);
+
+			return output;
+		}
+
+		Matrix toRotationMatrix(const Quaternion& q)
+		{
+			float tx = q.x + q.x;
+			float ty = q.y + q.y;
+			float tz = q.z + q.z;
+			float twx = tx * q.w;
+			float twy = ty * q.w;
+			float twz = tz * q.w;
+			float txx = tx * q.x;
+			float txy = ty * q.x;
+			float txz = tz * q.x;
+			float tyy = ty * q.y;
+			float tyz = tz * q.y;
+			float tzz = tz * q.z;
+
+			i.x = 1.0f - (tyy + tzz);
+			i.y = txy - twz;
+			i.z = txz + twy;
+			j.x = txy + twz;
+			j.y = 1.0f - (txx + tzz);
+			j.z = tyz - twx;
+			k.x = txz - twy;
+			k.y = tyz + twx;
+			k.z = 1.0f - (txx + tyy);
+
+			return Matrix(i, j, k);
+		};
+
+
 
 		static Matrix4 lookAt(const Vector3& from, const Vector3& to, const Vector3& tmp = Vector3(0, 1, 0))
 		{
@@ -896,7 +1357,175 @@ namespace Zorlock {
 		{
 			return Matrix4(Vector4(1,0,0,0), Vector4(0,1,0,0), Vector4(0,0,1,0), Vector4(0,0,0,1));
 		}
+		static Matrix4 ONE()
+		{
+			return Matrix4(Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1), Vector4(1, 1, 1, 1));
+		}
+		static Matrix4 scaling(const Vector3& scale)
+		{
+			Matrix4 mat;
 
+			mat.i.x = scale.x; mat.i.y = 0.0f; mat.i.z = 0.0f; mat.i.w = 0.0f;
+			mat.j.x = 0.0f; mat.j.y = scale.y; mat.j.z = 0.0f; mat.j.w = 0.0f;
+			mat.k.x = 0.0f; mat.k.y = 0.0f; mat.k.z = scale.z; mat.k.w = 0.0f;
+			mat.l.x = 0.0f; mat.l.y = 0.0f; mat.l.z = 0.0f; mat.l.w = 1.0f;
+
+			return mat;
+		}
+
+		static Matrix4 scaling(float scale)
+		{
+			Matrix4 mat;
+
+			mat.i.x = scale; mat.i.y = 0.0f; mat.i.z = 0.0f; mat.i.w = 0.0f;
+			mat.j.x = 0.0f; mat.j.y = scale; mat.j.z = 0.0f; mat.j.w = 0.0f;
+			mat.k.x = 0.0f; mat.k.y = 0.0f; mat.k.z = scale; mat.k.w = 0.0f;
+			mat.l.x = 0.0f; mat.l.y = 0.0f; mat.l.z = 0.0f; mat.l.w = 1.0f;
+
+			return mat;
+		}
+
+		void Matrix4::SetTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		{
+			Matrix rot3x3 = Matrix::ToRotationMatrix(rotation);
+		
+			i.x = scale.x * rot3x3.i.x; i.y = scale.y * rot3x3.i.y; i.z = scale.z * rot3x3.i.z; i.w = translation.x;
+			j.x = scale.x * rot3x3.j.x; j.y = scale.y * rot3x3.j.y; j.z = scale.z * rot3x3.j.z; j.w = translation.y;
+			k.x = scale.x * rot3x3.k.x; k.y = scale.y * rot3x3.k.y; k.z = scale.z * rot3x3.k.z; k.w = translation.z;
+
+			// No projection term
+			l.x = 0; l.y = 0; l.z = 0; l.w = 1;
+		}
+
+		void Matrix4::SetInverseTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		{
+			// Invert the parameters
+			Vector3 invTranslate = -translation;
+			Vector3 invScale(1 / scale.x, 1 / scale.y, 1 / scale.z);
+			Quaternion invRot = rotation.inverse();
+
+			// Because we're inverting, order is translation, rotation, scale
+			// So make translation relative to scale & rotation
+			invTranslate = Matrix::RotateQuat(invTranslate, invRot);    //invRot.rotate(invTranslate);
+			invTranslate *= invScale;
+
+			// Next, make a 3x3 rotation matrix
+			Matrix rot3x3  = Matrix::ToRotationMatrix(invRot);
+
+
+			// Set up final matrix with scale, rotation and translation
+			i.x = invScale.x * rot3x3.i.x; i.y = invScale.x * rot3x3.i.y; i.z = invScale.x * rot3x3.i.z; i.w = invTranslate.x;
+			j.x = invScale.y * rot3x3.j.x; j.y = invScale.y * rot3x3.j.y; j.z = invScale.y * rot3x3.j.z; j.w = invTranslate.y;
+			k.x = invScale.z * rot3x3.k.x; k.y = invScale.z * rot3x3.k.y; k.z = invScale.z * rot3x3.k.z; k.w = invTranslate.z;
+
+			// No projection term
+			l.x = 0; l.y = 0; l.z = 0; l.w = 1;
+		}
+
+		Matrix4 Matrix4::inverse() const
+		{
+			float m00 = i.x, m01 = i.y, m02 = i.z, m03 = i.w;
+			float m10 = j.x, m11 = j.y, m12 = j.z, m13 = j.w;
+			float m20 = k.x, m21 = k.y, m22 = k.z, m23 = k.w;
+			float m30 = l.x, m31 = l.y, m32 = l.z, m33 = l.w;
+
+			float v0 = m20 * m31 - m21 * m30;
+			float v1 = m20 * m32 - m22 * m30;
+			float v2 = m20 * m33 - m23 * m30;
+			float v3 = m21 * m32 - m22 * m31;
+			float v4 = m21 * m33 - m23 * m31;
+			float v5 = m22 * m33 - m23 * m32;
+
+			float t00 = +(v5 * m11 - v4 * m12 + v3 * m13);
+			float t10 = -(v5 * m10 - v2 * m12 + v1 * m13);
+			float t20 = +(v4 * m10 - v2 * m11 + v0 * m13);
+			float t30 = -(v3 * m10 - v1 * m11 + v0 * m12);
+
+			float invDet = 1 / (t00 * m00 + t10 * m01 + t20 * m02 + t30 * m03);
+
+			float d00 = t00 * invDet;
+			float d10 = t10 * invDet;
+			float d20 = t20 * invDet;
+			float d30 = t30 * invDet;
+
+			float d01 = -(v5 * m01 - v4 * m02 + v3 * m03) * invDet;
+			float d11 = +(v5 * m00 - v2 * m02 + v1 * m03) * invDet;
+			float d21 = -(v4 * m00 - v2 * m01 + v0 * m03) * invDet;
+			float d31 = +(v3 * m00 - v1 * m01 + v0 * m02) * invDet;
+
+			v0 = m10 * m31 - m11 * m30;
+			v1 = m10 * m32 - m12 * m30;
+			v2 = m10 * m33 - m13 * m30;
+			v3 = m11 * m32 - m12 * m31;
+			v4 = m11 * m33 - m13 * m31;
+			v5 = m12 * m33 - m13 * m32;
+
+			float d02 = +(v5 * m01 - v4 * m02 + v3 * m03) * invDet;
+			float d12 = -(v5 * m00 - v2 * m02 + v1 * m03) * invDet;
+			float d22 = +(v4 * m00 - v2 * m01 + v0 * m03) * invDet;
+			float d32 = -(v3 * m00 - v1 * m01 + v0 * m02) * invDet;
+
+			v0 = m21 * m10 - m20 * m11;
+			v1 = m22 * m10 - m20 * m12;
+			v2 = m23 * m10 - m20 * m13;
+			v3 = m22 * m11 - m21 * m12;
+			v4 = m23 * m11 - m21 * m13;
+			v5 = m23 * m12 - m22 * m13;
+
+			float d03 = -(v5 * m01 - v4 * m02 + v3 * m03) * invDet;
+			float d13 = +(v5 * m00 - v2 * m02 + v1 * m03) * invDet;
+			float d23 = -(v4 * m00 - v2 * m01 + v0 * m03) * invDet;
+			float d33 = +(v3 * m00 - v1 * m01 + v0 * m02) * invDet;
+
+			return Matrix4(
+				d00, d01, d02, d03,
+				d10, d11, d12, d13,
+				d20, d21, d22, d23,
+				d30, d31, d32, d33);
+		}
+
+
+		void makeView(const Vector3& position, const Quaternion& orientation)
+		{
+			// View matrix is:
+			//
+			//  [ Lx  Uy  Dz  Tx  ]
+			//  [ Lx  Uy  Dz  Ty  ]
+			//  [ Lx  Uy  Dz  Tz  ]
+			//  [ 0   0   0   1   ]
+			//
+			// Where T = -(Transposed(Rot) * Pos)
+
+			// This is most efficiently done using 3x3 Matrices
+			Matrix rot = Matrix::ToRotationMatrix(orientation);
+
+
+			// Make the translation relative to new axes
+			Matrix rotT = rot.transpose();
+			Vector3 trans = (-rotT).multiply(position);
+
+			// Make final matrix
+			*this = Matrix4(rotT);
+			i.w = trans.x;
+			j.w = trans.y;
+			k.w = trans.z;
+		}
+
+		static Matrix4 Matrix4::TRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		{
+			Matrix4 mat = Matrix4::IDENTITY();
+			mat.SetTransRotScale(translation, rotation, scale);
+
+			return mat;
+		}
+
+		static Matrix4 Matrix4::inverseTRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		{
+			Matrix4 mat = Matrix4::IDENTITY();
+			mat.SetInverseTransRotScale(translation, rotation, scale);
+
+			return mat;
+		}
 	};
 
 

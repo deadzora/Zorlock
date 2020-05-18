@@ -3,13 +3,13 @@
 
 namespace Zorlock {
 
-	class Behavior : Component {
+	class Behavior : public Component {
+	public:
 		virtual ~Behavior() = default;
 		virtual void Awake() const = 0;
 		virtual void Start() const = 0;
-		virtual void Update(void* i) = 0;
+		virtual void Update() const = 0;
 		virtual void Destroy() const = 0;
-
 	};
 
 }

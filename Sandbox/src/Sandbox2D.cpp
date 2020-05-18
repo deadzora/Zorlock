@@ -1,11 +1,10 @@
 #include "Sandbox2D.h"
 #include <imgui/imgui.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+using namespace Zorlock;
 
 Sandbox2D::Sandbox2D()
-	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
+	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f), m_SquareColor( 0.2f, 0.3f, 0.8f, 1.0f )
 {
 }
 
@@ -42,11 +41,11 @@ void Sandbox2D::OnUpdate(Zorlock::Timestep ts)
 
 		ZL_PROFILE_SCOPE("Renderer Draw");
 		Zorlock::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		Zorlock::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, -45.0f, { 0.8f, 0.2f, 0.3f, 1.0f });
-		Zorlock::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-		Zorlock::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_SquareColor);
-		Zorlock::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, 10.0f);
-		Zorlock::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckerboardTexture, 20.0f);
+		Zorlock::Renderer2D::DrawRotatedQuad(VECTOR2( 1.0f, 0.0f ), VECTOR2( 0.8f, 0.8f ), -45.0f, COLOR4( 0.8f, 0.2f, 0.3f, 1.0f ));
+		Zorlock::Renderer2D::DrawQuad(VECTOR2( -1.0f, 0.0f ), VECTOR2( 0.8f, 0.8f ), COLOR4( 0.8f, 0.2f, 0.3f, 1.0f ));
+		Zorlock::Renderer2D::DrawQuad(VECTOR2( 0.5f, -0.5f ), VECTOR2( 0.5f, 0.75f ), m_SquareColor);
+		Zorlock::Renderer2D::DrawQuad(VECTOR3( 0.0f, 0.0f, -0.2f ), VECTOR2( 20.0f, 20.0f ), m_CheckerboardTexture, 10.0f);
+		Zorlock::Renderer2D::DrawRotatedQuad(VECTOR3( -2.0f, 0.0f, 0.2f ), VECTOR2( 1.0f, 1.0f ), rotation, m_CheckerboardTexture, 20.0f);
 		Zorlock::Renderer2D::EndScene();
 
 		Zorlock::Renderer2D::BeginScene(m_CameraController.GetCamera());
@@ -54,8 +53,8 @@ void Sandbox2D::OnUpdate(Zorlock::Timestep ts)
 		{
 			for (float x = -5.0f; x < 5.0f; x += 0.5f)
 			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Zorlock::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+				COLOR4 color = COLOR4( (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f , 0.7f );
+				Zorlock::Renderer2D::DrawQuad(VECTOR3( x, y ,-0.15f), VECTOR2( 0.45f, 0.45f ), color);
 			}
 		}
 		Zorlock::Renderer2D::EndScene();
@@ -75,7 +74,7 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+	ImGui::ColorEdit4("Square Color", &m_SquareColor.x);
 	ImGui::End();
 }
 

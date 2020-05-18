@@ -7,7 +7,6 @@
 
 #ifndef FMT_CORE_H_
 #define FMT_CORE_H_
-
 #include <cassert>
 #include <cstdio>  // std::FILE
 #include <cstring>

@@ -4,17 +4,25 @@
 namespace Zorlock {
 
 
-	class Camera : GameObject
+	class Camera : public GameObject
 	{
+	public:
 		Camera();
+		Camera(MATRIX4 view, MATRIX4 proj);
 		void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
-		const MATRIX4& GetViewMatrix() const;
-		const MATRIX4& GetProjectionMatrix() const;
+		const MATRIX4& GetProjectionMatrix() const { return projectionMatrix; }
+		const MATRIX4& GetViewMatrix() const { return viewMatrix; }
+		const MATRIX4& GetViewProjectionMatrix() const 
+		{ 
+			return projectionMatrix * viewMatrix;
+			//return MATRIX4::IDENTITY();
+		}
 		void SetLookAtPos(VECTOR3 lookAtPos);
+		virtual void UpdateViewMatrix();
 		~Camera();
 
-	private:
-		void UpdateViewMatrix();
+	protected:
+		
 		MATRIX4 viewMatrix;
 		MATRIX4 projectionMatrix;
 

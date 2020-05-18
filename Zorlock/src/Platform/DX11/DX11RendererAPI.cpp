@@ -41,7 +41,7 @@ namespace Zorlock
 		DX11Raz::RazSetViewport( width, height);
 	}
 
-	void DX11RendererAPI::SetClearColor(const glm::vec4& color)
+	void DX11RendererAPI::SetClearColor(const COLOR4& color)
 	{
 		Window& win = Application::Get().GetWindow();
 		//Need to make all this shit a macro
@@ -49,7 +49,7 @@ namespace Zorlock
 		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
 		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
 
-		DX11Raz::RazSetCLSColor(zhandle->GetDeviceContext(), color.r, color.g, color.b, color.a);
+		DX11Raz::RazSetCLSColor(zhandle->GetDeviceContext(), color.x, color.y, color.z, color.w);
 	}
 
 	void DX11RendererAPI::Clear()

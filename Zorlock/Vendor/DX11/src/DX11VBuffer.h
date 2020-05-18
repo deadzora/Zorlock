@@ -13,6 +13,7 @@ namespace DX11Raz
 	public:
 		RazVertexBuffer();
 		bool SetLayout();
+		bool SetLayout(ID3D10Blob* vertexshader);
 		void Release();		
 		void SetIndex(uint32_t index);
 		void SetIndexValue(UINT index , D3D11_INPUT_ELEMENT_DESC & value);

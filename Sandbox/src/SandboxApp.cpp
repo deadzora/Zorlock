@@ -3,15 +3,15 @@
 
 #include "Sandbox2D.h"
 #include "ExampleLayer.h"
-#include "DX11Layer.h"
+#include "GraphicsTestLayer.h"
 
 class Sandbox : public Zorlock::Application
 {
 public:
 	Sandbox()
 	{
-		//PushLayer(new ExampleLayer());
 		PushLayer(new ExampleLayer());
+		//PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()
