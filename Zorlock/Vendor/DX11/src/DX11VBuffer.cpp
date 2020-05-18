@@ -110,20 +110,21 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 {
 	//assuming raz vertex list
-	std::vector<DX11Raz::RazVertex>* verts = static_cast<std::vector<DX11Raz::RazVertex>*>(vertices);
+	//std::vector<DX11Raz::RazVertex>* verts = static_cast<std::vector<DX11Raz::RazVertex>*>(vertices);
+	if (this->m_buffer != 0) this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
-	buff_desc.ByteWidth = sizeof(RazVertex) * (UINT)verts->size();
+	buff_desc.ByteWidth = size;
 	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	buff_desc.CPUAccessFlags = 0;
 	buff_desc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA init_data = {};
-	init_data.pSysMem = verts->data();
+	init_data.pSysMem = vertices;
 
-	this->m_size_vertex = sizeof(RazVertex);
-	this->m_size_list = (UINT)verts->size();
+	this->m_size_vertex = size;
+
 
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))

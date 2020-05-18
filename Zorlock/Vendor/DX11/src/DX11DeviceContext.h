@@ -19,6 +19,11 @@ namespace DX11Raz
 		bool setstencilstate();
 		bool setsamplerstate();
 		bool setstencilbuffer();
+		void setvertexshader(RazShader* vertex_shader);
+		void setpixelshader(RazShader* pixel_shader);
+		void setvertexbuffer(RazVertexBuffer* vertex_buffer);
+		void setindexbuffer(RazIndexBuffer* index_buffer);
+		void drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
 		bool Release();
 		bool MainRelease();
 		ID3D11DeviceContext* GetContext();

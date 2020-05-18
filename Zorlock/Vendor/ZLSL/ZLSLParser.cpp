@@ -691,14 +691,15 @@ namespace Zorlock {
 				{
 					printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
 					fbf.clear();
-					ParseFunctionBody(func.functionBodySyntax[i].original);
-					printf("Function : %s \n", fbf.name.c_str());
+					ParseFunctionBodyGeneric(func.functionBodySyntax[i].original, 2);
+
+					//ParseFunctionBody(func.functionBodySyntax[i].original);
+					printf("Function : %s nof args %i   \n", fbf.name.c_str(),fbf.arguments.size());
 					std::string newfuncbody = "";
 					bool isarray = false;
 
-							
-					newfuncbody += fbf.arguments[0].varname + ".Sample("+ fbf.arguments[0].varname +"Sampler,";
-					printf("Function : %s \n", newfuncbody.c_str());
+					newfuncbody += fbf.arguments[0].arithmetic + ".Sample("+ fbf.arguments[0].arithmetic +"Sampler,";
+					
 					if (fbf.arguments[0].isArray)
 					{
 						isarray = true;
@@ -706,20 +707,21 @@ namespace Zorlock {
 
 					if (isarray)
 					{
-						newfuncbody += " float3("+ fbf.arguments[0].arithmetic+","+ fbf.arguments[0].val_list[0] + ")) ";
+						newfuncbody += " float3("+ fbf.arguments[1].arithmetic+","+ fbf.arguments[0].val_list[0] + ")) ";
 
 					}
 					else {
-						newfuncbody += fbf.arguments[0].arithmetic + ") ";
+						newfuncbody += fbf.arguments[1].arithmetic + ") ";
 					}
 						
 
-					
+					printf("Function : %s \n", newfuncbody.c_str());
 					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);
+					
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
 				{
-					printf("Process Texture Function : %s \n", func.functionBodySyntax[i].original.c_str());
+					printf("Process Multiply Function : %s \n", func.functionBodySyntax[i].original.c_str());
 					ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
 					lexertk::generator generator;
 					if (generator.process(fbody))
@@ -1009,9 +1011,10 @@ namespace Zorlock {
 				{
 				case VariableTypes::SAMPLER2D:
 				{
-
+					dec[i].index = GetSamplerIndex(dec[i].varname);
 					if (dec[i].isArray)
 					{
+						
 						declares += s_mapHLSLVariables[dec[i].vartype] + "Array " + dec[i].varname + " : TEXTURE : register(t" + std::to_string(GetSamplerIndex(dec[i].varname)) + ");" + EOL;
 						declares += "SamplerState " + dec[i].varname + "Sampler : SAMPLER : register(s" + std::to_string(GetSamplerIndex(dec[i].varname)) + ");" + EOL;
 					}
@@ -1029,6 +1032,7 @@ namespace Zorlock {
 
 				default:
 				{
+					dec[i].index = i;
 					declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(i) + ")" + EOL;
 					declares += "{" + EOL;
 					declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
@@ -1942,11 +1946,42 @@ namespace Zorlock {
 		size_t capturea = 0;
 		size_t captureb = 0;
 		ZLSLDeclaredVariables * var = 0;
-		
+		var = new ZLSLDeclaredVariables();
 		capturea = current_token().position;
 		
 		do {
 			
+
+			if (current_token().type == token_t::e_lsqrbracket)
+			{
+				//beginning of an array, capture variable name
+				captureb = current_token().position;
+				std::string arith = func_def.substr(capturea, captureb - capturea);
+				printf("Arithmetic Arg %s \n", arith.c_str());
+				var->arithmetic = arith;
+
+				size_t capturearr = current_token().position+1;
+				//get array arguments
+				size_t nofsqrbrackets = 1;
+				do {
+					next_token();
+
+					if (current_token().type == token_t::e_lsqrbracket)
+					{
+						nofsqrbrackets++;
+					}
+					if (current_token().type == token_t::e_rsqrbracket)
+					{
+						nofsqrbrackets--;
+					}
+
+				} while (nofsqrbrackets > 0);
+
+				size_t capturearrend = current_token().position;
+				std::string arrayargs = func_def.substr(capturearr, capturearrend - capturearr);
+				var->isArray = true;
+				var->val_list.push_back(arrayargs);
+			}
 
 			if (current_token().type == token_t::e_lbracket)
 			{
@@ -1959,7 +1994,7 @@ namespace Zorlock {
 				if (nofbrackets == 0)
 				{
 					captureb = current_token().position;
-					var = new ZLSLDeclaredVariables();
+					
 
 					std::string arith = func_def.substr(capturea, captureb - capturea);
 					printf("Arithmetic Arg %s \n", arith.c_str());
@@ -1974,16 +2009,18 @@ namespace Zorlock {
 			{
 				if (current_token().type == token_t::e_comma)
 				{
-					captureb = current_token().position-1;
-					var = new ZLSLDeclaredVariables();
-					
-					std::string arith = func_def.substr(capturea, captureb - capturea);
-					printf("Arithmetic Arg %s \n", arith.c_str());
-					var->arithmetic = arith;
-
+					//if is array we already captured the main var name.
+					if (!var->isArray)
+					{
+						captureb = current_token().position;
+						std::string arith = func_def.substr(capturea, captureb - capturea);
+						printf("Arithmetic Arg %s \n", arith.c_str());
+						var->arithmetic = arith;
+					}
 					fd.arguments.push_back(*var);
 					next_token();
 					capturea = current_token().position;
+					var = new ZLSLDeclaredVariables();
 					nofargs--;
 				}
 			}

@@ -128,7 +128,7 @@ namespace Zorlock {
 		camera.UpdateViewMatrix();
 		s_Data.TextureShader->Bind();
 
-		s_Data.TextureShader->SetMat4("u_ViewProjection", (camera.GetProjectionMatrix()* camera.GetViewMatrix()));
+		s_Data.TextureShader->SetMat4("u_ViewProjection", (camera.GetProjectionMatrix() * camera.GetViewMatrix()).transpose());
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

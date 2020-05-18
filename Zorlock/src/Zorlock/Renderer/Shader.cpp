@@ -38,22 +38,28 @@ namespace Zorlock {
 		m_VUniformVars.clear();
 		for (size_t i = 0; i < parser->vertexUniforms.size(); i++)
 		{
-			ShaderVariable s;
-			s.Name = parser->vertexUniforms[i].varname;
-			s.Slot = parser->vertexUniforms[i].index;
-			s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
-			s.Size = ShaderDataTypeSize(s.Type);
-			m_VUniformVars.push_back(s);
+			if (parser->vertexUniforms[i].command == ZLSLParser::VarCommandValue::Uniform)
+			{
+				ShaderVariable s;
+				s.Name = parser->vertexUniforms[i].varname;
+				s.Slot = i;//parser->vertexUniforms[i].index;
+				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
+				s.Size = ShaderDataTypeSize(s.Type);
+				m_VUniformVars.push_back(s);
+			}
 		}
 		m_FUniformVars.clear();
 		for (size_t i = 0; i < parser->pixelUniforms.size(); i++)
 		{
-			ShaderVariable s;
-			s.Name = parser->pixelUniforms[i].varname;
-			s.Slot = parser->pixelUniforms[i].index;
-			s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
-			s.Size = ShaderDataTypeSize(s.Type);
-			m_FUniformVars.push_back(s);
+			if (parser->vertexUniforms[i].command == ZLSLParser::VarCommandValue::Uniform)
+			{
+				ShaderVariable s;
+				s.Name = parser->pixelUniforms[i].varname;
+				s.Slot = i;//parser->pixelUniforms[i].index;
+				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
+				s.Size = ShaderDataTypeSize(s.Type);
+				m_FUniformVars.push_back(s);
+			}
 		}
 		GenerateLayout();
 	}

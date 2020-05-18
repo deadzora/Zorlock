@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Zorlock/Renderer/VertexArray.h"
-#include "Zorlock/Renderer/Shader.h"
+#include "DX11Shader.h"
 
 namespace DX11Raz {
 	class RazVertexBuffer;
@@ -24,11 +24,20 @@ namespace Zorlock {
 
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
+		DX11Raz::RazVertexBuffer* GetVertexBuffer()
+		{
+			return m_RendererID;
+		}
+		DX11Shader* GetShader()
+		{
+			return dxvertexshader;
+		}
 	private:
 		DX11Raz::RazVertexBuffer* m_RendererID;
 		UINT m_VertexBufferIndex = 0;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;
+		DX11Shader* dxvertexshader;
 	};
 
 }

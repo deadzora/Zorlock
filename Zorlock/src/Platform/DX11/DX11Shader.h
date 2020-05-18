@@ -9,6 +9,8 @@ namespace DX11Raz {
 	class RazShader;
 }
 
+
+
 namespace Zorlock {
 
 	class DX11Shader : public Shader
@@ -39,55 +41,10 @@ namespace Zorlock {
 
 		void Compile(std::string vertexshadersource, std::string pixelshadersource);
 
-		template <class T>
-		UINT CreateVertexBufferData(T* bufferblob)
+		DX11Raz::RazShader* GetShader()
 		{
-			
-			return m_RendererID->CreateVertexCB(static_cast<void*>(bufferblob), sizeof(T));
-		};
-
-		template <class T>
-		UINT CreatePixelBufferData(T* bufferblob)
-		{
-			return m_RendererID->CreatePixelCB(static_cast<void*>(bufferblob), sizeof(T));
-		};
-
-		template <class T>
-		void UpdateVertexBufferData(T* bufferblob,UINT index)
-		{
-			m_RendererID->UpdateVertexCB(static_cast<void*>(bufferblob), sizeof(T), UINT index);
-		};
-
-		template <class T>
-		void UpdatePixelBufferData(T* bufferblob, UINT index)
-		{
-			pbufferSize = sizeof(T);
-			m_RendererID->UpdatePixelCB(static_cast<void*>(bufferblob), sizeof(T), UINT index);
-		};
-
-		template <class T>
-		T* SetVertexBufferData(UINT index)
-		{
-			return static_cast<T*>(m_RendererID->GetVertexCBData(index));
-		};
-
-		template <class T>
-		T* SetPixelBufferData(UINT index)
-		{
-			return static_cast<T*>(m_RendererID->GetPixelCBData(index));
-		};
-
-		template <class T>
-		void UploadVertexBufferData(T* bufferblob, UINT index)
-		{
-			m_RendererID->ApplyVertexCB(static_cast<void*>(bufferblob),sizeof(T),index);
-		};
-
-		template <class T>
-		void UploadPixelBufferData(T* bufferblob, UINT index)
-		{
-			m_RendererID->ApplyPixelCB(static_cast<void*>(bufferblob),sizeof(T),index);
-		};
+			return m_RendererID;
+		}
 
 		
 

@@ -1,9 +1,10 @@
 #include "ZLpch.h"
 #include "DX11VertexArray.h"
+#include "DX11Shader.h"
 #include <d3d11.h>
 #include <DX11Raz.h>
 #include <DX11VBuffer.h>
-
+#include <DX11DeviceContext.h>
 
 namespace Zorlock
 {
@@ -42,7 +43,9 @@ namespace Zorlock
 	}
 	void DX11VertexArray::Bind() const
 	{
-		//nothing to do here...since we have a direct reference to the buffer itself no need to make it current for operations
+		//set shader stuff this is all weird place for this imo
+
+
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Unbind() const
@@ -126,14 +129,14 @@ namespace Zorlock
 		m_VertexBuffers.push_back(vertexBuffer);
 		
 		
-		
+		dxvertexshader = static_cast<DX11Shader*>(vertexBuffer->GetShader());
 		//call it after we have layout set in place, need to pass our buffer unlike opengl we are using the same buffer for verts and layout
 		vertexBuffer->Bind(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		indexBuffer->Bind();
+		//indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
 		ZL_PROFILE_FUNCTION();
 	}

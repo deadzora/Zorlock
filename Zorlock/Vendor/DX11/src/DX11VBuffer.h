@@ -7,6 +7,8 @@ namespace DX11Raz
 {
 
 	struct Vertex;
+	class DX11DeviceContext;
+
 
 	class RazVertexBuffer
 	{
@@ -25,6 +27,7 @@ namespace DX11Raz
 		UINT GetVertexListSize();
 		~RazVertexBuffer();
 	private:
+		friend class DX11DeviceContext;
 		UINT m_size_vertex;
 		UINT m_size_list;
 		std::vector<RazVertex> vertices;

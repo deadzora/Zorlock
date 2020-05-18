@@ -1,9 +1,11 @@
 #include "ZLpch.h"
 #include "DX11RendererAPI.h"
 #include <DX11Raz.h>
+#include <DX11DeviceContext.h>
 #include <D3d11sdklayers.h>
 #include "Zorlock/Core/Application.h"
 #include "Platform/Windows/WindowNative.h"
+#include "DX11VertexArray.h"
 namespace Zorlock
 {
 	DX11RendererAPI::DX11RendererAPI()
@@ -70,7 +72,24 @@ namespace Zorlock
 
 	void DX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
-		//not yet
+
+		Window& win = Application::Get().GetWindow();
+		//Need to make all this shit a macro
+
+		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
+		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
+		DX11VertexArray * dxarray = static_cast<DX11VertexArray *>(vertexArray.get());
+		
+
+		dxarray->GetShader()->Apply();
+		zhandle->GetDeviceContext()->setvertexshader(dxarray->GetShader()->GetShader());
+		zhandle->GetDeviceContext()->setpixelshader(dxarray->GetShader()->GetShader());
+		zhandle->GetDeviceContext()->setblendstate();
+		zhandle->GetDeviceContext()->setvertexbuffer(dxarray->GetVertexBuffer());
+		dxarray->GetIndexBuffer()->Bind();
+
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		zhandle->GetDeviceContext()->drawIndexed(count,0,0);
 	}
 
 }

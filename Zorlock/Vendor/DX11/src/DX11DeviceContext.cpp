@@ -1,6 +1,9 @@
 #include "ZLpch.h"
 #include "DX11DeviceContext.h"
 #include "DX11SwapChain.h"
+#include "DX11VBuffer.h"
+#include "DX11IBuffer.h"
+#include "DX11Shaders.h"
 
 namespace DX11Raz
 {
@@ -16,6 +19,7 @@ namespace DX11Raz
 		m_contextswapchain->init(zhandle->GetHWND(), zhandle->GetWidth(), zhandle->GetHeight());
 		setviewportsize(zhandle->GetWidth(), zhandle->GetHeight());
 		createblendstate();
+		initialized = true;
 	}
 
 	void DX11DeviceContext::Flip(bool vsync)
@@ -70,7 +74,7 @@ namespace DX11Raz
 		{
 			//log the error
 		}
-		initialized = true;
+		
 		 
 	}
 
@@ -93,14 +97,19 @@ namespace DX11Raz
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBlendState(&blendDesc, &m_bs);
 		if (FAILED(hr))
 		{
+			OutputDebugString(L"Failed to Create Blend State\r\n");
 			return false;
 		}
+		setblendstate();
 		return true;
 	}
 
 	void DX11DeviceContext::setblendstate()
 	{
-		m_device_context->OMSetBlendState(m_bs, NULL, 0xFFFFFFFF);
+
+			m_device_context->OMSetBlendState(m_bs, NULL, 0xFFFFFFFF);
+		
+
 	}
 
 	bool DX11DeviceContext::setstencilstate()
@@ -113,6 +122,7 @@ namespace DX11Raz
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &m_depth_stencilstate);
 		if (FAILED(hr))
 		{
+			OutputDebugString(L"Failed to Create Depth Stencil State\r\n");
 			ZL_CORE_INFO("Failed to Create Depth Stencil State");
 			return false;
 		}
@@ -135,6 +145,7 @@ namespace DX11Raz
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateSamplerState(&sampler_desc, &m_sampler_state);
 		if (FAILED(hr))
 		{
+			OutputDebugString(L"Failed to Create Sampler State\r\n");
 			ZL_CORE_INFO("Failed to Create Sampler State");
 			return false;
 		}
@@ -160,12 +171,14 @@ namespace DX11Raz
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
 		if (FAILED(hr))
 		{
+			OutputDebugString(L"Failed to Create Depth Surface\r\n");
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
 		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
 		if (FAILED(hr))
 		{
+			OutputDebugString(L"Failed to Create Depth Stencil View\r\n");
 			ZL_CORE_INFO("Failed to Depth Stencil View");
 			return false;
 		}
@@ -173,6 +186,36 @@ namespace DX11Raz
 
 		return true;
 	}
+
+	void DX11DeviceContext::setvertexshader(RazShader* vertex_shader)
+	{
+		m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0);
+	}
+
+	void DX11DeviceContext::setpixelshader(RazShader* pixel_shader)
+	{
+		m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
+	}
+
+	void DX11DeviceContext::setvertexbuffer(RazVertexBuffer* vertex_buffer)
+	{
+		UINT stride = vertex_buffer->m_size_vertex;
+		UINT offset = 0;
+		m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &stride, &offset);
+		m_device_context->IASetInputLayout(vertex_buffer->m_layout);
+	}
+
+	void DX11DeviceContext::setindexbuffer(RazIndexBuffer* index_buffer)
+	{
+		m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0);
+	}
+
+	void DX11DeviceContext::drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
+	{
+		m_device_context->DrawIndexed(index_count, start_vertex_index, base_vertex_location);
+	}
+
+
 
 
 	bool DX11DeviceContext::Release()

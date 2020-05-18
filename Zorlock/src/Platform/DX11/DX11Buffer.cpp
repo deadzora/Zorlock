@@ -5,7 +5,7 @@
 #include "DX11Vertex.h"
 #include "DX11Raz.h"
 #include "DX11Shaders.h"
-
+#include <DX11DeviceContext.h>
 
 namespace Zorlock
 {
@@ -75,7 +75,10 @@ namespace Zorlock
 	void DX11VertexBuffer::SetData(const void* data, uint32_t size)
 	{
 		ZL_PROFILE_FUNCTION();
-		//have no idea what the hell i'm gonna cast to. 
+		void* a = const_cast<void*>(data);
+		float* arr = static_cast<float*>(a);
+		m_RendererID->SetVertices(arr,(UINT)size);
+
 	}
 
 	void DX11VertexBuffer::SetLayout(const BufferLayout& layout)
@@ -132,6 +135,7 @@ namespace Zorlock
 
 	void DX11IndexBuffer::Bind() const
 	{
+		DX11Raz::DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->setindexbuffer(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 
