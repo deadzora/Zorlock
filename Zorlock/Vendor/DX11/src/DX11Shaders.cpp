@@ -200,6 +200,59 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	return 1;
 }
 
+bool DX11Raz::RazShader::CreateTextureBuffer(std::string cbname, UINT slot, UINT buffersize)
+{
+	RazSamplerBuffer* sampler = new RazSamplerBuffer();
+	sampler->varname = cbname;
+	sampler->buffersize = buffersize;
+	sampler->slot = slot;
+	tx_buffer.push_back(sampler);
+	return true;
+}
+
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* tex, ID3D11ShaderResourceView* texturev)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (tname.compare(tx_buffer[i]->varname) == 0)
+		{
+			//delete vc_buffer[i]->data;
+			tx_buffer[i]->texture = tex;
+			tx_buffer[i]->textureview = texturev;
+		}
+	}
+
+	return true;
+}
+
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* tex)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (tname.compare(tx_buffer[i]->varname) == 0)
+		{
+			//delete vc_buffer[i]->data;
+			tx_buffer[i]->texture = tex;
+		}
+	}
+
+	return true;
+}
+
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (tname.compare(tx_buffer[i]->varname) == 0)
+		{
+			//delete vc_buffer[i]->data;
+			tx_buffer[i]->textureview = texturev;
+		}
+	}
+
+	return true;
+}
+
 bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
 {
 

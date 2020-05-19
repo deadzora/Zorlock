@@ -185,6 +185,7 @@ namespace Zorlock {
 		ShaderVarMap[ZLSLParser::VariableTypes::IVEC4] = ShaderDataType::Int4;
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
+		ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
 		ismapped = true;
 	}
 
@@ -246,6 +247,7 @@ namespace Zorlock {
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::IVEC4] = ShaderDataType::Int4;
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
+			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
 			shaderLibrary.ismapped = true;
 		}
 		return &shaderLibrary;

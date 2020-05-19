@@ -10,6 +10,7 @@ namespace Zorlock {
 	{
 	public:
 		DX11Texture2D(uint32_t width, uint32_t height);
+		DX11Texture2D(uint32_t width, uint32_t height, uint32_t color);
 		DX11Texture2D(const std::string& path);
 		virtual ~DX11Texture2D();
 

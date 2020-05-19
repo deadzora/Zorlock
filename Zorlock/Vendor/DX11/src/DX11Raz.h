@@ -54,6 +54,7 @@ namespace DX11Raz
 	RazTexture* RazGetCurrentTexture();
 	RazTexture* RazCreateTexture(const DX11Color& color, aiTextureType type);
 	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type);
+	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type);
 	RazTexture* RazCreateTexture(const wchar_t* filename, aiTextureType type);
 	RazTexture* RazCreateTexture(std::string filename, aiTextureType type);
 	RazTexture* RazCreateTexture(ID3D11ShaderResourceView* textureView, aiTextureType type);

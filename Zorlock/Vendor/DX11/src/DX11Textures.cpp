@@ -35,6 +35,12 @@ namespace DX11Raz
 		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
+	RazTexture::RazTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	{
+		this->InitColorTextureArray(colorData, width, height, size, type);
+		DX11GraphicsEngine::Get()->AddTexture(this);
+	}
+
 	RazTexture::RazTexture(const wchar_t* filename, aiTextureType type)
 	{
 		if (RAZFILEEXISTS(filename))
@@ -185,6 +191,33 @@ namespace DX11Raz
 			textureView = 0;
 			texture = 0;
 			OutputDebugString(L"Failed to Create Shader Resource from Color \r\n");
+		}
+	}
+
+	void RazTexture::InitColorTextureArray(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	{
+		this->type = type;
+		CD3D11_TEXTURE2D_DESC textureDesc(DXGI_FORMAT_R8G8B8A8_UNORM, width, height,size);
+
+		ID3D11Texture2D* p2DTexture = nullptr;
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = colorData;
+		//initData.SysMemPitch = sizeof(DX11Color);
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, &initData, &p2DTexture);
+		if (FAILED(hr))
+		{
+			textureView = 0;
+			texture = 0;
+			OutputDebugString(L"Failed to Create Texture2d array  from Color \r\n");
+		}
+		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
+		CD3D11_SHADER_RESOURCE_VIEW_DESC srcDesc(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, textureDesc.Format,0,0,0,size);
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture, &srcDesc, &textureView);
+		if (FAILED(hr))
+		{
+			textureView = 0;
+			texture = 0;
+			OutputDebugString(L"Failed to Create Texture 2d Array Shader Resource from Color \r\n");
 		}
 	}
 

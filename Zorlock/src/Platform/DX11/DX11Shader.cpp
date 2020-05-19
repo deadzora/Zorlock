@@ -278,7 +278,7 @@ namespace Zorlock
 				{
 				case ShaderDataType::Mat4:
 				{
-					printf("Uniform: %s on slot %i \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
 					break;
 				}
@@ -355,6 +355,12 @@ namespace Zorlock
 				case ShaderDataType::Int:
 				{
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
+					break;
+				}
+				case ShaderDataType::Sampler2D:
+				{
+					m_RendererID->CreateTextureBuffer(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, sizeof(ID3D11ShaderResourceView));
+
 					break;
 				}
 				}

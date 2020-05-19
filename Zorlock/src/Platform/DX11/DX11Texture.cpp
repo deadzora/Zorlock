@@ -13,6 +13,12 @@ namespace Zorlock
 		m_RendererID = DX11Raz::RazCreateTexture(&white, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
 	}
 
+	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height, uint32_t color)
+	{
+		DX11Raz::DX11Color newcolor = DX11Raz::DX11Color(color);
+		m_RendererID = DX11Raz::RazCreateTexture(&newcolor, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
+	}
+
 	DX11Texture2D::DX11Texture2D(const std::string& path) : m_Path(path)
 	{
 		ZL_PROFILE_FUNCTION();

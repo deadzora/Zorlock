@@ -478,6 +478,11 @@ namespace DX11Raz
 		return new RazTexture(colorData, width, height, type);
 	}
 
+	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	{
+		return new RazTexture(colorData, width, height,size, type);
+	}
+
 	RazTexture* RazCreateTexture(const wchar_t* filename, aiTextureType type)
 	{
 		return new RazTexture(filename, type);
