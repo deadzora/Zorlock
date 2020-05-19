@@ -26,6 +26,7 @@ namespace DX11Raz
 		void drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
 		bool Release();
 		bool MainRelease();
+		DX11SwapChain* GetSwapChain();
 		ID3D11DeviceContext* GetContext();
 		~DX11DeviceContext();
 		UINT width;

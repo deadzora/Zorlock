@@ -44,8 +44,7 @@ namespace Zorlock
 	void DX11VertexArray::Bind() const
 	{
 		//set shader stuff this is all weird place for this imo
-
-
+		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Unbind() const
@@ -53,14 +52,18 @@ namespace Zorlock
 		//nothing to do here...since we have a direct reference to the buffer itself no need to disable it for operations
 		ZL_PROFILE_FUNCTION();
 	}
+	void DX11VertexArray::DX11Bind()
+	{
+		m_RendererID = DX11Raz::RazGetCurrentVertexBuffer();
+	}
 	void DX11VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		if (vertexBuffer->GetLayout().GetElements().size() == 0) return;
-		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		vertexBuffer->Bind(m_RendererID);
+		vertexBuffer->Bind();
+		DX11Bind();
 		const auto& layout = vertexBuffer->GetLayout();
 		int index = 0;
 		for (const auto& element : layout)
@@ -131,12 +134,13 @@ namespace Zorlock
 		
 		dxvertexshader = static_cast<DX11Shader*>(vertexBuffer->GetShader());
 		//call it after we have layout set in place, need to pass our buffer unlike opengl we are using the same buffer for verts and layout
-		vertexBuffer->Bind(m_RendererID);
+		
+		vertexBuffer->Bind();
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
-		//indexBuffer->Bind();
+		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
 		ZL_PROFILE_FUNCTION();
 	}

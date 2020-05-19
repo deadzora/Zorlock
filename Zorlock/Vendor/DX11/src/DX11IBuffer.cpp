@@ -4,6 +4,7 @@
 
 DX11Raz::RazIndexBuffer::RazIndexBuffer() : m_buffer(0)
 {
+	DX11GraphicsEngine::Get()->AddIndexBuffer(this);
 }
 
 void DX11Raz::RazIndexBuffer::Release()

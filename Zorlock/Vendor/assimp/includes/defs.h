@@ -45,12 +45,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  @brief Assimp build configuration setup. See the notes in the comment
  *  blocks to find out how to customize _your_ Assimp build.
  */
-
+#include "ZLpch.h"
 #pragma once
 #ifndef AI_DEFINES_H_INC
 #define AI_DEFINES_H_INC
 
-#include <assimp/config.h>
+#include <config.h>
 
 //////////////////////////////////////////////////////////////////////////
 /* Define ASSIMP_BUILD_NO_XX_IMPORTER to disable a specific

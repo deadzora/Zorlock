@@ -124,7 +124,7 @@ namespace DX11Raz
 		ID3D11ShaderResourceView* GetTexture();
 		ID3D11ShaderResourceView** GetTextureAddress();
 		void Release();
-		~RazTexture() = default;
+		~RazTexture();
 	private:
 		void Init1x1ColorTexture(const DX11Color& color, aiTextureType type);
 		void InitColorTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type);

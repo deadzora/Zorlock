@@ -5,6 +5,7 @@
 
 DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_vertex(0), m_size_list(0)
 {
+	DX11GraphicsEngine::Get()->AddVertexBuffer(this);
 }
 
 bool DX11Raz::RazVertexBuffer::SetLayout()
@@ -28,7 +29,7 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 
 bool DX11Raz::RazVertexBuffer::SetLayout(ID3D10Blob* vshader)
 {
-	//Bind without Shader, very unoptimized way to bind layouts, data may get reinterpreted wrong with different shaders if the inputs do not match exactly.
+	
 	size_t size_layout = vlayout.size();
 	char buffer[100];
 	sprintf(buffer, "LayoutSize %zi \r\n", vlayout.size());
@@ -73,11 +74,11 @@ void DX11Raz::RazVertexBuffer::SetIndexValue(UINT index, D3D11_INPUT_ELEMENT_DES
 	vlayout[index] = value;
 }
 
-void DX11Raz::RazVertexBuffer::SetVertices(uint32_t size)
+void DX11Raz::RazVertexBuffer::SetVertices(UINT size)
 {
-
-	//no;
-
+	//UINT count = size / sizeof(float);
+	//float* arr = new float[count];
+	//SetVertices(&arr, size);
 }
 
 void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
@@ -109,8 +110,7 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 
 void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 {
-	//assuming raz vertex list
-	//std::vector<DX11Raz::RazVertex>* verts = static_cast<std::vector<DX11Raz::RazVertex>*>(vertices);
+
 	if (this->m_buffer != 0) this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};

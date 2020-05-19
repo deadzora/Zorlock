@@ -11,30 +11,35 @@ namespace Zorlock
 {
 	DX11VertexBuffer::DX11VertexBuffer() : m_RendererID(0)
 	{
+		m_RendererID = DX11Raz::RazCreateVertexBuffer();
 	}
 	DX11VertexBuffer::DX11VertexBuffer(uint32_t size) : m_RendererID(0)
 	{
 		//this function basically just checks the vector list 
 		//for the index, if its below the size, then it resizes. 
 		//so we pass -1 because the resize +1.
-		uint32_t newsize = size - 1;
-		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		m_RendererID->SetVertices(newsize);
 		ZL_PROFILE_FUNCTION();
+		m_RendererID = DX11Raz::RazCreateVertexBuffer();
+		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
+		DX11Raz::RazBindVertices(size);
+
+
 	}
 
 	DX11VertexBuffer::DX11VertexBuffer(float* vertices, uint32_t size)
 	{
-		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		m_RendererID->SetVertices(vertices, size);
 		ZL_PROFILE_FUNCTION();
+		m_RendererID = DX11Raz::RazCreateVertexBuffer();
+		DX11Raz::RazBindVertices(m_RendererID, vertices, size);
+
 	}
 
 	DX11VertexBuffer::DX11VertexBuffer(void* vertices, uint32_t size)
 	{
-		//std::vector<DX11Raz::RazVertex>* v = static_cast<std::vector<DX11Raz::RazVertex>*>(vertices);
+		ZL_PROFILE_FUNCTION();
 		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		m_RendererID->SetVertices(vertices, size);
+		DX11Raz::RazBindVertices(m_RendererID,vertices, size);
+
 	}
 	/*
 	DX11VertexBuffer::DX11VertexBuffer(void* vertices)
@@ -47,51 +52,51 @@ namespace Zorlock
 
 	DX11VertexBuffer::~DX11VertexBuffer()
 	{
-		m_RendererID->Release();
-
 		ZL_PROFILE_FUNCTION();
+		RazDeleteVertexBuffer(m_RendererID);
+
 	}
 
 	void DX11VertexBuffer::Bind() const
 	{
 		ZL_PROFILE_FUNCTION();
+		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
+
 	}
 
 	void DX11VertexBuffer::Bind(void* buffer)
 	{
 		ZL_PROFILE_FUNCTION();
-		m_RendererID = static_cast<DX11Raz::RazVertexBuffer*>(buffer);
+		//m_RendererID = static_cast<DX11Raz::RazVertexBuffer*>(buffer);
+		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
 		
 	}
 
-
-
 	void DX11VertexBuffer::Unbind() const
 	{
-		
 		ZL_PROFILE_FUNCTION();
+		DX11Raz::RazSetCurrentVertexBuffer(0);
+
 	}
 
 	void DX11VertexBuffer::SetData(const void* data, uint32_t size)
 	{
 		ZL_PROFILE_FUNCTION();
 		void* a = const_cast<void*>(data);
-		float* arr = static_cast<float*>(a);
-		m_RendererID->SetVertices(arr,(UINT)size);
-
+		DX11Raz::RazBindVertices(m_RendererID, a, size);
 	}
 
 	void DX11VertexBuffer::SetLayout(const BufferLayout& layout)
 	{
-		 m_Layout = layout; 
-		 if (vertexshader != nullptr)
-		 {
+		ZL_PROFILE_FUNCTION();
+		m_Layout = layout; 
+		DX11Raz::RazSetLayout(m_RendererID);
 
-		 }
 	}
 
 	void DX11VertexBuffer::SetLayout(const BufferLayout& layout, Shader* shader)
 	{
+		ZL_PROFILE_FUNCTION();
 		m_Layout = layout;
 		vertexshader = shader;
 
@@ -99,15 +104,12 @@ namespace Zorlock
 
 	void DX11VertexBuffer::ApplyLayout() const
 	{
-		if (vertexshader != nullptr)
+		ZL_PROFILE_FUNCTION();
+		if (m_RendererID != 0)
 		{
-			if (m_RendererID != 0)
-			{
-				DX11Raz::RazShader* vshader = static_cast<DX11Raz::RazShader*>(vertexshader->GetShaderID());
-
-				m_RendererID->SetLayout(vshader->GetBuffer());
-			}
+			DX11Raz::RazSetLayout(m_RendererID);
 		}
+		
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -118,6 +120,8 @@ namespace Zorlock
 	DX11IndexBuffer::DX11IndexBuffer(uint32_t* indices, uint32_t count) : m_Count(count)
 	{
 		m_RendererID = DX11Raz::RazCreateIndexBuffer();
+		DX11Raz::RazSetCurrentIndexBuffer(m_RendererID);
+
 		m_RendererID->SetIndexes(indices,count);
 		ZL_PROFILE_FUNCTION();
 	}
@@ -135,7 +139,8 @@ namespace Zorlock
 
 	void DX11IndexBuffer::Bind() const
 	{
-		DX11Raz::DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->setindexbuffer(m_RendererID);
+		DX11Raz::RazSetCurrentIndexBuffer(m_RendererID);
+		DX11Raz::RazBindIndexBuffer();
 		ZL_PROFILE_FUNCTION();
 	}
 

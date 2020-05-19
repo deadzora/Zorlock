@@ -10,7 +10,7 @@ namespace Zorlock
 	DX11Context::DX11Context(DX11Raz::ZWindow* windowHandle) : m_WindowHandle(windowHandle)
 	{
 		ZL_CORE_ASSERT(windowHandle, "Window handle is null!");
-		//We have the Window!
+
 	}
 
 	void DX11Context::Init()
@@ -22,9 +22,11 @@ namespace Zorlock
 
 	void DX11Context::SwapBuffers()
 	{
-		m_WindowHandle->GetDeviceContext()->Flip(true);
-		//No VSync?
-		//DX11Raz::DX11GraphicsEngine::Get()->Flip(true);
+		if (m_WindowHandle->GetDeviceContext() != nullptr)
+		{
+			DX11Raz::RazSetCurrentContext(m_WindowHandle->GetDeviceContext());
+			DX11Raz::RazFlip(true);
+		}
 	}
 
 

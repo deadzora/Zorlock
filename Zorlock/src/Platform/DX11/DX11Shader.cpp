@@ -87,19 +87,20 @@ namespace Zorlock
 	DX11Shader::~DX11Shader()
 	{
 		ZL_PROFILE_FUNCTION();
-		m_RendererID->Release();
+		DX11Raz::RazDeleteShader(m_RendererID);
 	}
 
 	void DX11Shader::Bind() const
 	{
 		ZL_PROFILE_FUNCTION();
-		//Use this to pass uniformbuffers
+		DX11Raz::RazSetCurrentShader(m_RendererID);
+
 	}
 
 	void DX11Shader::Unbind() const
 	{
 		ZL_PROFILE_FUNCTION();
-		//no
+		DX11Raz::RazSetCurrentShader(0);
 	}
 
 	void DX11Shader::Apply() const

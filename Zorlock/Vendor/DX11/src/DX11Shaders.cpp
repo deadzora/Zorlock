@@ -6,6 +6,7 @@
 
 DX11Raz::RazShader::RazShader() : mv_buffer(0), mp_buffer(0), m_ps(0), m_vs(0), pc_buffer(0), vc_buffer(0)
 {
+	DX11GraphicsEngine::Get()->AddShader(this);
 }
 
 DX11Raz::RazShader::~RazShader()

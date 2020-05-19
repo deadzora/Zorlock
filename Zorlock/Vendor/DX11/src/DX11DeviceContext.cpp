@@ -226,7 +226,7 @@ namespace DX11Raz
 		m_depth_stecil_buffer->Release();
 		m_depth_stencilstate->Release();
 		m_sampler_state->Release();
-		m_contextswapchain->release();
+		m_contextswapchain->Release();
 		delete this;
 		return true;
 	}
@@ -238,6 +238,11 @@ namespace DX11Raz
 
 		delete this;
 		return true;
+	}
+
+	DX11SwapChain* DX11DeviceContext::GetSwapChain()
+	{
+		return m_contextswapchain;
 	}
 
 	ID3D11DeviceContext* DX11DeviceContext::GetContext()

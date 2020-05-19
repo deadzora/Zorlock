@@ -5,8 +5,7 @@ namespace DX11Raz
 {
 	DX11SwapChain::DX11SwapChain()
 	{
-
-
+		DX11GraphicsEngine::Get()->AddSwapChain(this);
 	}
 
 	bool DX11SwapChain::init(HWND hwnd, UINT width, UINT height)
@@ -64,13 +63,14 @@ namespace DX11Raz
 		return true;
 	}
 
-	bool DX11SwapChain::release()
+	bool DX11SwapChain::Release()
 	{
 		m_rtv->Release();
 		m_swapchain->Release();
 		delete this;
 		return true;
 	}
+
 
 	ID3D11RenderTargetView* DX11SwapChain::GetRenderTargetView()
 	{

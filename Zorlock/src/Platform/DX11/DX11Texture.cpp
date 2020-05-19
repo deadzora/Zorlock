@@ -1,4 +1,5 @@
 #include "ZLpch.h"
+#include "DX11Raz.h"
 #include "DX11Texture.h"
 
 
@@ -7,15 +8,20 @@ namespace Zorlock
 	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
 		ZL_PROFILE_FUNCTION();
+		DX11Raz::DX11Color white = DX11Raz::White;
+
+		m_RendererID = DX11Raz::RazCreateTexture(&white, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
 	}
 
 	DX11Texture2D::DX11Texture2D(const std::string& path) : m_Path(path)
 	{
 		ZL_PROFILE_FUNCTION();
+		m_RendererID = DX11Raz::RazCreateTexture(path, aiTextureType::aiTextureType_DIFFUSE);
 	}
 
 	DX11Texture2D::~DX11Texture2D()
 	{
+		DX11Raz::RazSetDeleteTexture(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 
@@ -27,6 +33,7 @@ namespace Zorlock
 
 	void DX11Texture2D::Bind(uint32_t slot) const
 	{
+		//DX11Raz::RazSetCurrentTexture(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 

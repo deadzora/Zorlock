@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "DX11RendererAPI.h"
 #include <DX11Raz.h>
+#include <DX11Shaders.h>
 #include <DX11DeviceContext.h>
 #include <D3d11sdklayers.h>
 #include "Zorlock/Core/Application.h"
@@ -12,26 +13,7 @@ namespace Zorlock
 	{
 		DX11Raz::RazDX11Initialize();
 	}
-	/*
-	bool DX11MessageCallback(void* p)
-	{
-		ID3D11InfoQueue* pInfoQueue = PID3D11InfoQueue(p);
-		SIZE_T messageLength = 0;
-		HRESULT hr = pInfoQueue->GetMessage(0, NULL, &messageLength);
-		D3D11_MESSAGE* pMessage = (D3D11_MESSAGE*)malloc(messageLength);
-		hr = pInfoQueue->GetMessage(0, pMessage, &messageLength);
-		switch (pMessage->Severity)
-		{
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_ERROR:         ZL_CORE_CRITICAL(pMessage); return true;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_WARNING:       ZL_CORE_ERROR(pMessage); return false;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_INFO:          ZL_CORE_WARN(pMessage); return false;
-		case D3D11_MESSAGE_SEVERITY::D3D11_MESSAGE_SEVERITY_MESSAGE: ZL_CORE_TRACE(pMessage); return true;
-		}
 
-		
-		return true;
-	}
-	*/
 	void DX11RendererAPI::Init()
 	{
 		
@@ -45,24 +27,12 @@ namespace Zorlock
 
 	void DX11RendererAPI::SetClearColor(const COLOR4& color)
 	{
-		Window& win = Application::Get().GetWindow();
-		//Need to make all this shit a macro
-
-		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
-		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
-
-		DX11Raz::RazSetCLSColor(zhandle->GetDeviceContext(), color.x, color.y, color.z, color.w);
+		DX11Raz::RazSetCLSColor(DX11Raz::RazGetCurrentContext(), color.x, color.y, color.z, color.w);
 	}
 
 	void DX11RendererAPI::Clear()
 	{
-		Window& win = Application::Get().GetWindow();
-		//Need to make all this shit a macro
-
-		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
-		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
-
-		DX11Raz::RazCLS(zhandle->GetDeviceContext());
+		DX11Raz::RazCLS(DX11Raz::RazGetCurrentContext());
 	}
 
 	void DX11RendererAPI::Release()
@@ -71,25 +41,15 @@ namespace Zorlock
 	}
 
 	void DX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
-	{
-
-		Window& win = Application::Get().GetWindow();
-		//Need to make all this shit a macro
-
-		WindowsNative* whandle = static_cast<WindowsNative*>(&win);
-		DX11Raz::ZWindow* zhandle = static_cast<DX11Raz::ZWindow*>(whandle->GetNativeWindow());
-		DX11VertexArray * dxarray = static_cast<DX11VertexArray *>(vertexArray.get());
-		
-
-		dxarray->GetShader()->Apply();
-		zhandle->GetDeviceContext()->setvertexshader(dxarray->GetShader()->GetShader());
-		zhandle->GetDeviceContext()->setpixelshader(dxarray->GetShader()->GetShader());
-		zhandle->GetDeviceContext()->setblendstate();
-		zhandle->GetDeviceContext()->setvertexbuffer(dxarray->GetVertexBuffer());
-		dxarray->GetIndexBuffer()->Bind();
-
+	{		
+		DX11Raz::RazApplyVertexShaderConstants();
+		DX11Raz::RazApplyPixelShaderConstants();
+		DX11Raz::RazApplyShader();
+		DX11Raz::RazSetBlendState();
+		vertexArray->Bind();
+		vertexArray->GetIndexBuffer()->Bind();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-		zhandle->GetDeviceContext()->drawIndexed(count,0,0);
+		DX11Raz::RazDrawIndexed(count, 0, 0);
 	}
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Zorlock/Renderer/Texture.h"
-
+#include <DX11Textures.h>
 #include <d3d11.h>
 
 namespace Zorlock {
@@ -27,7 +27,7 @@ namespace Zorlock {
 	private:
 		std::string m_Path;
 		uint32_t m_Width, m_Height;
-		uint32_t m_RendererID;
+		DX11Raz::RazTexture * m_RendererID;
 		DXGI_FORMAT m_InternalFormat, m_DataFormat;
 	};
 

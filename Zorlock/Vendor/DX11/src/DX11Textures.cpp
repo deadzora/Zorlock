@@ -26,11 +26,13 @@ namespace DX11Raz
 	RazTexture::RazTexture(const DX11Color& color, aiTextureType type)
 	{
 		this->Init1x1ColorTexture(color, type);
+		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
 	RazTexture::RazTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type)
 	{
 		this->InitColorTexture(colorData, width, height, type);
+		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
 	RazTexture::RazTexture(const wchar_t* filename, aiTextureType type)
@@ -43,8 +45,8 @@ namespace DX11Raz
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load DDS Texture \r\n");
-
-					return;
+					this->textureView->GetResource(&this->texture);
+					
 				}
 			}
 			else
@@ -54,17 +56,21 @@ namespace DX11Raz
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load Texture \r\n");
-					return;
+					this->textureView->GetResource(&this->texture);
 				}
 			}
+			
+			
 		}
 		else {
-			return;
+			textureView = 0;
+			texture = 0;
+			
 		}
 
+		DX11GraphicsEngine::Get()->AddTexture(this);
 
 
-		return;
 	}
 
 	RazTexture::RazTexture(std::string filename, aiTextureType type)
@@ -78,7 +84,7 @@ namespace DX11Raz
 				{
 					OutputDebugString(L"Failed to Load DDS Texture \r\n");
 					
-					return;
+					this->textureView->GetResource(&this->texture);
 				}
 			}
 			else
@@ -88,17 +94,19 @@ namespace DX11Raz
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load Texture \r\n");
-					return;
+					this->textureView->GetResource(&this->texture);
 				}
 			}
+			
 		}
 		else {
-			return;
+			textureView = 0;
+			texture = 0;
 		}
 
+		DX11GraphicsEngine::Get()->AddTexture(this);
 
 
-		return;
 	}
 
 	RazTexture::RazTexture(ID3D11ShaderResourceView* textureView, aiTextureType type)
@@ -106,6 +114,7 @@ namespace DX11Raz
 		this->type = type;
 		this->textureView = textureView;
 		this->textureView->GetResource(&this->texture);
+		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
 	RazTexture::RazTexture(const uint8_t* pData, size_t size, aiTextureType type)
@@ -116,7 +125,11 @@ namespace DX11Raz
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Texture \r\n");
+			textureView = 0;
+			texture = 0;
 		}
+
+		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
 	aiTextureType RazTexture::GetType()
@@ -136,6 +149,12 @@ namespace DX11Raz
 
 	void RazTexture::Release()
 	{
+		if(textureView != 0) textureView->Release();
+		if (texture != 0) texture->Release();
+	}
+
+	RazTexture::~RazTexture()
+	{
 	}
 
 	void RazTexture::Init1x1ColorTexture(const DX11Color& color, aiTextureType type)
@@ -154,6 +173,8 @@ namespace DX11Raz
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, &initData, &p2DTexture);
 		if (FAILED(hr))
 		{
+			textureView = 0;
+			texture = 0;
 			OutputDebugString(L"Failed to Create Texture from Color \r\n");
 		}
 		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
@@ -161,6 +182,8 @@ namespace DX11Raz
 		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture, &srcDesc, &textureView);
 		if (FAILED(hr))
 		{
+			textureView = 0;
+			texture = 0;
 			OutputDebugString(L"Failed to Create Shader Resource from Color \r\n");
 		}
 	}
