@@ -16,7 +16,8 @@ namespace DX11Raz
 		RazVertexBuffer();
 		bool SetLayout();
 		bool SetLayout(ID3D10Blob* vertexshader);
-		void Release();		
+		void Release();	
+		void SetStride(UINT s);
 		void SetIndex(uint32_t index);
 		void SetIndexValue(UINT index , D3D11_INPUT_ELEMENT_DESC & value);
 		void SetVertices(UINT size);

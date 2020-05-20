@@ -26,5 +26,5 @@ private:
 	Zorlock::Ref<Zorlock::Texture2D> m_Texture, m_ChernoLogoTexture;
 
 	Zorlock::OrthographicCameraController m_CameraController;
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	Zorlock::COLOR m_SquareColor = { 1.0, 0.8f, 0.9f };
 };

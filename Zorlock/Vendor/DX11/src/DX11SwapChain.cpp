@@ -3,7 +3,7 @@
 
 namespace DX11Raz
 {
-	DX11SwapChain::DX11SwapChain()
+	DX11SwapChain::DX11SwapChain() : m_rtv(0), m_swapchain(0)
 	{
 		DX11GraphicsEngine::Get()->AddSwapChain(this);
 	}
@@ -65,9 +65,16 @@ namespace DX11Raz
 
 	bool DX11SwapChain::Release()
 	{
-		m_rtv->Release();
-		m_swapchain->Release();
-		delete this;
+		if (&m_rtv != NULL)
+		{
+			//m_rtv->Release();
+		}
+		if (m_swapchain != NULL)
+		{
+			//m_swapchain->Release();
+		}
+		//m_swapchain->Release();
+		//delete this;
 		return true;
 	}
 

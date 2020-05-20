@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "DX11VertexArray.h"
 #include "DX11Shader.h"
+#include "DX11Buffer.h"
 #include <d3d11.h>
 #include <DX11Raz.h>
 #include <DX11VBuffer.h>
@@ -89,13 +90,10 @@ namespace Zorlock
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
 				l.AlignedByteOffset = (index==0) ? 0 : element.Offset;
-				printf("Stride is actually %u !!", l.AlignedByteOffset);
 				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
-				char buffer[100];
-				sprintf(buffer, "Layout NAME %s FORMAT %i INDEX %i STRIDE %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, layout.GetStride());
-				OutputDebugStringA(buffer);
+				printf("Layout NAME %s FORMAT %i INDEX %i OFFSET %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, element.Offset);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -108,8 +106,6 @@ namespace Zorlock
 					m_RendererID->SetIndex(m_VertexBufferIndex);
 					D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
 					char buffer[100];
-					sprintf(buffer, "Layout NAME %s\r\n", element.Name.c_str());
-					OutputDebugStringA(buffer);
 					l.SemanticName = element.Name.c_str();
 					l.SemanticIndex = count;
 					l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
@@ -128,9 +124,11 @@ namespace Zorlock
 			
 			index++;
 		}
-
+		
 		vertexBuffer->ApplyLayout();
-
+		DX11VertexBuffer * vbuffer = static_cast<DX11VertexBuffer*>(vertexBuffer.get());
+		printf("Stride: %u \n", layout.GetStride());
+		vbuffer->SetStride(static_cast<UINT>(layout.GetStride()));
 		m_VertexBuffers.push_back(vertexBuffer);
 		
 		

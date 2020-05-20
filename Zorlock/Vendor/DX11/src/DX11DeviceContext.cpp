@@ -53,12 +53,12 @@ namespace DX11Raz
 
 		
 		D3D11_VIEWPORT vp = {};
-		vp.Width = 1280;
-		vp.Height = 720;
+		vp.Width = width;
+		vp.Height = height;
 		vp.MinDepth = 0.0;
 		vp.MaxDepth = 1.0;
-		this->width = 1280;
-		this->height = 720;
+		this->width = width;
+		this->height = height;
 		m_device_context->RSSetViewports(1, &vp);
 
 
@@ -199,7 +199,7 @@ namespace DX11Raz
 
 	void DX11DeviceContext::setvertexbuffer(RazVertexBuffer* vertex_buffer)
 	{
-		UINT stride = vertex_buffer->m_size_vertex;
+		
 		
 		UINT offset = 0;
 		m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &vertex_buffer->stride, &offset);

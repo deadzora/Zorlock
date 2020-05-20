@@ -78,6 +78,37 @@ namespace DX11Raz
 
 	void DX11GraphicsEngine::Release()
 	{
+		printf("Graphics Shutdown \n");
+		for (size_t i = 0; i < shaders.size(); i++)
+		{
+			shaders[i]->Release();
+		}
+		for (size_t i = 0; i < vbuffers.size(); i++)
+		{
+			vbuffers[i]->Release();
+
+		}
+		for (size_t i = 0; i < ibuffers.size(); i++)
+		{
+			ibuffers[i]->Release();
+
+		}
+		for (size_t i = 0; i < textures.size(); i++)
+		{
+			textures[i]->Release();
+
+		}
+		for (size_t i = 0; i < contexts.size(); i++)
+		{
+			contexts[i]->Release();
+
+		}
+		for (size_t i = 0; i < swapchains.size(); i++)
+		{
+			swapchains[i]->Release();
+		}
+
+
 		m_d3d_device->Release();
 		m_dxgi_device->Release();
 		m_dxgi_adapter->Release();

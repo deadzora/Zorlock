@@ -425,18 +425,18 @@ namespace Zorlock {
 			case ShaderSection::VERTEXSHADER:
 			{
 				//start with constant buffer declares
-				shaderFile += ReturnHLSLDeclares(vertexUniforms);
+				shaderFile += ReturnHLSLDeclares(vertexUniforms,true);
 				//next add with some var declares
-				shaderFile += ReturnHLSLDeclares(vertexVars);
+				shaderFile += ReturnHLSLDeclares(vertexVars,true);
 				//start with layout declares
 				shaderFile += "struct VS_INPUT" + EOL;
 				shaderFile += "{" + EOL;
-				shaderFile += ReturnHLSLDeclares(vlayoutVars);
+				shaderFile += ReturnHLSLDeclares(vlayoutVars,true);
 				shaderFile += "};" + EOL;
 				//Next add output declares
 				shaderFile += "struct VS_OUTPUT" + EOL;
 				shaderFile += "{" + EOL;
-				shaderFile += ReturnHLSLDeclares(voutVars);
+				shaderFile += ReturnHLSLDeclares(voutVars,true);
 				shaderFile += "};" + EOL;
 				//Next add functions
 				shaderFile += ReturnHLSLFunctions(vertexFunctions, true);
@@ -445,17 +445,17 @@ namespace Zorlock {
 			case ShaderSection::FRAGMENTSHADER:
 			{
 				//start with constant buffer declares
-				shaderFile += ReturnHLSLDeclares(pixelUniforms);
+				shaderFile += ReturnHLSLDeclares(pixelUniforms,false);
 				//next add with some var declares
-				shaderFile += ReturnHLSLDeclares(pixelVars);
+				shaderFile += ReturnHLSLDeclares(pixelVars,false);
 				//start with input declares
 				shaderFile += "struct VS_INPUT" + EOL;
 				shaderFile += "{" + EOL;
-				shaderFile += ReturnHLSLDeclares(voutVars);
+				shaderFile += ReturnHLSLDeclares(voutVars,false);
 				shaderFile += "};" + EOL;
 				//Next add functions
 
-				shaderFile += "/* Change function body return type to " + ReturnHLSLDeclares(playoutVars);
+				shaderFile += "/* Change function body return type to " + ReturnHLSLDeclares(playoutVars,false);
 				shaderFile += "*/" + EOL;
 				shaderFile += ReturnHLSLFunctions(pixelFunctions, false);
 				break;
@@ -682,7 +682,7 @@ namespace Zorlock {
 							ReplaceAll(fbody, "{", "");
 							ReplaceAll(fbody, "}", "");
 							ReplaceAll(fbody, func.functionBodySyntax[i].original, zr);
-							fbody = "{" + EOL + ReturnHLSLDeclares(playoutVars) + EOL + fbody + EOL + "}" + EOL;
+							fbody = "{" + EOL + ReturnHLSLDeclares(playoutVars,false) + EOL + fbody + EOL + "}" + EOL;
 						}
 						
 					}
@@ -964,7 +964,7 @@ namespace Zorlock {
 		return declares;
 	}
 
-	std::string ZLSLParser::ReturnHLSLDeclares(std::vector<ZLSLDeclaredVariables> dec)
+	std::string ZLSLParser::ReturnHLSLDeclares(std::vector<ZLSLDeclaredVariables> dec,bool isvert)
 	{
 		std::string declares;
 		std::string EOL = "\n";
@@ -1032,11 +1032,27 @@ namespace Zorlock {
 
 				default:
 				{
+
 					dec[i].index = i;
-					declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(i) + ")" + EOL;
+					if (isvert)
+					{
+						declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(vertexuniformcount) + ")" + EOL;
+					}
+					else {
+						declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(vertexuniformcount+ fragmentuniformcount) + ")" + EOL;
+					}
+					
 					declares += "{" + EOL;
 					declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
 					declares += "};" + EOL;
+					if (isvert)
+					{
+						vertexuniformcount++;
+					}
+					else {
+						fragmentuniformcount++;
+					}
+
 					break;
 				}
 				}

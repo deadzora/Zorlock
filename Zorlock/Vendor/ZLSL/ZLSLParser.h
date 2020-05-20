@@ -361,7 +361,7 @@ namespace Zorlock
 		bool parse_variable_decl_definition(std::string& var_def, variable_decl_definition& fd);
 		std::string ParsevariableDeclares(std::string residual, variable_decl_definition& vd, function_definition& fd, syntax_definition& fbd);
 		std::string ReturnGLSLDeclares(std::vector<ZLSLDeclaredVariables> dec);
-		std::string ReturnHLSLDeclares(std::vector<ZLSLDeclaredVariables> dec);
+		std::string ReturnHLSLDeclares(std::vector<ZLSLDeclaredVariables> dec, bool isvert);
 		std::string ReturnGLSLFunctions(std::vector<ZLSLFunctions> funcs, bool isvert);
 		std::string ReturnHLSLFunctions(std::vector<ZLSLFunctions> funcs, bool isvert);
 		std::string ReturnGLSLFunctionBody(ZLSLFunctions func, bool isvert);
@@ -397,7 +397,9 @@ namespace Zorlock
 		functionbodyfunc_definition& ParseFunctionBody(std::string func);
 		std::string GetShader(OutPutShaderType output, ShaderSection section);
 		void SaveShader(std::string shaderdata, std::string shaderfile);
-		
+		unsigned int vertexuniformcount = 0;
+		unsigned int fragmentuniformcount = 0;
+
 
 		std::vector<ZLSLDeclaredVariables> vertexVars;
 		std::vector<ZLSLDeclaredVariables> vertexUniforms;

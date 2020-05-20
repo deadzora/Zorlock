@@ -329,41 +329,49 @@ namespace Zorlock
 				{
 				case ShaderDataType::Mat4:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
 					break;
 				}
 				case ShaderDataType::Mat3:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX3(), sizeof(MATRIX3));
 					break;
 				}
 				case ShaderDataType::Float4:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR4(), sizeof(VECTOR4));
 					break;
 				}
 				case ShaderDataType::Float3:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR3(), sizeof(VECTOR3));
 					break;
 				}
 				case ShaderDataType::Float2:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR2(), sizeof(VECTOR2));
 					break;
 				}
 				case ShaderDataType::Float:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new float(1.0f), sizeof(float));
 					break;
 				}
 				case ShaderDataType::Int:
 				{
+					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
 					break;
 				}
 				case ShaderDataType::Sampler2D:
 				{
+					printf("Shader texture var: %s ", m_FUniformVars[i].Name.c_str());
 					m_RendererID->CreateTextureBuffer(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, sizeof(ID3D11ShaderResourceView));
 
 					break;

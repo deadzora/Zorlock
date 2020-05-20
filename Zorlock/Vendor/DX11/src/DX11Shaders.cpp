@@ -16,10 +16,10 @@ DX11Raz::RazShader::~RazShader()
 
 void DX11Raz::RazShader::Release()
 {
-	if (mv_buffer != 0)mv_buffer->Release();
-	if (mp_buffer != 0)mp_buffer->Release();
-	if (m_ps != 0)m_ps->Release();
-	if (m_vs != 0)m_vs->Release();
+	//if (mv_buffer != 0)mv_buffer->Release();
+	//if (mp_buffer != 0)mp_buffer->Release();
+	//if (m_ps != 0)m_ps->Release();
+	//if (m_vs != 0)m_vs->Release();
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
 		
@@ -27,13 +27,16 @@ void DX11Raz::RazShader::Release()
 		
 	}
 	pc_buffer.clear();
-	for (size_t i = 0; i < vc_buffer.size(); i++)
+	if (&vc_buffer != NULL)
 	{
+		for (size_t i = 0; i < vc_buffer.size(); i++)
+		{
 
-		vc_buffer[i]->Release();
+			vc_buffer[i]->Release();
+		}
+		vc_buffer.clear();
 	}
-	vc_buffer.clear();
-	delete this;
+	//delete this;
 }
 
 bool DX11Raz::RazShader::InitVertex(const wchar_t* filename)
@@ -292,10 +295,10 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 {
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
-		if (cbname.compare(vc_buffer[i]->varname) == 0)
+		if (cbname.compare(pc_buffer[i]->varname) == 0)
 		{
 			//delete vc_buffer[i]->data;
-			vc_buffer[i]->data = bufferdata;
+			pc_buffer[i]->data = bufferdata;
 		}
 	}
 	return true;
@@ -347,9 +350,10 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
-		if (cbname.compare(vc_buffer[i]->varname) == 0)
+		
+		if (cbname.compare(pc_buffer[i]->varname) == 0)
 		{
-			buffer = vc_buffer[i];
+			buffer = pc_buffer[i];
 			break;
 		}
 	}
