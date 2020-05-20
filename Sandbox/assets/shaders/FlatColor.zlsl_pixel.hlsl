@@ -8,7 +8,7 @@ struct VS_INPUT
 {
 	float4 v_Position : SV_POSITION;
 };
-/*Change function body return type to 	float4 color;
+/* Change function body return type to 	float4 color;
 */
 float main(VS_INPUT input) : SV_Target
 {

@@ -122,14 +122,18 @@ namespace DX11Raz
 		RazTexture(ID3D11ShaderResourceView* textureView, aiTextureType type);
 		RazTexture(const uint8_t* pData, size_t size, aiTextureType type);
 		aiTextureType GetType();
-		ID3D11ShaderResourceView* GetTexture();
+		ID3D11Resource* GetTexture();
+		ID3D11ShaderResourceView* GetTextureView();
 		ID3D11ShaderResourceView** GetTextureAddress();
+		void InsertTexture(RazTexture* rtexture, UINT index);
 		void Release();
 		~RazTexture();
 	private:
+		UINT GetByteSize(DXGI_FORMAT format);
 		void Init1x1ColorTexture(const DX11Color& color, aiTextureType type);
 		void InitColorTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type);
 		void InitColorTextureArray(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type);
+		UINT Width, Height, Size, Count;
 		ID3D11Resource* texture;
 		ID3D11ShaderResourceView* textureView;
 		aiTextureType type = aiTextureType::aiTextureType_UNKNOWN;

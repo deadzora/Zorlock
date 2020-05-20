@@ -2,6 +2,7 @@
 #include "DX11Shaders.h"
 #include "DX11Raz.h"
 #include "DX11DeviceContext.h"
+#include "DX11Textures.h"
 #include <d3dcompiler.h>
 
 DX11Raz::RazShader::RazShader() : mv_buffer(0), mp_buffer(0), m_ps(0), m_vs(0), pc_buffer(0), vc_buffer(0)
@@ -253,6 +254,23 @@ bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11ShaderReso
 	return true;
 }
 
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RazTexture* texture)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (tname.compare(tx_buffer[i]->varname) == 0)
+		{
+			//delete vc_buffer[i]->data;
+			tx_buffer[i]->texture = texture->GetTexture();
+			tx_buffer[i]->textureview = texture->GetTextureView();
+		}
+	}
+
+	return true;
+}
+
+
+
 bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
 {
 
@@ -338,7 +356,10 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 
 	if (buffer == 0)
 	{
-		OutputDebugStringW(L"Vertex ConstantBuffer Buffer Pointer was Null");
+		std::wstringstream ss;
+		
+		ss << L" Could not find Pixel Var " << RAZTEXTUREFILEW(cbname) << L"\n";
+		OutputDebugStringW(ss.str().c_str());
 		return false;
 	}
 
@@ -439,6 +460,51 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->PSSetConstantBuffers(this->pc_buffer[i]->slot, 1, &this->pc_buffer[i]->buffer);
 	}
 	return noerror;
+}
+
+void DX11Raz::RazShader::ApplyTexture(std::string cbname)
+{
+	RazSamplerBuffer* buffer = 0;
+
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (cbname.compare(tx_buffer[i]->varname) == 0)
+		{
+			buffer = tx_buffer[i];
+			break;
+		}
+	}
+
+	if (buffer == 0)
+	{
+		OutputDebugStringW(L"Texture Buffer Pointer was Null");
+		return;
+	}
+
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->setshadertexture(buffer->slot, buffer->textureview);
+}
+
+void DX11Raz::RazShader::ApplyTextureArray(std::string cbname)
+{
+	RazSamplerBuffer* buffer = 0;
+
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (cbname.compare(tx_buffer[i]->varname) == 0)
+		{
+			buffer = tx_buffer[i];
+			break;
+		}
+	}
+
+	if (buffer == 0)
+	{
+		OutputDebugStringW(L"Texture Buffer Pointer was Null");
+		return;
+	}
+	
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->setshadertexture(buffer->slot, buffer->textureview);
+
 }
 
 

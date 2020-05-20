@@ -30,6 +30,7 @@ namespace DX11Raz
 		friend class DX11DeviceContext;
 		UINT m_size_vertex;
 		UINT m_size_list;
+		UINT stride;
 		std::vector<RazVertex> vertices;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> vlayout;
 		ID3D11Buffer* m_buffer;

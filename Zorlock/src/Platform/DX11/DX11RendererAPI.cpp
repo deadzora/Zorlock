@@ -47,6 +47,7 @@ namespace Zorlock
 		DX11Raz::RazApplyShader();
 		DX11Raz::RazSetBlendState();
 		vertexArray->Bind();
+		DX11Raz::RazApplyVertexBuffer();
 		vertexArray->GetIndexBuffer()->Bind();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		DX11Raz::RazDrawIndexed(count, 0, 0);

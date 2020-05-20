@@ -15,6 +15,7 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 	char buffer[100];
 	sprintf(buffer, "LayoutSize %zi \r\n", vlayout.size());
 
+
 	OutputDebugStringA(buffer);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(),vlayout.size(), NULL, 0, &this->m_layout);
 	if (FAILED(hr))
@@ -33,7 +34,12 @@ bool DX11Raz::RazVertexBuffer::SetLayout(ID3D10Blob* vshader)
 	size_t size_layout = vlayout.size();
 	char buffer[100];
 	sprintf(buffer, "LayoutSize %zi \r\n", vlayout.size());
-
+	this->stride = 0;
+	for (size_t i = 0; i < vlayout.size(); i++)
+	{
+		stride += vlayout[i].AlignedByteOffset;
+	}
+	sprintf(buffer, "Calculated stride %u \r\n", stride);
 	OutputDebugStringA(buffer);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), vlayout.size(), vshader->GetBufferPointer(), vshader->GetBufferSize(), &this->m_layout);
 	if (FAILED(hr))
@@ -95,9 +101,11 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = vertices;
 
-	this->m_size_vertex = sizeof(float);
+	//this->m_size_vertex = sizeof(float);
 	this->m_size_list = size;
+	this->m_size_vertex = sizeof(float);
 
+	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{
@@ -115,17 +123,18 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
-	buff_desc.ByteWidth = size;
+	buff_desc.ByteWidth = sizeof(float) * size;
 	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	buff_desc.CPUAccessFlags = 0;
 	buff_desc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = vertices;
+	//this->m_size_vertex = sizeof(float);
+	this->m_size_list = size;
+	this->m_size_vertex = sizeof(float);
 
-	this->m_size_vertex = size;
-
-
+	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{
@@ -150,9 +159,11 @@ void DX11Raz::RazVertexBuffer::SetVertices(std::vector<RazVertex>& v)
 	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = v.data();
 
-	this->m_size_vertex = sizeof(RazVertex);
+	//this->m_size_vertex = sizeof(RazVertex);
 	this->m_size_list = (UINT)v.size();
+	this->m_size_vertex = sizeof(RazVertex);
 
+	//printf("Stride is actually %u and size is %u !!", m_size_vertex, this->m_size_list);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{

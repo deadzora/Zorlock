@@ -142,6 +142,11 @@ namespace Zorlock
 
 	}
 
+	void DX11Shader::SetTextureArray(const std::string& name, void* values, uint32_t count)
+	{
+
+	}
+
 	void DX11Shader::SetFloat(const std::string& name, float value)
 	{
 		ZL_PROFILE_FUNCTION();

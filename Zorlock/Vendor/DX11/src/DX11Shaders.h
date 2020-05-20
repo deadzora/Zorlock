@@ -40,6 +40,7 @@ namespace DX11Raz
 	};
 
 	class DX11DeviceContext;
+	class RazTexture;
 
 	class RazShader
 	{
@@ -62,6 +63,7 @@ namespace DX11Raz
 		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex, ID3D11ShaderResourceView* texturev);
 		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex);
 		bool UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev);
+		bool UpdateTextureBuffer(std::string tname, RazTexture* texture);
 		bool UpdateVertexCB(void* bufferdata, std::string cbname);
 		bool UpdatePixelCB(void* bufferdata, std::string cbname);
 		bool ApplyVertexCB(std::string cbname);
@@ -70,6 +72,8 @@ namespace DX11Raz
 		void* GetVertexCBData(UINT index);
 		bool ApplyAllVertexCB();
 		bool ApplyAllPixelCB();
+		void ApplyTexture(std::string cbname);
+		void ApplyTextureArray(std::string cbname);
 		ID3D10Blob* GetBuffer();
 		ID3D10Blob* GetPBuffer();
 

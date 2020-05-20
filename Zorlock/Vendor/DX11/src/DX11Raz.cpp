@@ -671,4 +671,31 @@ namespace DX11Raz
 		RazGetCurrentContext()->drawIndexed(index_count, start_vertex_index, base_vertex_location);
 	}
 
+	void RazApplyShaderTexture(RazShader* shader, std::string name, RazTexture* texture)
+	{
+		shader->UpdateTextureBuffer(name, texture->GetTexture());
+	}
+
+	void RazApplyShaderTexture(std::string name, RazTexture* texture)
+	{
+		RazGetCurrentShader()->UpdateTextureBuffer(name, texture->GetTexture());
+	}
+
+	void RazApplyVertexBuffer(RazVertexBuffer* v)
+	{
+		RazGetCurrentContext()->setvertexbuffer(v);
+	}
+
+	void RazApplyVertexBuffer()
+	{
+		RazGetCurrentContext()->setvertexbuffer(RazGetCurrentVertexBuffer());
+	}
+
+	void RazApplyIndexBuffer(RazIndexBuffer* ibuffer)
+	{
+		RazGetCurrentContext()->setindexbuffer(ibuffer);
+	}
+
+
+
 }

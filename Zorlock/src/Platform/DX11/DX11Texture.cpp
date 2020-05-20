@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "DX11Raz.h"
 #include "DX11Texture.h"
+#include "DX11Shaders.h"
 
 
 namespace Zorlock
@@ -39,8 +40,14 @@ namespace Zorlock
 
 	void DX11Texture2D::Bind(uint32_t slot) const
 	{
-		//DX11Raz::RazSetCurrentTexture(m_RendererID);
+		DX11Raz::RazSetCurrentTexture(m_RendererID);
 		ZL_PROFILE_FUNCTION();
+	}
+
+	void DX11Texture2D::Bind(std::string varname)
+	{
+		DX11Raz::RazGetCurrentShader()->UpdateTextureBuffer(varname, m_RendererID);
+		DX11Raz::RazGetCurrentShader()->ApplyTexture(varname);
 	}
 
 }

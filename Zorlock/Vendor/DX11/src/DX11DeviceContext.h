@@ -24,6 +24,10 @@ namespace DX11Raz
 		void setvertexbuffer(RazVertexBuffer* vertex_buffer);
 		void setindexbuffer(RazIndexBuffer* index_buffer);
 		void drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
+		void setshadertexture(UINT slot, ID3D11ShaderResourceView* texture);
+		void setshadertexture(ID3D11ShaderResourceView* texture);
+		void setshadertextures(ID3D11ShaderResourceView* texture, UINT arraysize);
+		void setshadertextures(UINT slot, ID3D11ShaderResourceView* texture, UINT arraysize);
 		bool Release();
 		bool MainRelease();
 		DX11SwapChain* GetSwapChain();

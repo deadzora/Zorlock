@@ -45,6 +45,7 @@ namespace Zorlock
 	{
 		//set shader stuff this is all weird place for this imo
 		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
+		//DX11Raz::RazApplyVertexBuffer(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Unbind() const
@@ -87,7 +88,8 @@ namespace Zorlock
 				l.SemanticIndex = 0;
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
-				l.AlignedByteOffset = layout.GetStride();//(index==0) ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;//element.Offset;
+				l.AlignedByteOffset = (index==0) ? 0 : element.Offset;
+				printf("Stride is actually %u !!", l.AlignedByteOffset);
 				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);

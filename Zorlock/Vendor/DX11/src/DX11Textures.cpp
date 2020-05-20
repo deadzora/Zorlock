@@ -41,6 +41,8 @@ namespace DX11Raz
 		DX11GraphicsEngine::Get()->AddTexture(this);
 	}
 
+	
+
 	RazTexture::RazTexture(const wchar_t* filename, aiTextureType type)
 	{
 		if (RAZFILEEXISTS(filename))
@@ -143,7 +145,12 @@ namespace DX11Raz
 		return this->type;
 	}
 
-	ID3D11ShaderResourceView* RazTexture::GetTexture()
+	ID3D11Resource* RazTexture::GetTexture()
+	{
+		return this->texture;
+	}
+
+	ID3D11ShaderResourceView* RazTexture::GetTextureView()
 	{
 		return this->textureView;
 	}
@@ -153,14 +160,82 @@ namespace DX11Raz
 		return &this->textureView;
 	}
 
+	void RazTexture::InsertTexture(RazTexture* rtexture, UINT index)
+	{
+		D3D11_MAPPED_SUBRESOURCE init_data = {};
+		HRESULT hr;
+		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(rtexture->texture, 0, D3D11_MAP_READ, 0, &init_data);
+		if (FAILED(hr))
+		{
+			OutputDebugStringW(L"Could not read Texture Data");
+			return;
+		}
+		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(rtexture->texture, 0);
+		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(texture, index, D3D11_MAP_WRITE, 0, &init_data);
+		if (FAILED(hr))
+		{
+			OutputDebugStringW(L"Could not write Texture Data");
+			return;
+		}
+		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(texture, index);		
+	}
+
 	void RazTexture::Release()
 	{
-		if(textureView != 0) textureView->Release();
-		if (texture != 0) texture->Release();
+		//if(textureView != 0) textureView->Release();
+		//if (texture != 0) texture->Release();
 	}
 
 	RazTexture::~RazTexture()
 	{
+	}
+
+	UINT RazTexture::GetByteSize(DXGI_FORMAT format)
+	{
+		switch (format)
+		{
+		case DXGI_FORMAT::DXGI_FORMAT_B4G4R4A4_UNORM:
+		{
+			return 2;
+		}
+		case DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_TYPELESS:
+		case DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM:
+		case DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_SINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_SNORM:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_TYPELESS:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM:
+		case DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+		{
+			return 4;
+		}
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_FLOAT:
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_SINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_SNORM:
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_TYPELESS:
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_UINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_UNORM:
+		{
+			return 8;
+		}
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_SINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_TYPELESS:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_UINT:
+		{
+			return 16;
+		}
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32_SINT:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32_TYPELESS:
+		case DXGI_FORMAT::DXGI_FORMAT_R32G32B32_UINT:
+		{
+			return 12;
+		}
+		}
+
+		return 0;
 	}
 
 	void RazTexture::Init1x1ColorTexture(const DX11Color& color, aiTextureType type)
@@ -174,8 +249,10 @@ namespace DX11Raz
 		CD3D11_TEXTURE2D_DESC textureDesc(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 		ID3D11Texture2D* p2DTexture = nullptr;
 		D3D11_SUBRESOURCE_DATA initData = {};
+
 		initData.pSysMem = colorData;
-		initData.SysMemPitch = sizeof(DX11Color);
+		initData.SysMemPitch = width * 4;
+		initData.SysMemSlicePitch = width * height * 4;
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, &initData, &p2DTexture);
 		if (FAILED(hr))
 		{
@@ -192,18 +269,39 @@ namespace DX11Raz
 			texture = 0;
 			OutputDebugString(L"Failed to Create Shader Resource from Color \r\n");
 		}
+		Width = width;
+		Height = height;
+		Size = 4;
+		Count = 1;
+
+
 	}
 
 	void RazTexture::InitColorTextureArray(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
 	{
+
 		this->type = type;
-		CD3D11_TEXTURE2D_DESC textureDesc(DXGI_FORMAT_R8G8B8A8_UNORM, width, height,size);
+		CD3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.Width = width;
+		textureDesc.Height = height;
+		textureDesc.ArraySize = size;
+		textureDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 		ID3D11Texture2D* p2DTexture = nullptr;
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = colorData;
+		D3D11_SUBRESOURCE_DATA* initData = new D3D11_SUBRESOURCE_DATA[size];
+		for (size_t i = 0; i < size; i++)
+		{
+			//32 bits = 4 bytes
+			initData->pSysMem = colorData;
+			initData->SysMemPitch = width * 4;
+			initData->SysMemSlicePitch = width * height * 4;
+			colorData++;
+			initData++;
+		}
+		
 		//initData.SysMemPitch = sizeof(DX11Color);
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, &initData, &p2DTexture);
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, initData, &p2DTexture);
 		if (FAILED(hr))
 		{
 			textureView = 0;
@@ -219,6 +317,11 @@ namespace DX11Raz
 			texture = 0;
 			OutputDebugString(L"Failed to Create Texture 2d Array Shader Resource from Color \r\n");
 		}
+		Width = width;
+		Height = height;
+		Size = 4;
+		Count = size;
+
 	}
 
 }

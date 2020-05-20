@@ -28,6 +28,7 @@ namespace Zorlock {
 		virtual void Apply() const override;
 		virtual void SetInt(const std::string& name, int value) override;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
+		virtual void SetTextureArray(const std::string& name, void* values, uint32_t count) override;
 		virtual void SetFloat(const std::string& name, float value) override;
 		//virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
 		virtual void SetFloat3(const std::string& name, const VECTOR3& value) override;

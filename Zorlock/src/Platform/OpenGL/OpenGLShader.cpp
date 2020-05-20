@@ -247,6 +247,12 @@ namespace Zorlock {
 		UploadUniformIntArray(name, values, count);
 	}
 
+	void OpenGLShader::SetTextureArray(const std::string& name, void* values, uint32_t count)
+	{
+		UploadUniformDataArray(name, values, count);
+		
+	}
+
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
 		ZL_PROFILE_FUNCTION();
@@ -327,6 +333,13 @@ namespace Zorlock {
 	{
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform1iv(location, count, values);
+	}
+
+	void OpenGLShader::UploadUniformDataArray(const std::string& name, void* values, uint32_t count)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		int * vals = static_cast<int*>(values);
+		glUniform1iv(location, count, vals);
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& name, float value)

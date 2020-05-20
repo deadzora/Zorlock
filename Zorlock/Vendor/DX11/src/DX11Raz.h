@@ -93,8 +93,13 @@ namespace DX11Raz
 	void RazSetBlendState();
 	void RazDrawIndexed(DX11DeviceContext* dhandle,UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
 	void RazDrawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
-
-
+	void RazApplyShaderTexture(RazShader* shader,std::string name, RazTexture* texture);
+	void RazApplyShaderTexture(std::string name, RazTexture* texture);
+	void RazApplyVertexBuffer(RazVertexBuffer* v);
+	void RazApplyVertexBuffer();
+	void RazApplyIndexBuffer(RazIndexBuffer* ibuffer);
+	void RazApplyShaderTextureIndex(RazShader* shader, UINT index, std::string name, RazTexture* texture);
+	void RazApplyShaderTextureIndex(UINT index, std::string name, RazTexture* texture);
 	class DX11GraphicsEngine
 	{
 	public:

@@ -200,8 +200,9 @@ namespace DX11Raz
 	void DX11DeviceContext::setvertexbuffer(RazVertexBuffer* vertex_buffer)
 	{
 		UINT stride = vertex_buffer->m_size_vertex;
+		
 		UINT offset = 0;
-		m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &stride, &offset);
+		m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &vertex_buffer->stride, &offset);
 		m_device_context->IASetInputLayout(vertex_buffer->m_layout);
 	}
 
@@ -213,6 +214,26 @@ namespace DX11Raz
 	void DX11DeviceContext::drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
 	{
 		m_device_context->DrawIndexed(index_count, start_vertex_index, base_vertex_location);
+	}
+
+	void DX11DeviceContext::setshadertexture(UINT slot, ID3D11ShaderResourceView* texture)
+	{
+		m_device_context->PSSetShaderResources(slot, 1, &texture);
+	}
+
+	void DX11DeviceContext::setshadertexture(ID3D11ShaderResourceView* texture)
+	{
+		m_device_context->PSSetShaderResources(0, 1, &texture);
+	}
+
+	void DX11DeviceContext::setshadertextures(ID3D11ShaderResourceView* texture, UINT arraysize)
+	{
+		m_device_context->PSSetShaderResources(0, arraysize, &texture);
+	}
+
+	void DX11DeviceContext::setshadertextures(UINT slot, ID3D11ShaderResourceView* texture, UINT arraysize)
+	{
+		m_device_context->PSSetShaderResources(slot, arraysize, &texture);
 	}
 
 
