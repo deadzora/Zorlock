@@ -213,6 +213,7 @@ namespace DX11Raz
 
 	void DX11DeviceContext::drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
 	{
+		
 		m_device_context->DrawIndexed(index_count, start_vertex_index, base_vertex_location);
 	}
 

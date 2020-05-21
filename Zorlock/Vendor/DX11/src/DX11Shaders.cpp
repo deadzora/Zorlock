@@ -154,10 +154,10 @@ UINT DX11Raz::RazShader::CreateVertexCB(std::string cbname, UINT slot, void* buf
 {
 	
 	D3D11_BUFFER_DESC buff_desc = {};
-	buff_desc.Usage = D3D11_USAGE_DYNAMIC;
+	buff_desc.Usage = D3D11_USAGE_DEFAULT;
 	buff_desc.ByteWidth = buffersize + (16 - (buffersize % 16));
 	buff_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	buff_desc.MiscFlags = 0;
 	buff_desc.StructureByteStride = 0;
 
@@ -182,10 +182,10 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 
 
 	D3D11_BUFFER_DESC buff_desc = {};
-	buff_desc.Usage = D3D11_USAGE_DYNAMIC;
+	buff_desc.Usage = D3D11_USAGE_DEFAULT;
 	buff_desc.ByteWidth = buffersize + (16 - (buffersize % 16));
 	buff_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	buff_desc.MiscFlags = 0;
 	buff_desc.StructureByteStride = 0;
 	//ID3D11Buffer* p; 
@@ -328,7 +328,9 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 	D3D11_MAPPED_SUBRESOURCE init_data = {};
 	//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	HRESULT hr;
-	hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer, 0, 0, buffer->data, 0, 0);
+	/*
+	hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Could not Map Vertex Shader Data");
@@ -338,8 +340,10 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 	CopyMemory(init_data.pData, buffer->data, buffer->buffersize);
 
 
-	DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
-	DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
+
+	*/
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
 	
 	return true;
 }
@@ -370,7 +374,9 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 	D3D11_MAPPED_SUBRESOURCE init_data = {};
 	//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	HRESULT hr;
-	hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer, 0, 0, buffer->data, 0, 0);
+	/*
+	hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Could not Map Pixel Shader Data");
@@ -381,8 +387,9 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 	CopyMemory(init_data.pData, buffer->data, buffer->buffersize);
 
 
-	DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
-	DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->PSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
+	*/
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
 
 	return true;
 }
@@ -414,7 +421,9 @@ bool DX11Raz::RazShader::ApplyAllVertexCB()
 		D3D11_MAPPED_SUBRESOURCE init_data = {};
 		//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 		HRESULT hr;
-		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(this->vc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(vc_buffer[i]->buffer, 0, 0, vc_buffer[i]->data, 0, 0);
+		/*
+		hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(this->vc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 		if (FAILED(hr))
 		{
 			OutputDebugStringW(L"Could not Map Vertex Shader Data");
@@ -426,8 +435,10 @@ bool DX11Raz::RazShader::ApplyAllVertexCB()
 		CopyMemory(init_data.pData, this->vc_buffer[i]->data, this->vc_buffer[i]->buffersize);
 
 
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(this->vc_buffer[i]->buffer, 0);
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->VSSetConstantBuffers(this->vc_buffer[i]->slot, 1, &this->vc_buffer[i]->buffer);
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(this->vc_buffer[i]->buffer, 0);
+
+		*/
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(this->vc_buffer[i]->slot, 1, &this->vc_buffer[i]->buffer);
 	}
 	return noerror;
 }
@@ -448,7 +459,9 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 		D3D11_MAPPED_SUBRESOURCE init_data = {};
 		//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 		HRESULT hr;
-		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(this->pc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(pc_buffer[i]->buffer, 0, 0, pc_buffer[i]->data, 0, 0);
+		/*
+		hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(this->pc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 		if (FAILED(hr))
 		{
 			OutputDebugStringW(L"Could not Map Pixel Shader Data");
@@ -460,8 +473,9 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 		CopyMemory(init_data.pData, this->pc_buffer[i]->data, this->pc_buffer[i]->buffersize);
 
 
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(this->pc_buffer[i]->buffer, 0);
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->PSSetConstantBuffers(this->pc_buffer[i]->slot, 1, &this->pc_buffer[i]->buffer);
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(this->pc_buffer[i]->buffer, 0);
+		*/
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(this->pc_buffer[i]->slot, 1, &this->pc_buffer[i]->buffer);
 	}
 	return noerror;
 }

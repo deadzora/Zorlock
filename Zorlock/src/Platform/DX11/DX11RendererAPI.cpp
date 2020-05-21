@@ -41,7 +41,8 @@ namespace Zorlock
 	}
 
 	void DX11RendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
-	{		
+	{	
+
 		DX11VertexArray * dxvertexarray = static_cast<DX11VertexArray*>(vertexArray.get());
 		DX11Raz::RazSetCurrentShader(dxvertexarray->GetShader()->GetShader());
 		DX11Raz::RazApplyVertexShaderConstants();

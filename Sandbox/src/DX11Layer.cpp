@@ -47,7 +47,7 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 		for (int x = 0; x < 20; x++)
 		{
 			VECTOR3 pos(x * 0.11f, y * 0.11f, -0.15f);
-			MATRIX4 transform = MATRIX4::TRS(pos, QUATERNION::IDENTITY(), VECTOR3(0.1f, 0.1f, 0.1f));
+			MATRIX4 transform = MATRIX4::TRS(VECTOR3(0,0,10), QUATERNION::IDENTITY(), VECTOR3(1.5f, 1.5f, 1.5f));
 			Zorlock::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 		}
 	}

@@ -721,8 +721,16 @@ namespace Zorlock {
 				}
 				else if (func.functionBodySyntax[i].command == VarCommandValue::Z_Mul)
 				{
+					fbf.clear();
+					ParseFunctionBodyGeneric(func.functionBodySyntax[i].original, 2);
+
+					if (ZLSLDEBUG == true) printf("Function : %s nof args %i   \n", fbf.name.c_str(), fbf.arguments.size());
 					if (ZLSLDEBUG == true) printf("Process Multiply Function : %s \n", func.functionBodySyntax[i].original.c_str());
-					ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
+					std::string newfuncbody = "";
+					newfuncbody += "mul("+fbf.arguments[1].arithmetic + "," + fbf.arguments[0].arithmetic + ")";
+
+					//ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
+					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);
 					lexertk::generator generator;
 					if (generator.process(fbody))
 					{
@@ -1033,12 +1041,14 @@ namespace Zorlock {
 				default:
 				{
 
-					dec[i].index = i;
+					
 					if (isvert)
 					{
+						dec[i].index = vertexuniformcount;
 						declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(vertexuniformcount) + ")" + EOL;
 					}
 					else {
+						dec[i].index = vertexuniformcount + fragmentuniformcount;
 						declares += "cbuffer c_" + dec[i].varname + "_buffer : register(b" + std::to_string(vertexuniformcount+ fragmentuniformcount) + ")" + EOL;
 					}
 					

@@ -195,6 +195,7 @@ namespace Zorlock
 		{
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
+				//printf("Sent float3 \n");
 				VECTOR3 p = value;
 				m_RendererID->UpdatePixelCB(&p, name);
 				m_RendererID->ApplyPixelCB(name);
@@ -242,9 +243,11 @@ namespace Zorlock
 		{
 			if (m_VUniformVars[i].Name.compare(name) == 0)
 			{
+				//printf("Sent Mat4 \n");
 				MATRIX4 p = value;
-				//OutputDebugString(L" Setting Tansformation matrix\r\n");
-				m_RendererID->UpdateVertexCB(p.To4x4Array(), name);
+				DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.To4x4Array());
+				
+				m_RendererID->UpdateVertexCB(&mat, name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
 			}
@@ -254,7 +257,10 @@ namespace Zorlock
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
 				MATRIX4 p = value;
-				m_RendererID->UpdatePixelCB(p.To4x4Array(), name);
+				DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.To4x4Array());
+				
+							
+				m_RendererID->UpdatePixelCB(&mat, name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}
@@ -283,37 +289,43 @@ namespace Zorlock
 				{
 				case ShaderDataType::Mat4:
 				{
-					
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
 					break;
 				}
 				case ShaderDataType::Mat3:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new MATRIX3(), sizeof(MATRIX3));
 					break;
 				}
 				case ShaderDataType::Float4:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR4(), sizeof(VECTOR4));
 					break;
 				}
 				case ShaderDataType::Float3:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR3(), sizeof(VECTOR3));
 					break;
 				}
 				case ShaderDataType::Float2:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR2(), sizeof(VECTOR2));
 					break;
 				}
 				case ShaderDataType::Float:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new float(1.0f), sizeof(float));
 					break;
 				}
 				case ShaderDataType::Int:
 				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new UINT(1), sizeof(UINT));
 					break;
 				}
@@ -329,49 +341,49 @@ namespace Zorlock
 				{
 				case ShaderDataType::Mat4:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
 					break;
 				}
 				case ShaderDataType::Mat3:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX3(), sizeof(MATRIX3));
 					break;
 				}
 				case ShaderDataType::Float4:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR4(), sizeof(VECTOR4));
 					break;
 				}
 				case ShaderDataType::Float3:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR3(), sizeof(VECTOR3));
 					break;
 				}
 				case ShaderDataType::Float2:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR2(), sizeof(VECTOR2));
 					break;
 				}
 				case ShaderDataType::Float:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new float(1.0f), sizeof(float));
 					break;
 				}
 				case ShaderDataType::Int:
 				{
-					printf("Shader var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
 					break;
 				}
 				case ShaderDataType::Sampler2D:
 				{
-					printf("Shader texture var: %s ", m_FUniformVars[i].Name.c_str());
+					printf("Texture var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
 					m_RendererID->CreateTextureBuffer(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, sizeof(ID3D11ShaderResourceView));
 
 					break;

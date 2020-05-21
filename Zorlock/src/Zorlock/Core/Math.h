@@ -1217,10 +1217,12 @@ namespace Zorlock {
 
 		Matrix4 transpose() const
 		{
-			return Matrix4(i.x, j.x, k.x, l.x,
+			return Matrix4(
+				i.x, j.x, k.x, l.x,
 				i.y, j.y, k.y, l.y,
 				i.z, j.z, k.z, l.z,
-				i.w, j.w, k.w, l.w);
+				i.w, j.w, k.w, l.w
+			);
 		}
 
 		Matrix get3x3() const

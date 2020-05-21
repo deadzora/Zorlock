@@ -29,7 +29,7 @@ VS_OUTPUT main(VS_INPUT input)
 	output.v_TexCoord = input.a_TexCoord;
 	output.v_TexIndex = input.a_TexIndex;
 	output.v_TilingFactor = input.a_TilingFactor;
-	output.v_Position = mul(u_ViewProjection , float4(input.a_Position, 1.0));	
+	output.v_Position = mul(float4(input.a_Position, 1.0),u_ViewProjection );	
 	return output;
 
 }

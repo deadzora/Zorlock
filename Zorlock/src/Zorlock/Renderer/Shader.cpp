@@ -12,6 +12,8 @@ namespace Zorlock {
 
 	void Shader::Process()
 	{
+		uint32_t vertexuniforms = 0;
+		uint32_t pixeluniforms = 0;
 		m_VInputVars.clear();
 		for (size_t i = 0; i < parser->vlayoutVars.size(); i++)
 		{
@@ -46,19 +48,34 @@ namespace Zorlock {
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
 				s.Size = ShaderDataTypeSize(s.Type);
 				m_VUniformVars.push_back(s);
+				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
+				{
+					vertexuniforms++;
+				}
 			}
 		}
 		m_FUniformVars.clear();
 		for (size_t i = 0; i < parser->pixelUniforms.size(); i++)
 		{
-			if (parser->vertexUniforms[i].command == ZLSLParser::VarCommandValue::Uniform)
+			if (parser->pixelUniforms[i].command == ZLSLParser::VarCommandValue::Uniform)
 			{
 				ShaderVariable s;
 				s.Name = parser->pixelUniforms[i].varname;
-				s.Slot = i;//parser->pixelUniforms[i].index;
+				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
+				{
+					s.Slot = (vertexuniforms+ pixeluniforms);
+				}
+				else {
+					s.Slot = i;
+				}
+				//parser->pixelUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
 				s.Size = ShaderDataTypeSize(s.Type);
 				m_FUniformVars.push_back(s);
+				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
+				{
+					pixeluniforms++;
+				}
 			}
 		}
 		GenerateLayout();

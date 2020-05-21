@@ -20,7 +20,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output = (VS_OUTPUT) 0; 
 
-	output.v_Position = mul(u_ViewProjection * u_Transform , input.a_Position);
+	output.v_Position = mul(input.a_Position,u_ViewProjection * u_Transform );
 	return output;
 
 }
