@@ -10,6 +10,13 @@ namespace DX11Raz
 
 	DX11DeviceContext::DX11DeviceContext(ID3D11DeviceContext* device_context) :m_device_context(device_context)
 	{
+
+		m_bs = nullptr;
+		m_depth_stencilview = nullptr;
+		m_depth_stecil_buffer = nullptr;
+		m_depth_stencilstate = nullptr;
+		m_sampler_state = nullptr;
+		m_pRasterState = nullptr;
 	}
 
 	void DX11DeviceContext::Init(ZWindow * zhandle)
@@ -44,8 +51,9 @@ namespace DX11Raz
 		m_device_context->OMSetRenderTargets(1, &m_contextswapchain->m_rtv, m_depth_stencilview);
 		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
 		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
+		m_device_context->RSSetState(m_pRasterState);
 		//create depth stencil state
-		m_device_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	void DX11DeviceContext::setviewportsize(UINT width, UINT height)
@@ -74,7 +82,10 @@ namespace DX11Raz
 		{
 			//log the error
 		}
-		
+		if (!setrasterizer())
+		{
+			//log the error
+		}
 		 
 	}
 
@@ -187,6 +198,27 @@ namespace DX11Raz
 		return true;
 	}
 
+	bool DX11DeviceContext::setrasterizer()
+	{
+		CD3D11_RASTERIZER_DESC rasterDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE,
+			FALSE /* FrontCounterClockwise */,
+			D3D11_DEFAULT_DEPTH_BIAS,
+			D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
+			D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS,
+			TRUE /* DepthClipEnable */,
+			FALSE /* ScissorEnable */,
+			TRUE /* MultisampleEnable */,
+			FALSE /* AntialiasedLineEnable */);
+
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateRasterizerState(&rasterDesc, &m_pRasterState);
+		if (FAILED(hr))
+		{
+			OutputDebugString(L"Failed to Create Rasterizer \r\n");
+			ZL_CORE_INFO("Failed to Create Rasterizer");
+			return false;
+		}
+	}
+
 	void DX11DeviceContext::setvertexshader(RazShader* vertex_shader)
 	{
 		m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0);
@@ -209,6 +241,7 @@ namespace DX11Raz
 	void DX11DeviceContext::setindexbuffer(RazIndexBuffer* index_buffer)
 	{
 		m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0);
+		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	void DX11DeviceContext::drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
@@ -256,8 +289,13 @@ namespace DX11Raz
 	bool DX11DeviceContext::MainRelease()
 	{
 
+		
+		if (m_bs!=nullptr)m_bs->Release();
+		if (m_depth_stencilview != nullptr)m_depth_stencilview->Release();
+		if (m_depth_stecil_buffer != nullptr)m_depth_stecil_buffer->Release();
+		if (m_depth_stencilstate != nullptr)m_depth_stencilstate->Release();
+		if (m_sampler_state != nullptr)m_sampler_state->Release();
 		m_device_context->Release();
-
 		delete this;
 		return true;
 	}

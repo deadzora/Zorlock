@@ -298,6 +298,7 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 		if (cbname.compare(pc_buffer[i]->varname) == 0)
 		{
 			//delete vc_buffer[i]->data;
+			//printf("Updating %s \n",pc_buffer[i]->varname.c_str());
 			pc_buffer[i]->data = bufferdata;
 		}
 	}
@@ -341,7 +342,7 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 
 
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
-
+	
 	*/
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
 	
@@ -370,7 +371,7 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 		OutputDebugStringW(ss.str().c_str());
 		return false;
 	}
-
+	//printf("Applying %s \n", buffer->varname.c_str());
 	D3D11_MAPPED_SUBRESOURCE init_data = {};
 	//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	HRESULT hr;
@@ -406,6 +407,7 @@ void* DX11Raz::RazShader::GetVertexCBData(UINT index)
 
 bool DX11Raz::RazShader::ApplyAllVertexCB()
 {
+	/*
 	bool noerror = true;
 	for (size_t i = 0; i < this->vc_buffer.size(); i++)
 	{
@@ -421,8 +423,8 @@ bool DX11Raz::RazShader::ApplyAllVertexCB()
 		D3D11_MAPPED_SUBRESOURCE init_data = {};
 		//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 		HRESULT hr;
-		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(vc_buffer[i]->buffer, 0, 0, vc_buffer[i]->data, 0, 0);
-		/*
+		//DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(vc_buffer[i]->buffer, 0, 0, vc_buffer[i]->data, 0, 0);
+		
 		hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(this->vc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 		if (FAILED(hr))
 		{
@@ -437,14 +439,17 @@ bool DX11Raz::RazShader::ApplyAllVertexCB()
 
 		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(this->vc_buffer[i]->buffer, 0);
 
-		*/
+		
 		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(this->vc_buffer[i]->slot, 1, &this->vc_buffer[i]->buffer);
 	}
 	return noerror;
+	*/
+	return true;
 }
 
 bool DX11Raz::RazShader::ApplyAllPixelCB()
 {
+	/*
 	bool noerror = true;
 	for (size_t i = 0; i < this->pc_buffer.size(); i++)
 	{
@@ -459,8 +464,8 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 		D3D11_MAPPED_SUBRESOURCE init_data = {};
 		//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 		HRESULT hr;
-		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(pc_buffer[i]->buffer, 0, 0, pc_buffer[i]->data, 0, 0);
-		/*
+		//DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(pc_buffer[i]->buffer, 0, 0, pc_buffer[i]->data, 0, 0);
+		
 		hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(this->pc_buffer[i]->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 		if (FAILED(hr))
 		{
@@ -474,10 +479,12 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 
 
 		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(this->pc_buffer[i]->buffer, 0);
-		*/
+		
 		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(this->pc_buffer[i]->slot, 1, &this->pc_buffer[i]->buffer);
 	}
 	return noerror;
+	*/
+	return true;
 }
 
 void DX11Raz::RazShader::ApplyTexture(std::string cbname)

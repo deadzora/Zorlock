@@ -12,14 +12,15 @@ struct VS_INPUT
 {
 	float4 a_Position : POSITION;
 };
-struct VS_OUTPUT
+struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
 };
-VS_OUTPUT main(VS_INPUT input)
+PS_INPUT main(VS_INPUT input)
 {
-	VS_OUTPUT output = (VS_OUTPUT) 0; 
+	PS_INPUT output = (PS_INPUT) 0; 
 
+	//output.v_Position = input.a_Position;
 	output.v_Position = mul(input.a_Position,u_ViewProjection * u_Transform );
 	return output;
 

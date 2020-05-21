@@ -111,7 +111,7 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
-	buff_desc.ByteWidth = sizeof(float) * size;
+	buff_desc.ByteWidth = sizeof(float)*size;
 	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	buff_desc.CPUAccessFlags = 0;
 	buff_desc.MiscFlags = 0;
@@ -141,7 +141,7 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
-	buff_desc.ByteWidth = sizeof(float) * size;
+	buff_desc.ByteWidth = sizeof(vertices);// *size;
 	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	buff_desc.CPUAccessFlags = 0;
 	buff_desc.MiscFlags = 0;

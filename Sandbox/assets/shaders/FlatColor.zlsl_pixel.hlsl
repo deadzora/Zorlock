@@ -4,13 +4,13 @@ float3 u_Color;
 };
 //type 
 //version 330 core
-struct VS_INPUT
+struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
 };
 /* Change function body return type to 	float4 color;
 */
-float main(VS_INPUT input) : SV_Target
+float4 main(PS_INPUT input) : SV_Target
 {
 	float4 color;
 

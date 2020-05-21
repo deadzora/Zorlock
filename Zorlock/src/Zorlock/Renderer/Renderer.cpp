@@ -27,7 +27,7 @@ namespace Zorlock {
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		s_SceneData->ViewProjectionMatrix = camera.GetViewMatrix(); //(camera.GetProjectionMatrix()* camera.GetViewMatrix());
+		s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix()* camera.GetViewMatrix());
 	}
 
 	void Renderer::EndScene()

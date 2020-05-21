@@ -434,7 +434,7 @@ namespace Zorlock {
 				shaderFile += ReturnHLSLDeclares(vlayoutVars,true);
 				shaderFile += "};" + EOL;
 				//Next add output declares
-				shaderFile += "struct VS_OUTPUT" + EOL;
+				shaderFile += "struct PS_INPUT" + EOL;
 				shaderFile += "{" + EOL;
 				shaderFile += ReturnHLSLDeclares(voutVars,true);
 				shaderFile += "};" + EOL;
@@ -449,7 +449,7 @@ namespace Zorlock {
 				//next add with some var declares
 				shaderFile += ReturnHLSLDeclares(pixelVars,false);
 				//start with input declares
-				shaderFile += "struct VS_INPUT" + EOL;
+				shaderFile += "struct PS_INPUT" + EOL;
 				shaderFile += "{" + EOL;
 				shaderFile += ReturnHLSLDeclares(voutVars,false);
 				shaderFile += "};" + EOL;
@@ -608,7 +608,7 @@ namespace Zorlock {
 			{
 				if (isvert)
 				{
-					functions += "VS_OUTPUT " + funcs[i].functionName + "(VS_INPUT input";
+					functions += "PS_INPUT " + funcs[i].functionName + "(VS_INPUT input";
 					if (funcs[i].functionArgVarList.size() > 0)
 					{
 						functions += ", ";
@@ -616,7 +616,7 @@ namespace Zorlock {
 				}
 				else {
 
-					functions += "float " + funcs[i].functionName + "(VS_INPUT input";
+					functions += "float4 " + funcs[i].functionName + "(PS_INPUT input";
 					if (funcs[i].functionArgVarList.size() > 0)
 					{
 						functions += ", ";
@@ -673,7 +673,7 @@ namespace Zorlock {
 							ReplaceAll(fbody, "{", "");
 							ReplaceAll(fbody, "}", "");
 							ReplaceAll(fbody, func.functionBodySyntax[i].original, zr);
-							fbody = "{" + EOL + "	VS_OUTPUT output = (VS_OUTPUT) 0; " + EOL + fbody + EOL + "}" + EOL;
+							fbody = "{" + EOL + "	PS_INPUT output = (PS_INPUT) 0; " + EOL + fbody + EOL + "}" + EOL;
 
 
 						}

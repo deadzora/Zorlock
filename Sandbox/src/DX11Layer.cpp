@@ -7,11 +7,11 @@ DX11Layer::DX11Layer() : Layer("DX11Layer"), m_CameraController(1280.0f / 720.0f
 {
 	m_FlatColorShader = Zorlock::Shader::Create("FlatColor", "assets/shaders/FlatColor.zlsl");
 	m_SquareVA = Zorlock::VertexArray::Create();
-	float squareVertices[5 * 4] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
+	float squareVertices[4 * 4] = {
+		-0.5f, -0.5f, 0.0f, 0.0f, 
+		 0.5f, -0.5f, 0.0f, 1.0f, 
+		 0.5f,  0.5f, 0.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f, 0.0f, 
 	};
 	m_FlatColorShader->Bind();
 	Zorlock::Ref<Zorlock::VertexBuffer> squareVB = Zorlock::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
@@ -57,12 +57,8 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 
 void DX11Layer::OnImGuiRender()
 {
-	ImGui::Begin("test");
-	ImGui::Text("This is example text");
-	ImGui::Button("Click Me!");
-	ImGui::SameLine();
-	std::string clickcount = "You're mom ";
-	ImGui::Text(clickcount.c_str());
+	ImGui::Begin("Settings");
+	ImGui::ColorEdit3("Square Color", &m_SquareColor.x);
 	ImGui::End();
 }
 

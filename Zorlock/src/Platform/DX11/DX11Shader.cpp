@@ -175,10 +175,8 @@ namespace Zorlock
 	}
 
 
-
 	void DX11Shader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
-
 
 		//figure out if this is pixelor vertex
 		for (size_t i = 0; i < m_VUniformVars.size(); i++)
@@ -245,9 +243,10 @@ namespace Zorlock
 			{
 				//printf("Sent Mat4 \n");
 				MATRIX4 p = value;
-				DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.To4x4Array());
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
 				
-				m_RendererID->UpdateVertexCB(&mat, name);
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdateVertexCB(&p, name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
 			}
@@ -257,10 +256,10 @@ namespace Zorlock
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
 				MATRIX4 p = value;
-				DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.To4x4Array());
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
 				
-							
-				m_RendererID->UpdatePixelCB(&mat, name);
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdatePixelCB(&p, name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}
