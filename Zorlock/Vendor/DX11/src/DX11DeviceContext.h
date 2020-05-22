@@ -19,8 +19,19 @@ namespace DX11Raz
 		bool setstencilstate();
 		bool setsamplerstate();
 		bool setstencilbuffer();
+		bool setrasterizer();
+		void setvertexshader(RazShader* vertex_shader);
+		void setpixelshader(RazShader* pixel_shader);
+		void setvertexbuffer(RazVertexBuffer* vertex_buffer);
+		void setindexbuffer(RazIndexBuffer* index_buffer);
+		void drawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
+		void setshadertexture(UINT slot, ID3D11ShaderResourceView* texture);
+		void setshadertexture(ID3D11ShaderResourceView* texture);
+		void setshadertextures(ID3D11ShaderResourceView* texture, UINT arraysize);
+		void setshadertextures(UINT slot, ID3D11ShaderResourceView* texture, UINT arraysize);
 		bool Release();
 		bool MainRelease();
+		DX11SwapChain* GetSwapChain();
 		ID3D11DeviceContext* GetContext();
 		~DX11DeviceContext();
 		UINT width;
@@ -33,6 +44,7 @@ namespace DX11Raz
 		ID3D11Texture2D* m_depth_stecil_buffer;
 		ID3D11DepthStencilState* m_depth_stencilstate;
 		ID3D11SamplerState* m_sampler_state;
+		ID3D11RasterizerState* m_pRasterState;
 		//ID3D11ShaderResourceView* m_texture;
 		DX11SwapChain* m_contextswapchain;
 		ZWindow* m_contextContainer;

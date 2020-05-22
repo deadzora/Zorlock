@@ -4,7 +4,7 @@
 
 namespace DX11Raz
 {
-
+	class DX11DeviceContext;
 
 	class RazIndexBuffer
 	{
@@ -15,6 +15,7 @@ namespace DX11Raz
 		void SetIndexes(std::vector<DWORD> indices);
 		~RazIndexBuffer();
 	private:
+		friend class DX11DeviceContext;
 		std::vector<DWORD> vertices;
 		ID3D11Buffer* m_buffer;
 		UINT m_size_index;

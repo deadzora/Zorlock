@@ -28,6 +28,8 @@ namespace Zorlock {
 		virtual void SetLayout(const BufferLayout& layout) override;
 		virtual void SetLayout(const BufferLayout& layout, Shader * shader) override;
 		virtual void ApplyLayout() const override;
+		void SetStride(UINT stride);
+
 	private:
 		
 		DX11Raz::RazVertexBuffer* m_RendererID;

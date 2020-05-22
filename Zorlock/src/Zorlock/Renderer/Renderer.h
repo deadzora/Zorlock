@@ -19,7 +19,7 @@ namespace Zorlock {
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform = MATRIX4().IDENTITY());
+		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform = MATRIX4::IDENTITY().translation(VECTOR3(1.0f,1.0f,1.0f)));
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:

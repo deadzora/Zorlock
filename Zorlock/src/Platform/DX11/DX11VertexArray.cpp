@@ -1,9 +1,11 @@
 #include "ZLpch.h"
 #include "DX11VertexArray.h"
+#include "DX11Shader.h"
+#include "DX11Buffer.h"
 #include <d3d11.h>
 #include <DX11Raz.h>
 #include <DX11VBuffer.h>
-
+#include <DX11DeviceContext.h>
 
 namespace Zorlock
 {
@@ -42,7 +44,9 @@ namespace Zorlock
 	}
 	void DX11VertexArray::Bind() const
 	{
-		//nothing to do here...since we have a direct reference to the buffer itself no need to make it current for operations
+		//set shader stuff this is all weird place for this imo
+		DX11Raz::RazSetCurrentVertexBuffer(m_RendererID);
+		//DX11Raz::RazApplyVertexBuffer(m_RendererID);
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::Unbind() const
@@ -50,14 +54,18 @@ namespace Zorlock
 		//nothing to do here...since we have a direct reference to the buffer itself no need to disable it for operations
 		ZL_PROFILE_FUNCTION();
 	}
+	void DX11VertexArray::DX11Bind()
+	{
+		m_RendererID = DX11Raz::RazGetCurrentVertexBuffer();
+	}
 	void DX11VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		ZL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		if (vertexBuffer->GetLayout().GetElements().size() == 0) return;
-		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		vertexBuffer->Bind(m_RendererID);
+		vertexBuffer->Bind();
+		DX11Bind();
 		const auto& layout = vertexBuffer->GetLayout();
 		int index = 0;
 		for (const auto& element : layout)
@@ -81,13 +89,11 @@ namespace Zorlock
 				l.SemanticIndex = 0;
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
-				l.AlignedByteOffset = layout.GetStride();//(index==0) ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;//element.Offset;
+				l.AlignedByteOffset = (index==0) ? 0 : element.Offset;
 				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
-				char buffer[100];
-				sprintf(buffer, "Layout NAME %s FORMAT %i INDEX %i STRIDE %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, layout.GetStride());
-				OutputDebugStringA(buffer);
+				printf("Layout NAME %s FORMAT %i INDEX %i OFFSET %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, element.Offset);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -100,8 +106,6 @@ namespace Zorlock
 					m_RendererID->SetIndex(m_VertexBufferIndex);
 					D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
 					char buffer[100];
-					sprintf(buffer, "Layout NAME %s\r\n", element.Name.c_str());
-					OutputDebugStringA(buffer);
 					l.SemanticName = element.Name.c_str();
 					l.SemanticIndex = count;
 					l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
@@ -120,15 +124,18 @@ namespace Zorlock
 			
 			index++;
 		}
-
+		
 		vertexBuffer->ApplyLayout();
-
+		DX11VertexBuffer * vbuffer = static_cast<DX11VertexBuffer*>(vertexBuffer.get());
+		printf("Stride: %u \n", layout.GetStride());
+		vbuffer->SetStride(static_cast<UINT>(layout.GetStride()));
 		m_VertexBuffers.push_back(vertexBuffer);
 		
 		
-		
+		dxvertexshader = static_cast<DX11Shader*>(vertexBuffer->GetShader());
 		//call it after we have layout set in place, need to pass our buffer unlike opengl we are using the same buffer for verts and layout
-		vertexBuffer->Bind(m_RendererID);
+		
+		vertexBuffer->Bind();
 		ZL_PROFILE_FUNCTION();
 	}
 	void DX11VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)

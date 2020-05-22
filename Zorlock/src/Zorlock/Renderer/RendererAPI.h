@@ -1,5 +1,4 @@
 #pragma once
-#include <glm/glm.hpp>
 #include "Zorlock/Renderer/VertexArray.h"
 #include "Color.h"
 namespace Zorlock {

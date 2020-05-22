@@ -2,7 +2,7 @@ Texture2DArray u_Textures : TEXTURE : register(t0);
 SamplerState u_TexturesSampler : SAMPLER : register(s0);
 //type 
 //version 330 core
-struct VS_INPUT
+struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
 	float4 v_Color : COLOR;
@@ -10,9 +10,9 @@ struct VS_INPUT
 	float v_TexIndex : PSIZE;
 	float v_TilingFactor : PSIZE;
 };
-/*Change function body return type to 	float4 color;
+/* Change function body return type to 	float4 color;
 */
-float main(VS_INPUT input) : SV_Target
+float4 main(PS_INPUT input) : SV_Target
 {
 	float4 color;
 

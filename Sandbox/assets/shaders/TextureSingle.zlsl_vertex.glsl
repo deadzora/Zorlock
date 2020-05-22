@@ -11,6 +11,6 @@ void main()
 {
 
 	v_TexCoord = a_TexCoord;
-	v_Position = u_ViewProjection * u_Transform*vec4(a_Position, 1.0);	
+	v_Position = u_ViewProjection * u_Transform *vec4(a_Position, 1.0);	
 	gl_Position=v_Position;
 }

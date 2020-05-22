@@ -279,6 +279,9 @@
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DDSTextureLoader.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
@@ -292,6 +295,9 @@
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11SwapChain.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11Textures.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11VBuffer.h">
@@ -310,6 +316,9 @@
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\MouseEvent.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\WICTextureLoader.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\ZWindow.h">
@@ -2909,6 +2918,9 @@
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DDSTextureLoader.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11DeviceContext.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
@@ -2924,6 +2936,9 @@
     <ClCompile Include="vendor\DX11\src\DX11SwapChain.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\DX11\src\DX11Textures.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\DX11\src\DX11VBuffer.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
@@ -2937,6 +2952,9 @@
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\DX11\src\MouseEvent.cpp">
+      <Filter>vendor\DX11\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\DX11\src\WICTextureLoader.cpp">
       <Filter>vendor\DX11\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\DX11\src\ZWindow.cpp">

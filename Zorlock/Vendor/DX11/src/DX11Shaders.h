@@ -5,6 +5,42 @@
 namespace DX11Raz
 {
 
+	struct RazConstantBuffer
+	{
+	public:
+		RazConstantBuffer() = default;
+		~RazConstantBuffer() = default;
+		std::string varname;
+		UINT slot;
+		ID3D11Buffer* buffer;
+		UINT buffersize;
+		void* data;
+		void Release()
+		{
+			buffer->Release();
+			//delete data;
+		}
+	};
+
+	struct RazSamplerBuffer
+	{
+	public:
+		RazSamplerBuffer() = default;
+		~RazSamplerBuffer() = default;
+		ID3D11ShaderResourceView* textureview;
+		ID3D11Resource* texture;
+		std::string varname;
+		UINT slot;
+		UINT buffersize;
+		void Release()
+		{
+			//handled on the texture side
+			//delete data;
+		}
+	};
+
+	class DX11DeviceContext;
+	class RazTexture;
 
 	class RazShader
 	{
@@ -20,26 +56,32 @@ namespace DX11Raz
 		bool InitPixel(const void* shader_byte_code, size_t byte_code_size);
 
 		//constant buffers
-		UINT CreateVertexCB(void * bufferdata, UINT buffersize);
-		UINT CreatePixelCB(void* bufferdata, UINT buffersize);
-		bool UpdateVertexCB(void* bufferdata, UINT buffersize, UINT index);
-		bool UpdatePixelCB(void* bufferdata, UINT buffersize, UINT index);
-		bool ApplyVertexCB(void* bufferdata, UINT buffersize, UINT index);
-		bool ApplyPixelCB(void* bufferdata, UINT buffersize, UINT index);
+
+		UINT CreateVertexCB(std::string cbname, UINT slot, void * bufferdata, UINT buffersize);
+		UINT CreatePixelCB(std::string cbname, UINT slot, void* bufferdata, UINT buffersize);
+		bool CreateTextureBuffer(std::string tname, UINT slot, UINT buffersize);
+		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex, ID3D11ShaderResourceView* texturev);
+		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex);
+		bool UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev);
+		bool UpdateTextureBuffer(std::string tname, RazTexture* texture);
+		bool UpdateVertexCB(void* bufferdata, std::string cbname);
+		bool UpdatePixelCB(void* bufferdata, std::string cbname);
+		bool ApplyVertexCB(std::string cbname);
+		bool ApplyPixelCB(std::string cbname);
 		void* GetPixelCBData(UINT index);
 		void* GetVertexCBData(UINT index);
 		bool ApplyAllVertexCB();
 		bool ApplyAllPixelCB();
+		void ApplyTexture(std::string cbname);
+		void ApplyTextureArray(std::string cbname);
 		ID3D10Blob* GetBuffer();
 		ID3D10Blob* GetPBuffer();
 
 	protected:
-		std::vector<void*> vdata;
-		std::vector<void*> pdata;
-		std::vector <UINT> vbsize;
-		std::vector <UINT> pbsize;
-		std::vector < ID3D11Buffer*> vc_buffer;
-		std::vector < ID3D11Buffer*> pc_buffer;
+		friend class DX11DeviceContext;
+		std::vector <RazConstantBuffer*> vc_buffer;
+		std::vector <RazConstantBuffer*> pc_buffer;
+		std::vector <RazSamplerBuffer*> tx_buffer;
 		ID3D10Blob* mv_buffer;
 		ID3D10Blob* mp_buffer;
 		ID3D11VertexShader* m_vs;

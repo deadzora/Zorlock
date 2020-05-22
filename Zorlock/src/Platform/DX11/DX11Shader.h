@@ -9,6 +9,8 @@ namespace DX11Raz {
 	class RazShader;
 }
 
+
+
 namespace Zorlock {
 
 	class DX11Shader : public Shader
@@ -26,6 +28,7 @@ namespace Zorlock {
 		virtual void Apply() const override;
 		virtual void SetInt(const std::string& name, int value) override;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
+		virtual void SetTextureArray(const std::string& name, void* values, uint32_t count) override;
 		virtual void SetFloat(const std::string& name, float value) override;
 		//virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
 		virtual void SetFloat3(const std::string& name, const VECTOR3& value) override;
@@ -36,58 +39,21 @@ namespace Zorlock {
 		virtual void PostProcess() override;
 		virtual void* GetShaderID() const override;
 		virtual const std::string& GetName() const override { return m_Name; }
-
 		void Compile(std::string vertexshadersource, std::string pixelshadersource);
 
-		template <class T>
-		UINT CreateVertexBufferData(T* bufferblob)
+		void UploadUniformInt(const std::string& name, int value);
+		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
+		void UploadUniformDataArray(const std::string& name, void* values, uint32_t count);
+		void UploadUniformFloat(const std::string& name, float value);
+		void UploadUniformFloat2(const std::string& name, const VECTOR2& value);
+		void UploadUniformFloat3(const std::string& name, const VECTOR3& value);
+		void UploadUniformFloat4(const std::string& name, const VECTOR4& value);
+		void UploadUniformMat3(const std::string& name, const MATRIX3& matrix);
+		void UploadUniformMat4(const std::string& name, const MATRIX4& matrix);
+		DX11Raz::RazShader* GetShader()
 		{
-			
-			return m_RendererID->CreateVertexCB(static_cast<void*>(bufferblob), sizeof(T));
-		};
-
-		template <class T>
-		UINT CreatePixelBufferData(T* bufferblob)
-		{
-			return m_RendererID->CreatePixelCB(static_cast<void*>(bufferblob), sizeof(T));
-		};
-
-		template <class T>
-		void UpdateVertexBufferData(T* bufferblob,UINT index)
-		{
-			m_RendererID->UpdateVertexCB(static_cast<void*>(bufferblob), sizeof(T), UINT index);
-		};
-
-		template <class T>
-		void UpdatePixelBufferData(T* bufferblob, UINT index)
-		{
-			pbufferSize = sizeof(T);
-			m_RendererID->UpdatePixelCB(static_cast<void*>(bufferblob), sizeof(T), UINT index);
-		};
-
-		template <class T>
-		T* SetVertexBufferData(UINT index)
-		{
-			return static_cast<T*>(m_RendererID->GetVertexCBData(index));
-		};
-
-		template <class T>
-		T* SetPixelBufferData(UINT index)
-		{
-			return static_cast<T*>(m_RendererID->GetPixelCBData(index));
-		};
-
-		template <class T>
-		void UploadVertexBufferData(T* bufferblob, UINT index)
-		{
-			m_RendererID->ApplyVertexCB(static_cast<void*>(bufferblob),sizeof(T),index);
-		};
-
-		template <class T>
-		void UploadPixelBufferData(T* bufferblob, UINT index)
-		{
-			m_RendererID->ApplyPixelCB(static_cast<void*>(bufferblob),sizeof(T),index);
-		};
+			return m_RendererID;
+		}
 
 		
 

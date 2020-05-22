@@ -12,7 +12,7 @@ namespace Zorlock {
 
 	enum class ShaderDataType
 	{
-		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
+		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool, Sampler2D
 	};
 
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)
@@ -207,9 +207,13 @@ namespace Zorlock {
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
 		
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) {};
+		
+		virtual void SetTextureArray(const std::string& name, void* values, uint32_t count) {};
+
 		virtual void PostProcess() {};
 		//Helper function across graphics API
 		virtual void* GetShaderID() const =0;
+
 
 		void Process();
 		virtual const std::string& GetName() const { return "";  };

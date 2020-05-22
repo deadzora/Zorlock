@@ -231,17 +231,17 @@ namespace DX11Raz
 
 		case WM_MOUSEWHEEL:
 		{
-			double x = GET_X_LPARAM(lparam);
-			double y = GET_Y_LPARAM(lparam);
+			double x = (double)GET_X_LPARAM(lparam)/ (double)WHEEL_DELTA;
+			double y = (double)GET_Y_LPARAM(lparam) / (double)WHEEL_DELTA;
 			if (GET_WHEEL_DELTA_WPARAM(wparam) > 0)
 			{
-				this->WScrollCallback(this, x, y);
-				//this->mouse.OnWheelUp((int)x, y);
+				this->WScrollCallback(this, (int)x, y);
+				this->mouse.OnWheelUp((int)x, GET_WHEEL_DELTA_WPARAM(wparam));
 			}
 			else if (GET_WHEEL_DELTA_WPARAM(wparam) < 0)
 			{
-				this->WScrollCallback(this, x, y);
-				//this->mouse.OnWheelDown(x, y);
+				this->WScrollCallback(this, (int)x, -y);
+				this->mouse.OnWheelDown((int)x, GET_WHEEL_DELTA_WPARAM(wparam));
 			}
 			break;
 		}

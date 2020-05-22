@@ -7,6 +7,6 @@ out vec4 v_Position;
 
 void main()
 {
-	v_Position = u_ViewProjection * u_Transform*a_Position;
+	v_Position = u_ViewProjection * u_Transform *a_Position;
 	gl_Position=v_Position;
 }

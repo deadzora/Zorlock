@@ -49,10 +49,9 @@ namespace Zorlock
 	DX11Shader::DX11Shader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name), Shader()
 	{
 
+		m_RendererID = DX11Raz::RazCreateShader();
+		Compile(vertexSrc, fragmentSrc);
 
-
-		m_RendererID->InitVertex(vertexSrc);
-		m_RendererID->InitPixel(fragmentSrc);
 	}
 
 	DX11Shader::DX11Shader(const std::string& name, const std::string& filepath)
@@ -72,24 +71,36 @@ namespace Zorlock
 
 	DX11Shader::DX11Shader(const std::string& source, bool diff)
 	{
+		ZL_PROFILE_FUNCTION();
+		CreateParser();
+		parser->Parse(source);
+		Process();
+		printf("COMPILE SHADERS!! \n");
+		std::string vertexSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::VERTEXSHADER);
+		std::string fragmentSrc = parser->GetShader(Zorlock::ZLSLParser::OutPutShaderType::HLSL, Zorlock::ZLSLParser::ShaderSection::FRAGMENTSHADER);
+		parser->SaveShader(vertexSrc, "_vertex.hlsl");
+		parser->SaveShader(fragmentSrc, "_pixel.hlsl");
+		m_RendererID = DX11Raz::RazCreateShader();
+		Compile(vertexSrc, fragmentSrc);
 	}
 
 	DX11Shader::~DX11Shader()
 	{
 		ZL_PROFILE_FUNCTION();
-		//m_RendererID->Release();
+		DX11Raz::RazDeleteShader(m_RendererID);
 	}
 
 	void DX11Shader::Bind() const
 	{
 		ZL_PROFILE_FUNCTION();
-		//Use this to pass uniformbuffers
+		DX11Raz::RazSetCurrentShader(m_RendererID);
+
 	}
 
 	void DX11Shader::Unbind() const
 	{
 		ZL_PROFILE_FUNCTION();
-		//no
+		DX11Raz::RazSetCurrentShader(0);
 	}
 
 	void DX11Shader::Apply() const
@@ -100,41 +111,50 @@ namespace Zorlock
 
 	void DX11Shader::SetInt(const std::string& name, int value)
 	{
-		/*
-		if (sizeof(int) % 16)
-		{
-			shaderData.push_back(static_cast<void*>(&value));
-		}
-		*/
-		ZL_PROFILE_FUNCTION();
+		UploadUniformInt(name, value);
 	}
 
 	void DX11Shader::SetIntArray(const std::string& name, int* values, uint32_t count)
 	{
-		ZL_PROFILE_FUNCTION();
+
+	}
+
+	void DX11Shader::SetTextureArray(const std::string& name, void* values, uint32_t count)
+	{
+
 	}
 
 	void DX11Shader::SetFloat(const std::string& name, float value)
 	{
 		ZL_PROFILE_FUNCTION();
-	}
+		UploadUniformFloat(name, value);
 
+	}
 
 
 	void DX11Shader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
+
+		UploadUniformFloat3(name, value);
+
 	}
 
 
 
 	void DX11Shader::SetFloat4(const std::string& name, const VECTOR4& value)
 	{
+
+		UploadUniformFloat4(name, value);
+
 	}
 
 
 
 	void DX11Shader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
+		UploadUniformMat4(name, value);
+
+
 	}
 
 	void DX11Shader::PostProcess()
@@ -149,8 +169,317 @@ namespace Zorlock
 
 	void DX11Shader::Compile(std::string vertexshadersource, std::string pixelshadersource)
 	{
-		m_RendererID->InitVertex(vertexshadersource);
-		m_RendererID->InitPixel(pixelshadersource);
+		if (m_RendererID->InitVertex(vertexshadersource))
+		{
+			for (size_t i = 0; i < m_VUniformVars.size(); i++)
+			{
+				switch (m_VUniformVars[i].Type)
+				{
+				case ShaderDataType::Mat4:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
+					break;
+				}
+				case ShaderDataType::Mat3:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new MATRIX3(), sizeof(MATRIX3));
+					break;
+				}
+				case ShaderDataType::Float4:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR4(), sizeof(VECTOR4));
+					break;
+				}
+				case ShaderDataType::Float3:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR3(), sizeof(VECTOR3));
+					break;
+				}
+				case ShaderDataType::Float2:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new VECTOR2(), sizeof(VECTOR2));
+					break;
+				}
+				case ShaderDataType::Float:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new float(1.0f), sizeof(float));
+					break;
+				}
+				case ShaderDataType::Int:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new UINT(1), sizeof(UINT));
+					break;
+				}
+				}
+				
+			}
+		}
+		if (m_RendererID->InitPixel(pixelshadersource))
+		{
+			for (size_t i = 0; i < m_FUniformVars.size(); i++)
+			{
+				switch (m_FUniformVars[i].Type)
+				{
+				case ShaderDataType::Mat4:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX4(), sizeof(MATRIX4));
+					break;
+				}
+				case ShaderDataType::Mat3:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new MATRIX3(), sizeof(MATRIX3));
+					break;
+				}
+				case ShaderDataType::Float4:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR4(), sizeof(VECTOR4));
+					break;
+				}
+				case ShaderDataType::Float3:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR3(), sizeof(VECTOR3));
+					break;
+				}
+				case ShaderDataType::Float2:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new VECTOR2(), sizeof(VECTOR2));
+					break;
+				}
+				case ShaderDataType::Float:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new float(1.0f), sizeof(float));
+					break;
+				}
+				case ShaderDataType::Int:
+				{
+					printf("Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
+					break;
+				}
+				case ShaderDataType::Sampler2D:
+				{
+					printf("Texture var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					m_RendererID->CreateTextureBuffer(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, sizeof(ID3D11ShaderResourceView));
+
+					break;
+				}
+				}
+
+			}
+		}
+		//get constant buffers
+
+
+
+	}
+
+	void DX11Shader::UploadUniformInt(const std::string& name, int value)
+	{
+
+		ZL_PROFILE_FUNCTION();
+
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				int p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				int p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+		
+	}
+
+	void DX11Shader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+	}
+
+	void DX11Shader::UploadUniformDataArray(const std::string& name, void* values, uint32_t count)
+	{
+	}
+
+	void DX11Shader::UploadUniformFloat(const std::string& name, float value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				float p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				float p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat2(const std::string& name, const VECTOR2& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR3 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent float3 \n");
+				VECTOR3 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat3(const std::string& name, const VECTOR3& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR3 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent float3 \n");
+				VECTOR3 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat4(const std::string& name, const VECTOR4& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR4 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR4 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformMat3(const std::string& name, const MATRIX3& matrix)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent Mat4 \n");
+				MATRIX3 p = matrix;
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
+
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				MATRIX3 p = matrix;
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
+
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformMat4(const std::string& name, const MATRIX4& matrix)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+
+				m_RendererID->UpdateVertexCB((void*)&matrix, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+
+				m_RendererID->UpdatePixelCB((void*)&matrix, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
 	}
 
 
