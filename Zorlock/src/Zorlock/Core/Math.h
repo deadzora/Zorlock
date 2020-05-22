@@ -1054,6 +1054,19 @@ namespace Zorlock {
 			return mat;
 		}
 
+
+		static Matrix4 Matrix4::projection(const Vector3& projection)
+		{
+			Matrix4 mat;
+
+			mat.i.x = 1.0f; mat.i.y = 0.0f; mat.i.z = 0.0f; mat.i.w = 0.0f;
+			mat.j.x = 0.0f; mat.j.y = 1.0f; mat.j.z = 0.0f; mat.j.w = 0.0f;
+			mat.k.x = 0.0f; mat.k.y = 0.0f; mat.k.z = 1.0f; mat.k.w = 0.0f;
+			mat.l.x = projection.x; mat.l.y = projection.y; projection.z; mat.l.w = 1.0f;
+
+			return mat;
+		}
+
 		static Matrix4 Matrix4::rotation(const Quaternion& quat)
 		{
 			Matrix mat = Matrix4::IDENTITY().toRotationMatrix(quat);
@@ -1215,6 +1228,16 @@ namespace Zorlock {
 				v.w);
 		}
 
+		Matrix4 transposeRH() const
+		{
+			return Matrix4(
+				i.x, i.y, i.z, i.w,
+				j.x, j.y, j.z, j.w,
+				k.x, k.y, k.z, l.z,
+				l.x, l.y, k.w, l.w
+			);
+		}
+
 		Matrix4 transpose() const
 		{
 			return Matrix4(
@@ -1222,6 +1245,16 @@ namespace Zorlock {
 				i.y, j.y, k.y, l.y,
 				i.z, j.z, k.z, l.z,
 				i.w, j.w, k.w, l.w
+			);
+		}
+
+		Matrix4 inverseTranspose() const
+		{
+			return Matrix4(
+				l.x, k.x, j.x, i.x,
+				l.y, k.y, j.y, i.y,
+				l.z, k.z, j.z, i.z,
+				l.w, k.w, j.w, i.w
 			);
 		}
 
@@ -1270,17 +1303,20 @@ namespace Zorlock {
 			if (ffar == 0.0f)
 			{
 				k.z = 1.0f;
-				k.w = 0.0f;
+				//k.w = 0.0f;
+				l.z = 0.0f;
 			}
 			else
 			{
 				k.z = -2.0F / deltaZ;
-				k.w = -(ffar + fnear) / deltaZ;
+				//k.w = -(ffar + fnear) / deltaZ;
+				l.z = -(ffar + fnear) / deltaZ;
 			}
 
 			l.x = 0.0f;
 			l.y = 0.0f;
-			l.z = 0.0f;
+			k.w = 0.0f;
+			//l.z = 0.0f;
 			l.w = 1.0f;
 
 		}
@@ -1529,6 +1565,8 @@ namespace Zorlock {
 			return mat;
 		}
 	};
+
+	
 
 
 	class Box {

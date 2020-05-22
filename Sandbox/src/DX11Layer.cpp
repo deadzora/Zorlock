@@ -5,13 +5,15 @@
 
 DX11Layer::DX11Layer() : Layer("DX11Layer"), m_CameraController(1280.0f / 720.0f)
 {
-	m_FlatColorShader = Zorlock::Shader::Create("FlatColor", "assets/shaders/FlatColor.zlsl");
+	rotation = 0.0f;
+	m_FlatColorShader = Zorlock::Shader::Create("FlatColor", "assets/shaders/FlatColor2.zlsl");
+	m_Shader = Zorlock::Shader::Create("VertexPosColor", "assets/shaders/VertexPosColor2.zlsl");
 	m_SquareVA = Zorlock::VertexArray::Create();
 	float squareVertices[4 * 4] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, 
+		-0.5f, -0.5f, 0.0f, 1.0f, 
 		 0.5f, -0.5f, 0.0f, 1.0f, 
 		 0.5f,  0.5f, 0.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 0.0f, 
+		-0.5f,  0.5f, 0.0f, 1.0f, 
 	};
 	m_FlatColorShader->Bind();
 	Zorlock::Ref<Zorlock::VertexBuffer> squareVB = Zorlock::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
@@ -32,6 +34,9 @@ void DX11Layer::OnDetach()
 
 void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 {
+	
+	rotation += 0.5f;
+	if (rotation >= 360) rotation = 0;
 	m_CameraController.OnUpdate(ts);
 
 	Zorlock::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
@@ -42,15 +47,19 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 	m_FlatColorShader->Bind();
 	m_FlatColorShader->SetFloat3("u_Color", m_SquareColor.ToVector3());
 
-	for (int y = 0; y < 20; y++)
+	for (float y = 0; y < 20; y++)
 	{
-		for (int x = 0; x < 20; x++)
+		for (float x = 0; x < 20; x++)
 		{
-			VECTOR3 pos(x * 0.11f, y * 0.11f, -0.15f);
-			MATRIX4 transform = MATRIX4::TRS(VECTOR3(0,0,10), QUATERNION::IDENTITY(), VECTOR3(1.5f, 1.5f, 1.5f));
+			VECTOR3 pos(x * 0.11f, y * 0.11f, 0);
+			MATRIX4 transform = MATRIX4::TRS(pos, QUATERNION::EulerAngles(VECTOR3(0,0,0)), VECTOR3(0.1f, 0.1f, 0.1f));
 			Zorlock::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 		}
 	}
+
+	m_Shader->Bind();
+	Zorlock::Renderer::Submit(m_Shader, m_SquareVA, MATRIX4::TRS(VECTOR3(0, 0, 0), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
+
 
 	Zorlock::Renderer::EndScene();
 }
@@ -59,6 +68,7 @@ void DX11Layer::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit3("Square Color", &m_SquareColor.x);
+	ImGui::Text("Rotation: %f", rotation);
 	ImGui::End();
 }
 

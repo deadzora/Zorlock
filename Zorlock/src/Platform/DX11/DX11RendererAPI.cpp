@@ -45,13 +45,15 @@ namespace Zorlock
 
 		DX11VertexArray * dxvertexarray = static_cast<DX11VertexArray*>(vertexArray.get());
 		//DX11Raz::RazSetCurrentShader(dxvertexarray->GetShader()->GetShader());
-		DX11Raz::RazApplyVertexShaderConstants();
-		DX11Raz::RazApplyPixelShaderConstants();
-		DX11Raz::RazApplyShader();
+		//DX11Raz::RazApplyVertexShaderConstants();
+		//DX11Raz::RazApplyPixelShaderConstants();
+		//DX11Raz::RazApplyShader();
 		DX11Raz::RazSetBlendState();
 		vertexArray->Bind();
 		DX11Raz::RazApplyVertexBuffer();
 		vertexArray->GetIndexBuffer()->Bind();
+		DX11Raz::RazBindIndexBuffer();
+
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		DX11Raz::RazDrawIndexed(count, 0, 0);
 	}

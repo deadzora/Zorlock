@@ -16,7 +16,7 @@ public:
 	void OnEvent(Zorlock::Event& e) override;
 
 private:
-
+	float rotation;
 	Zorlock::Ref<Zorlock::Shader> m_Shader;
 	Zorlock::Ref<Zorlock::VertexArray> m_VertexArray;
 

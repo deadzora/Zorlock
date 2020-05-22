@@ -283,6 +283,8 @@ bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
 		{
 			//delete vc_buffer[i]->data;
 			vc_buffer[i]->data = bufferdata;
+			//ApplyVertexCB(cbname);
+			break;
 		}
 	}
 
@@ -300,6 +302,8 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 			//delete vc_buffer[i]->data;
 			//printf("Updating %s \n",pc_buffer[i]->varname.c_str());
 			pc_buffer[i]->data = bufferdata;
+			//ApplyPixelCB(cbname);
+			break;
 		}
 	}
 	return true;

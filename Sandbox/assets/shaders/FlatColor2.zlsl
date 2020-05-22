@@ -4,13 +4,17 @@ version 330 core
 layout(location = 0) in vec4 a_Position as Z_Position;
 
 uniform mat4 u_ViewProjection;
+uniform mat4 u_ViewMatrix;
 uniform mat4 u_Transform;
 
 out vec4 v_Position as Z_Position;
 
 function void main()
 {
-	v_Position = Z_Mul(u_ViewProjection * u_Transform , a_Position);
+	//v_Position = a_Position;
+	v_Position = Z_Mul(u_Transform , a_Position);	
+	v_Position = Z_Mul(u_ViewMatrix, v_Position);
+	v_Position = Z_Mul(u_ViewProjection, v_Position);	
 	Z_Return(v_Position);	
 }
 

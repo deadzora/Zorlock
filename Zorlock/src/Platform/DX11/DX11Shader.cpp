@@ -111,30 +111,7 @@ namespace Zorlock
 
 	void DX11Shader::SetInt(const std::string& name, int value)
 	{
-
-		ZL_PROFILE_FUNCTION();
-
-		//figure out if this is pixelor vertex
-		for (size_t i = 0; i < m_VUniformVars.size(); i++)
-		{
-			if (m_VUniformVars[i].Name.compare(name) == 0)
-			{
-				int p = value;
-				m_RendererID->UpdateVertexCB(&p, name);
-				m_RendererID->ApplyVertexCB(name);
-				break;
-			}
-		}
-		for (size_t i = 0; i < m_FUniformVars.size(); i++)
-		{
-			if (m_FUniformVars[i].Name.compare(name) == 0)
-			{
-				int p = value;
-				m_RendererID->UpdatePixelCB(&p, name);
-				m_RendererID->ApplyPixelCB(name);
-				break;
-			}
-		}
+		UploadUniformInt(name, value);
 	}
 
 	void DX11Shader::SetIntArray(const std::string& name, int* values, uint32_t count)
@@ -150,56 +127,15 @@ namespace Zorlock
 	void DX11Shader::SetFloat(const std::string& name, float value)
 	{
 		ZL_PROFILE_FUNCTION();
+		UploadUniformFloat(name, value);
 
-		//figure out if this is pixelor vertex
-		for (size_t i = 0; i < m_VUniformVars.size(); i++)
-		{
-			if (m_VUniformVars[i].Name.compare(name) == 0)
-			{
-				float p = value;
-				m_RendererID->UpdateVertexCB(&p, name);
-				m_RendererID->ApplyVertexCB(name);
-				break;
-			}
-		}
-		for (size_t i = 0; i < m_FUniformVars.size(); i++)
-		{
-			if (m_FUniformVars[i].Name.compare(name) == 0)
-			{
-				float p = value;
-				m_RendererID->UpdatePixelCB(&p, name);
-				m_RendererID->ApplyPixelCB(name);
-				break;
-			}
-		}
 	}
 
 
 	void DX11Shader::SetFloat3(const std::string& name, const VECTOR3& value)
 	{
 
-		//figure out if this is pixelor vertex
-		for (size_t i = 0; i < m_VUniformVars.size(); i++)
-		{
-			if (m_VUniformVars[i].Name.compare(name) == 0)
-			{
-				VECTOR3 p = value;
-				m_RendererID->UpdateVertexCB(&p, name);
-				m_RendererID->ApplyVertexCB(name);
-				break;
-			}
-		}
-		for (size_t i = 0; i < m_FUniformVars.size(); i++)
-		{
-			if (m_FUniformVars[i].Name.compare(name) == 0)
-			{
-				//printf("Sent float3 \n");
-				VECTOR3 p = value;
-				m_RendererID->UpdatePixelCB(&p, name);
-				m_RendererID->ApplyPixelCB(name);
-				break;
-			}
-		}
+		UploadUniformFloat3(name, value);
 
 	}
 
@@ -208,27 +144,7 @@ namespace Zorlock
 	void DX11Shader::SetFloat4(const std::string& name, const VECTOR4& value)
 	{
 
-		//figure out if this is pixelor vertex
-		for (size_t i = 0; i < m_VUniformVars.size(); i++)
-		{
-			if (m_VUniformVars[i].Name.compare(name) == 0)
-			{
-				VECTOR4 p = value;
-				m_RendererID->UpdateVertexCB(&p, name);
-				m_RendererID->ApplyVertexCB(name);
-				break;
-			}
-		}
-		for (size_t i = 0; i < m_FUniformVars.size(); i++)
-		{
-			if (m_FUniformVars[i].Name.compare(name) == 0)
-			{
-				VECTOR4 p = value;
-				m_RendererID->UpdatePixelCB(&p, name);
-				m_RendererID->ApplyPixelCB(name);
-				break;
-			}
-		}
+		UploadUniformFloat4(name, value);
 
 	}
 
@@ -236,34 +152,7 @@ namespace Zorlock
 
 	void DX11Shader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
-		//figure out if this is pixelor vertex
-		for (size_t i = 0; i < m_VUniformVars.size(); i++)
-		{
-			if (m_VUniformVars[i].Name.compare(name) == 0)
-			{
-				//printf("Sent Mat4 \n");
-				MATRIX4 p = value;
-				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
-				
-				//&XMMatrixTranspose(mat)
-				m_RendererID->UpdateVertexCB(&p, name);
-				m_RendererID->ApplyVertexCB(name);
-				break;
-			}
-		}
-		for (size_t i = 0; i < m_FUniformVars.size(); i++)
-		{
-			if (m_FUniformVars[i].Name.compare(name) == 0)
-			{
-				MATRIX4 p = value;
-				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
-				
-				//&XMMatrixTranspose(mat)
-				m_RendererID->UpdatePixelCB(&p, name);
-				m_RendererID->ApplyPixelCB(name);
-				break;
-			}
-		}
+		UploadUniformMat4(name, value);
 
 
 	}
@@ -395,6 +284,202 @@ namespace Zorlock
 
 
 
+	}
+
+	void DX11Shader::UploadUniformInt(const std::string& name, int value)
+	{
+
+		ZL_PROFILE_FUNCTION();
+
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				int p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				int p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+		
+	}
+
+	void DX11Shader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+	}
+
+	void DX11Shader::UploadUniformDataArray(const std::string& name, void* values, uint32_t count)
+	{
+	}
+
+	void DX11Shader::UploadUniformFloat(const std::string& name, float value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				float p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				float p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat2(const std::string& name, const VECTOR2& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR3 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent float3 \n");
+				VECTOR3 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat3(const std::string& name, const VECTOR3& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR3 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent float3 \n");
+				VECTOR3 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformFloat4(const std::string& name, const VECTOR4& value)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR4 p = value;
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				VECTOR4 p = value;
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformMat3(const std::string& name, const MATRIX3& matrix)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				//printf("Sent Mat4 \n");
+				MATRIX3 p = matrix;
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
+
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+				MATRIX3 p = matrix;
+				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
+
+				//&XMMatrixTranspose(mat)
+				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformMat4(const std::string& name, const MATRIX4& matrix)
+	{
+		//figure out if this is pixelor vertex
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+
+				m_RendererID->UpdateVertexCB((void*)&matrix, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+
+				m_RendererID->UpdatePixelCB((void*)&matrix, name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
 	}
 
 

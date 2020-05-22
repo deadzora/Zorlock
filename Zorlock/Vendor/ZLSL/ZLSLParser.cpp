@@ -727,7 +727,7 @@ namespace Zorlock {
 					if (ZLSLDEBUG == true) printf("Function : %s nof args %i   \n", fbf.name.c_str(), fbf.arguments.size());
 					if (ZLSLDEBUG == true) printf("Process Multiply Function : %s \n", func.functionBodySyntax[i].original.c_str());
 					std::string newfuncbody = "";
-					newfuncbody += "mul("+fbf.arguments[1].arithmetic + "," + fbf.arguments[0].arithmetic + ")";
+					newfuncbody += "mul("+fbf.arguments[0].arithmetic + "," + fbf.arguments[1].arithmetic + ")";
 
 					//ReplaceAll(fbody, "Z_Mul", s_mapHLSLCommands[func.functionBodySyntax[i].command]);
 					ReplaceAll(fbody, func.functionBodySyntax[i].original, newfuncbody);

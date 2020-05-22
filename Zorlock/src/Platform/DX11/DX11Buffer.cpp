@@ -145,7 +145,7 @@ namespace Zorlock
 	void DX11IndexBuffer::Bind() const
 	{
 		DX11Raz::RazSetCurrentIndexBuffer(m_RendererID);
-		DX11Raz::RazBindIndexBuffer();
+		
 		ZL_PROFILE_FUNCTION();
 	}
 

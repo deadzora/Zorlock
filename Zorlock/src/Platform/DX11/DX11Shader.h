@@ -39,9 +39,17 @@ namespace Zorlock {
 		virtual void PostProcess() override;
 		virtual void* GetShaderID() const override;
 		virtual const std::string& GetName() const override { return m_Name; }
-
 		void Compile(std::string vertexshadersource, std::string pixelshadersource);
 
+		void UploadUniformInt(const std::string& name, int value);
+		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
+		void UploadUniformDataArray(const std::string& name, void* values, uint32_t count);
+		void UploadUniformFloat(const std::string& name, float value);
+		void UploadUniformFloat2(const std::string& name, const VECTOR2& value);
+		void UploadUniformFloat3(const std::string& name, const VECTOR3& value);
+		void UploadUniformFloat4(const std::string& name, const VECTOR4& value);
+		void UploadUniformMat3(const std::string& name, const MATRIX3& matrix);
+		void UploadUniformMat4(const std::string& name, const MATRIX4& matrix);
 		DX11Raz::RazShader* GetShader()
 		{
 			return m_RendererID;
