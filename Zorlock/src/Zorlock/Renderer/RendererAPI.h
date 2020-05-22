@@ -18,17 +18,20 @@ namespace Zorlock {
 		virtual void Clear() = 0;
 		virtual void Release() = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
-
+		static void SetAPI(int a) {
+			s_API = (API)a;
+		}
 		static API GetAPI() { return s_API; }
 		static Scope<RendererAPI> Create();
 	private:
 		static API s_API;
 	};
 
-
-
-
 }
+#define ZL_OPENGL 1
+#define ZL_DX11 2
+#define ZL_RENDERAPI(a) Zorlock::RendererAPI::SetAPI(a);
+
 
 #define ZINT(v) (Zorlock::RendererAPI::GetAPI()==Zorlock::RendererAPI::API::OpenGL) ? v : (UINT)v
 #define DXSHADERFILE(s) std::wstring(s.begin(), s.end()).c_str()

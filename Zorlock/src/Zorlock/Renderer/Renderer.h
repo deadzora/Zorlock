@@ -19,13 +19,14 @@ namespace Zorlock {
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform = MATRIX4::IDENTITY().translation(VECTOR3(1.0f,1.0f,1.0f)));
+		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform = MATRIX4().IDENTITY());
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	private:
 		struct SceneData
 		{
 			MATRIX4 ViewProjectionMatrix;
+			MATRIX4 ViewMatrix;
 		};
 	public:
 		ZL_DEPRECATED("Rolling out new SceneRenderer")

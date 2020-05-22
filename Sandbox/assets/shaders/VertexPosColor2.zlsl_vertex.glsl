@@ -1,15 +1,16 @@
 //type vertex
 #version 330 core
 layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec4 a_Color;
 uniform mat4 u_ViewProjection;
+uniform mat4 u_ViewMatrix;
 uniform mat4 u_Transform;
-out vec4 v_Color;
 out vec4 pp;
 
 void main()
 {
-	v_Color = a_Color;
-	pp = u_ViewProjection * u_Transform*vec4(a_Position, 1.0);
+
+	pp = u_Transform *a_Position;	
+	pp = u_ViewMatrix*pp;
+	pp = u_ViewProjection*pp;	
 	gl_Position=pp;
 }

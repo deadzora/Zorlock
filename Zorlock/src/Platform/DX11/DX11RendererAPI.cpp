@@ -48,7 +48,6 @@ namespace Zorlock
 		DX11Raz::RazApplyVertexShaderConstants();
 		DX11Raz::RazApplyPixelShaderConstants();
 		DX11Raz::RazApplyShader();
-
 		DX11Raz::RazSetBlendState();
 		vertexArray->Bind();
 		DX11Raz::RazApplyVertexBuffer();

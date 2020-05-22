@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Zorlock.h"
+#include <Zorlock.h>
+
 
 class DX11Layer : public Zorlock::Layer
 {

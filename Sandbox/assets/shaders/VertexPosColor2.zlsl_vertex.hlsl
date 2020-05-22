@@ -25,9 +25,9 @@ PS_INPUT main(VS_INPUT input)
 	PS_INPUT output = (PS_INPUT) 0; 
 
 
-	output.pp = mul(u_Transform ,input.a_Position);	
-	output.pp = mul(u_ViewMatrix,output.pp);
-	output.pp = mul(u_ViewProjection,output.pp);	
+	output.pp = mul(input.a_Position,u_Transform );	
+	output.pp = mul(output.pp,u_ViewMatrix);
+	output.pp = mul(output.pp,u_ViewProjection);	
 	return output;
 
 }

@@ -7,6 +7,8 @@ namespace Zorlock {
 
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
+
+
 	Scope<RendererAPI> RendererAPI::Create()
 	{
 		OutputDebugString(L"Creating 3D Device\r\n");

@@ -18,6 +18,7 @@
 #include "Zorlock/ImGui/ImGuiLayer.h"
 
 // ---Renderer------------------------
+#include "Zorlock/Renderer/RendererAPI.h"
 #include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Renderer/Renderer2D.h"
 #include "Zorlock/Renderer/RenderCommand.h"

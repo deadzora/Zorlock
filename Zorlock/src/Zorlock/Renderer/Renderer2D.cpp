@@ -98,9 +98,9 @@ namespace Zorlock {
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
-		s_Data.WhiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xffffffff;
-		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		s_Data.WhiteTexture = Texture2D::Create(1, 1, 0xffffffff);
+		//uint32_t whiteTextureData = 0xffffffff;
+		//s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 
 		//OpenGL only, Directx combines all textures into a single array, doesn;t need to send an array of addresses
@@ -129,7 +129,7 @@ namespace Zorlock {
 		camera.UpdateViewMatrix();
 		s_Data.TextureShader->Bind();
 
-		s_Data.TextureShader->SetMat4("u_ViewProjection", (camera.GetProjectionMatrix() * camera.GetViewMatrix()));
+		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix());//(camera.GetProjectionMatrix() * camera.GetViewMatrix()).transpose());
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -153,7 +153,7 @@ namespace Zorlock {
 		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			s_Data.TextureSlots[i]->Bind(i);
-
+		s_Data.WhiteTexture->Bind("u_Textures");
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 		/*
