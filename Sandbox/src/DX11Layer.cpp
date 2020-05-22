@@ -7,7 +7,7 @@ DX11Layer::DX11Layer() : Layer("DX11Layer"), m_CameraController(1280.0f / 720.0f
 {
 	rotation = 0.0f;
 	m_FlatColorShader = Zorlock::Shader::Create("FlatColor", "assets/shaders/FlatColor2.zlsl");
-	m_Shader = Zorlock::Shader::Create("VertexPosColor", "assets/shaders/VertexPosColor2.zlsl");
+	//m_Shader = Zorlock::Shader::Create("VertexPosColor", "assets/shaders/VertexPosColor2.zlsl");
 	m_SquareVA = Zorlock::VertexArray::Create();
 	float squareVertices[4 * 4] = {
 		-0.5f, -0.5f, 0.0f, 1.0f, 
@@ -15,7 +15,7 @@ DX11Layer::DX11Layer() : Layer("DX11Layer"), m_CameraController(1280.0f / 720.0f
 		 0.5f,  0.5f, 0.0f, 1.0f,
 		-0.5f,  0.5f, 0.0f, 1.0f, 
 	};
-	m_FlatColorShader->Bind();
+	m_FlatColorShader->Bind();	
 	Zorlock::Ref<Zorlock::VertexBuffer> squareVB = Zorlock::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 	squareVB->SetLayout(m_FlatColorShader->GetLayout(), m_FlatColorShader.get());
 	m_SquareVA->AddVertexBuffer(squareVB);
@@ -44,6 +44,7 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 
 
 	Zorlock::Renderer::BeginScene(m_CameraController.GetCamera());
+	
 	m_FlatColorShader->Bind();
 	m_FlatColorShader->SetFloat3("u_Color", m_SquareColor.ToVector3());
 
@@ -57,9 +58,10 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 		}
 	}
 
+	/*
 	m_Shader->Bind();
 	Zorlock::Renderer::Submit(m_Shader, m_SquareVA, MATRIX4::TRS(VECTOR3(0, 0, 0), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
-
+	*/
 
 	Zorlock::Renderer::EndScene();
 }

@@ -26,7 +26,6 @@ namespace Zorlock {
 		struct SceneData
 		{
 			MATRIX4 ViewProjectionMatrix;
-			MATRIX4 ViewMatrix;
 		};
 	public:
 		ZL_DEPRECATED("Rolling out new SceneRenderer")

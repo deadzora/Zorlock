@@ -27,8 +27,7 @@ namespace Zorlock {
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		s_SceneData->ViewProjectionMatrix = camera.GetProjectionMatrix();//(camera.GetViewMatrix() * camera.GetProjectionMatrix());
-		s_SceneData->ViewMatrix = camera.GetViewMatrix();
+		s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
 	}
 
 	void Renderer::EndScene()
@@ -38,8 +37,7 @@ namespace Zorlock {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
-		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix); //(s_SceneData->ViewProjectionMatrix).transpose());
-		shader->SetMat4("u_ViewMatrix", s_SceneData->ViewProjectionMatrix);
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetMat4("u_Transform", transform);
 		shader->Apply();
 		vertexArray->Bind();

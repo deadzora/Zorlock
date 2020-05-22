@@ -10,6 +10,6 @@ out vec4 pp;
 void main()
 {
 	v_Color = a_Color;
-	pp = u_ViewProjection * u_Transform*vec4(a_Position, 1.0);
+	pp = u_ViewProjection * u_Transform *vec4(a_Position, 1.0);
 	gl_Position=pp;
 }
