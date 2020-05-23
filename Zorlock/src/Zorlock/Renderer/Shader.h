@@ -125,6 +125,7 @@ namespace Zorlock {
 		uint32_t Slot;
 		size_t Offset;
 		bool Normalized;
+		bool isArray;
 
 		ShaderVariable() : Name(""), Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false), Slot(0)
 		{};
@@ -138,7 +139,10 @@ namespace Zorlock {
 			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Slot(slot)
 		{
 		}
-
+		ShaderVariable(ShaderDataType type, const std::string& name, uint32_t slot, size_t offset, bool normalized, bool isarray)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Slot(slot), isArray(isarray)
+		{
+		}
 
 	};
 

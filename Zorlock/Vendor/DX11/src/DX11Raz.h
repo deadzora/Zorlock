@@ -16,7 +16,7 @@ namespace DX11Raz
 #define D3D_COMPILE_STANDARD_FILE_INCLUDE ((ID3DInclude*)(UINT_PTR)1)
 #endif
 
-#ifdef ZL_DEBUG
+#ifdef ZL_DEBUG_DX11
 	typedef bool (*DX11DebugCallback)(void* pInfoQueue);
 #define PID3D11InfoQueue(p) static_cast<ID3D11InfoQueue*>(p);
 #endif
@@ -95,11 +95,14 @@ namespace DX11Raz
 	void RazDrawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
 	void RazApplyShaderTexture(RazShader* shader,std::string name, RazTexture* texture);
 	void RazApplyShaderTexture(std::string name, RazTexture* texture);
+	void RazApplyShaderTexture(RazTexture* texture);
+	void RazApplyShaderTexture(RazTexture* texture, UINT slot);
 	void RazApplyVertexBuffer(RazVertexBuffer* v);
 	void RazApplyVertexBuffer();
 	void RazApplyIndexBuffer(RazIndexBuffer* ibuffer);
-	void RazApplyShaderTextureIndex(RazShader* shader, UINT index, std::string name, RazTexture* texture);
-	void RazApplyShaderTextureIndex(UINT index, std::string name, RazTexture* texture);
+	//void RazApplyShaderTextureIndex(RazShader* shader, UINT index, std::string name, RazTexture* texture);
+	//void RazApplyShaderTextureIndex(UINT index, std::string name, RazTexture* texture);
+
 	class DX11GraphicsEngine
 	{
 	public:
@@ -178,8 +181,10 @@ namespace DX11Raz
 		//DX11SwapChain* m_swapchain;
 		ID3D11Debug* m_d3dDebug;
 		
-
+#ifdef ZL_DEBUG_DX11
 		DX11DebugCallback DebugCall;
+
+#endif
 		//main context
 		DX11DeviceContext* m_imm_device_context;
 

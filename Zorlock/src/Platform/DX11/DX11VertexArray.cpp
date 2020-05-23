@@ -2,7 +2,6 @@
 #include "DX11VertexArray.h"
 #include "DX11Shader.h"
 #include "DX11Buffer.h"
-#include <d3d11.h>
 #include <DX11Raz.h>
 #include <DX11VBuffer.h>
 #include <DX11DeviceContext.h>

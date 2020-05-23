@@ -19,6 +19,7 @@ void main()
 	v_TexCoord = a_TexCoord;
 	v_TexIndex = a_TexIndex;
 	v_TilingFactor = a_TilingFactor;
-	v_Position = u_ViewProjection *vec4(a_Position, 1.0);	
+	v_Position = vec4(a_Position,1.0);
+	v_Position = u_ViewProjection*v_Position;
 	gl_Position=v_Position;
 }

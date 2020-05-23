@@ -18,7 +18,7 @@ struct PS_INPUT
 	float4 v_Color : COLOR;
 	float2 v_TexCoord : TEXCOORD;
 	float v_TexIndex : PSIZE;
-	float v_TilingFactor : PSIZE;
+	float v_TilingFactor : BLENDWEIGHT;
 };
 PS_INPUT main(VS_INPUT input)
 {
@@ -29,7 +29,8 @@ PS_INPUT main(VS_INPUT input)
 	output.v_TexCoord = input.a_TexCoord;
 	output.v_TexIndex = input.a_TexIndex;
 	output.v_TilingFactor = input.a_TilingFactor;
-	output.v_Position = mul(u_ViewProjection ,float4(input.a_Position, 1.0));	
+	output.v_Position = float4(input.a_Position,1.0);
+	output.v_Position = mul(u_ViewProjection,output.v_Position);
 	return output;
 
 }

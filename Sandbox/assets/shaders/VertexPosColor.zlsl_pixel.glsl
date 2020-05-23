@@ -1,11 +1,11 @@
 //type fragment
 #version 330 core
-layout(location = 0) out vec3 color;
-in vec4 pp;
+layout(location = 0) out vec4 color;
+in vec4 v_Position;
 in vec4 v_Color;
 
 void main()
 {
-	color = vec3(pp.x,pp.y,pp.z) * 0.5 + 0.5;
+	color = vec4(v_Position.x,v_Position.y,v_Position.z,1.0) * 0.5 + 0.5;
 	
 }

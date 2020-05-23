@@ -45,6 +45,11 @@ namespace Zorlock {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, &color);
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, uint32_t color, uint32_t size)
+	{
+		//possible alternative for doing texture arrays here.
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{

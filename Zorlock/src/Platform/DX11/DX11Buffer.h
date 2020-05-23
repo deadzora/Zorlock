@@ -46,7 +46,7 @@ namespace Zorlock {
 		virtual void Bind() const;
 		virtual void Unbind() const;
 
-		virtual UINT GetCount() const { return m_Count; }
+		virtual uint32_t GetCount() const { return m_Count; }
 	private:
 		DX11Raz::RazIndexBuffer* m_RendererID;
 		UINT m_Count;

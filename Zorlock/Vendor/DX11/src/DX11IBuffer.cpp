@@ -32,9 +32,10 @@ void DX11Raz::RazIndexBuffer::SetIndexes(UINT* indices, UINT count)
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{
+		printf("Failed to Create Index Buffer");
 		OutputDebugStringW(L"Failed to Create Index Buffer");
 
-		return ;
+		return;
 	}
 
 }

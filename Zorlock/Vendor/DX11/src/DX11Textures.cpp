@@ -109,7 +109,7 @@ namespace DX11Raz
 		}
 		else {
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 		}
 
 		DX11GraphicsEngine::Get()->AddTexture(this);
@@ -134,7 +134,7 @@ namespace DX11Raz
 		{
 			OutputDebugString(L"Failed to Create Texture \r\n");
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 		}
 
 		DX11GraphicsEngine::Get()->AddTexture(this);
@@ -257,7 +257,7 @@ namespace DX11Raz
 		if (FAILED(hr))
 		{
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture from Color \r\n");
 		}
 		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
@@ -266,7 +266,7 @@ namespace DX11Raz
 		if (FAILED(hr))
 		{
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 			OutputDebugString(L"Failed to Create Shader Resource from Color \r\n");
 		}
 		Width = width;
@@ -305,7 +305,7 @@ namespace DX11Raz
 		if (FAILED(hr))
 		{
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture2d array  from Color \r\n");
 		}
 		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
@@ -314,7 +314,7 @@ namespace DX11Raz
 		if (FAILED(hr))
 		{
 			textureView = 0;
-			texture = 0;
+			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture 2d Array Shader Resource from Color \r\n");
 		}
 		Width = width;

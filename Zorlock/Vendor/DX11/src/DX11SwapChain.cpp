@@ -11,22 +11,25 @@ namespace DX11Raz
 	bool DX11SwapChain::init(HWND hwnd, UINT width, UINT height)
 	{
 		ID3D11Device* device = DX11GraphicsEngine::Get()->GetDevice();
+		UINT samples;
+		HRESULT hr = device->CheckMultisampleQualityLevels(DXGI_FORMAT_R10G10B10A2_UNORM, D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT, &samples);
+
 
 		DXGI_SWAP_CHAIN_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.BufferCount = 1;
+		desc.BufferCount = 2;
 		desc.BufferDesc.Width = width;
 		desc.BufferDesc.Height = height;
-		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.BufferDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
 		desc.BufferDesc.RefreshRate.Numerator = 60;
 		desc.BufferDesc.RefreshRate.Denominator = 1;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		desc.OutputWindow = hwnd;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
+		desc.SampleDesc.Count = 4;
+		desc.SampleDesc.Quality = samples-1;
 		desc.Windowed = TRUE;
-
-		HRESULT hr = DX11GraphicsEngine::Get()->GetFactory()->CreateSwapChain(device, &desc, &m_swapchain);
+		desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		hr = DX11GraphicsEngine::Get()->GetFactory()->CreateSwapChain(device, &desc, &m_swapchain);
 
 		if (FAILED(hr))
 		{

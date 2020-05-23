@@ -36,6 +36,7 @@ void Sandbox2D::OnUpdate(Zorlock::Timestep ts)
 	}
 
 	{
+		Zorlock::Renderer2D::BeginScene(m_CameraController.GetCamera());
 		static float rotation = 0.0f;
 		rotation += ts * 50.0f;
 
@@ -45,10 +46,10 @@ void Sandbox2D::OnUpdate(Zorlock::Timestep ts)
 		Zorlock::Renderer2D::DrawQuad(VECTOR2( -1.0f, 0.0f ), VECTOR2( 0.8f, 0.8f ), COLOR4( 0.8f, 0.2f, 0.3f, 1.0f ));
 		Zorlock::Renderer2D::DrawQuad(VECTOR2( 0.5f, -0.5f ), VECTOR2( 0.5f, 0.75f ), m_SquareColor);
 		Zorlock::Renderer2D::DrawQuad(VECTOR3( 0.0f, 0.0f, -0.2f ), VECTOR2( 20.0f, 20.0f ), m_CheckerboardTexture, 10.0f);
-		Zorlock::Renderer2D::DrawRotatedQuad(VECTOR3( -2.0f, 0.0f, 0.2f ), VECTOR2( 1.0f, 1.0f ), rotation, m_CheckerboardTexture, 20.0f);
+		Zorlock::Renderer2D::DrawRotatedQuad(VECTOR3( -2.0f, 0.0f, -0.005f ), VECTOR2( 1.0f, 1.0f ), rotation, m_CheckerboardTexture, 20.0f);
 		Zorlock::Renderer2D::EndScene();
 
-		Zorlock::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		
 		for (float y = -5.0f; y < 5.0f; y += 0.5f)
 		{
 			for (float x = -5.0f; x < 5.0f; x += 0.5f)
@@ -57,6 +58,7 @@ void Sandbox2D::OnUpdate(Zorlock::Timestep ts)
 				Zorlock::Renderer2D::DrawQuad(VECTOR3( x, y ,-0.15f), VECTOR2( 0.45f, 0.45f ), color);
 			}
 		}
+		
 		Zorlock::Renderer2D::EndScene();
 	}
 }

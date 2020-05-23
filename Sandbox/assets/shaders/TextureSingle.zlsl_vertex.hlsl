@@ -10,21 +10,23 @@ float4x4 u_Transform;
 //version 330 core
 struct VS_INPUT
 {
-	float3 a_Position : POSITION;
+	float4 a_Position : POSITION;
 	float2 a_TexCoord : TEXCOORD;
 };
-struct VS_OUTPUT
+struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
 	float2 v_TexCoord : TEXCOORD;
 };
-VS_OUTPUT main(VS_INPUT input)
+PS_INPUT main(VS_INPUT input)
 {
-	VS_OUTPUT output = (VS_OUTPUT) 0; 
+	PS_INPUT output = (PS_INPUT) 0; 
 
 
 	output.v_TexCoord = input.a_TexCoord;
-	output.v_Position = mul(u_ViewProjection * u_Transform , float4(input.a_Position, 1.0));	
+	output.v_Position = input.a_Position;
+	output.v_Position = mul(u_Transform,output.v_Position);	
+	output.v_Position = mul(u_ViewProjection,output.v_Position);
 	return output;
 
 }

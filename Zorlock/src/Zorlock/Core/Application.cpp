@@ -1,17 +1,20 @@
 #include "ZLpch.h"
 #include "Zorlock/Core/Application.h"
-
 #include "Zorlock/Core/Log.h"
-
 #include "Zorlock/Renderer/Renderer.h"
-
 #include "Zorlock/Core/Input.h"
-
 #include <glfw3.h>
 
 namespace Zorlock {
 
-
+#ifdef ZL_PLATFORM_WINDOWS
+	double GetTimeAsDouble() {
+		using namespace std::chrono;
+		using SecondsFP = std::chrono::duration<double>;
+		return duration_cast<SecondsFP>(high_resolution_clock::now().time_since_epoch()).count();
+	}
+#define GETTIME (Renderer::GetAPI() == RendererAPI::API::DX11) ? (float)Zorlock::GetTimeAsDouble() : (float)glfwGetTime()
+#endif
 
 	Application* Application::s_Instance = nullptr;
 

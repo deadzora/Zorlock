@@ -88,8 +88,10 @@ namespace Zorlock {
 				variable.command = s_mapStringCommands[vd.command];
 				variable.varname = vd.varname;
 				variable.vartype = s_mapStringVariables[vd.vartype];
-				std::stringstream indexnum(vd.index);
-				indexnum >> variable.index;
+				if (!vd.index.empty())
+				{
+					variable.index = std::stoi(vd.index);
+				}
 				variable.isArray = vd.isarray;
 
 				if (variable.isArray) {
@@ -166,6 +168,7 @@ namespace Zorlock {
 						pinVars.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Uniform) {
+
 						pixelUniforms.push_back(variable);
 					}
 					else {
@@ -178,9 +181,9 @@ namespace Zorlock {
 				if (ZLSLDEBUG == true) printf("Variable[%02d]\n", function_count++);
 				if (ZLSLDEBUG == true) printf("Command: %s\n", vd.command.c_str());
 				if (ZLSLDEBUG == true) printf("Variable: (%s)\n", vd.varname.c_str());
-				if (ZLSLDEBUG == true) printf("Type: \n%s\n", vd.vartype.c_str());
-				if (ZLSLDEBUG == true) printf("Index: \n%s\n", vd.index.c_str());
-				if (ZLSLDEBUG == true) printf("Semantic: \n%s\n", vd.semantic.c_str());
+				if (ZLSLDEBUG == true) printf("Type: %s\n", vd.vartype.c_str());
+				if (ZLSLDEBUG == true) printf("Index: %u\n", variable.index);
+				if (ZLSLDEBUG == true) printf("Semantic: %s\n", vd.semantic.c_str());
 				if (ZLSLDEBUG == true) printf("-----------------------------\n\n");
 
 				vd.clear();
@@ -698,21 +701,21 @@ namespace Zorlock {
 					std::string newfuncbody = "";
 					bool isarray = false;
 
-					newfuncbody += fbf.arguments[0].arithmetic + ".Sample("+ fbf.arguments[0].arithmetic +"Sampler,";
+					
 					
 					if (fbf.arguments[0].isArray)
 					{
-						isarray = true;
-					}
-
-					if (isarray)
-					{
-						newfuncbody += " float3("+ fbf.arguments[1].arithmetic+","+ fbf.arguments[0].val_list[0] + ")) ";
-
-					}
-					else {
+						newfuncbody += fbf.arguments[0].arithmetic + "[NonUniformResourceIndex("+ fbf.arguments[0].val_list[0] +")].Sample(" + fbf.arguments[0].arithmetic + "Sampler,";
 						newfuncbody += fbf.arguments[1].arithmetic + ") ";
 					}
+					else {
+						newfuncbody += fbf.arguments[0].arithmetic + ".Sample(" + fbf.arguments[0].arithmetic + "Sampler,";
+						newfuncbody += fbf.arguments[1].arithmetic + ") ";
+					}
+
+
+					
+
 						
 
 					if (ZLSLDEBUG == true) printf("Function : %s \n", newfuncbody.c_str());
@@ -1023,7 +1026,7 @@ namespace Zorlock {
 					if (dec[i].isArray)
 					{
 						
-						declares += s_mapHLSLVariables[dec[i].vartype] + "Array " + dec[i].varname + " : TEXTURE : register(t" + std::to_string(GetSamplerIndex(dec[i].varname)) + ");" + EOL;
+						declares += s_mapHLSLVariables[dec[i].vartype] + "<float4> " + dec[i].varname + "["+dec[i].val_list[0]+"] : TEXTURE : register(t" + std::to_string(GetSamplerIndex(dec[i].varname)) + ");" + EOL;
 						declares += "SamplerState " + dec[i].varname + "Sampler : SAMPLER : register(s" + std::to_string(GetSamplerIndex(dec[i].varname)) + ");" + EOL;
 					}
 					else {
@@ -1473,13 +1476,15 @@ namespace Zorlock {
 			{
 				if (!token_is(token_t::e_lsqrbracket))
 					return false;
-				if (!token_is_then_assign(token_t::e_number, fd.index))
+				if (current_token().type != token_t::e_number)
 				{
 					return false;
 				}
 				else {
 					fd.isarray = true;
-					if (ZLSLDEBUG == true) printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.index.c_str());
+					fd.arrayvals.push_back(current_token().value);
+					printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.arrayvals[0].c_str());
+					next_token();
 				}
 
 				if (!token_is(token_t::e_rsqrbracket))

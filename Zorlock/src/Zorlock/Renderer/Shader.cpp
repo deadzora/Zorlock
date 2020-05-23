@@ -71,6 +71,7 @@ namespace Zorlock {
 				//parser->pixelUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
 				s.Size = ShaderDataTypeSize(s.Type);
+				s.isArray = parser->pixelUniforms[i].isArray;
 				m_FUniformVars.push_back(s);
 				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{

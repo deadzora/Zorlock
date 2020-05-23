@@ -20,6 +20,12 @@ namespace Zorlock
 		m_RendererID = DX11Raz::RazCreateTexture(&newcolor, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
 	}
 
+	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height, uint32_t color, uint32_t size)
+	{
+		DX11Raz::DX11Color newcolor = DX11Raz::DX11Color(color);
+		m_RendererID = DX11Raz::RazCreateTexture(&newcolor, (UINT)width, (UINT)height, (UINT)size, aiTextureType::aiTextureType_DIFFUSE);
+	}
+
 	DX11Texture2D::DX11Texture2D(const std::string& path) : m_Path(path)
 	{
 		ZL_PROFILE_FUNCTION();
@@ -40,12 +46,15 @@ namespace Zorlock
 
 	void DX11Texture2D::Bind(uint32_t slot) const
 	{
-		DX11Raz::RazSetCurrentTexture(m_RendererID);
 		ZL_PROFILE_FUNCTION();
+		DX11Raz::RazSetCurrentTexture(m_RendererID);
+		DX11Raz::RazApplyShaderTexture(m_RendererID, slot);
+
 	}
 
 	void DX11Texture2D::Bind(std::string varname)
 	{
+		ZL_PROFILE_FUNCTION();
 		DX11Raz::RazGetCurrentShader()->UpdateTextureBuffer(varname, m_RendererID);
 		DX11Raz::RazGetCurrentShader()->ApplyTexture(varname);
 	}

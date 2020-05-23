@@ -28,10 +28,8 @@ namespace Zorlock {
 	};
 
 }
-#define ZL_OPENGL 1
-#define ZL_DX11 2
-#define ZL_RENDERAPI(a) Zorlock::RendererAPI::SetAPI(a);
 
+#define ZLRENDERAPI Zorlock::RendererAPI::GetAPI()
 
 #define ZINT(v) (Zorlock::RendererAPI::GetAPI()==Zorlock::RendererAPI::API::OpenGL) ? v : (UINT)v
 #define DXSHADERFILE(s) std::wstring(s.begin(), s.end()).c_str()

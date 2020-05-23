@@ -204,12 +204,13 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	return 1;
 }
 
-bool DX11Raz::RazShader::CreateTextureBuffer(std::string cbname, UINT slot, UINT buffersize)
+bool DX11Raz::RazShader::CreateTextureBuffer(std::string cbname, UINT slot, UINT buffersize, bool isarray)
 {
 	RazSamplerBuffer* sampler = new RazSamplerBuffer();
 	sampler->varname = cbname;
 	sampler->buffersize = buffersize;
 	sampler->slot = slot;
+	sampler->isArray = isarray;
 	tx_buffer.push_back(sampler);
 	return true;
 }
@@ -295,6 +296,7 @@ bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
 
 bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 {
+
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
 		if (cbname.compare(pc_buffer[i]->varname) == 0)
@@ -371,7 +373,7 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 	{
 		std::wstringstream ss;
 		
-		ss << L" Could not find Pixel Var " << RAZTEXTUREFILEW(cbname) << L"\n";
+		//ss << L" Could not find Pixel Var " << RAZTEXTUREFILEW(cbname) << L"\n";
 		OutputDebugStringW(ss.str().c_str());
 		return false;
 	}

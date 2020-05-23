@@ -32,6 +32,8 @@ namespace DX11Raz
 		std::string varname;
 		UINT slot;
 		UINT buffersize;
+		bool isArray;
+		std::vector< ID3D11Resource*> texturearray;
 		void Release()
 		{
 			//handled on the texture side
@@ -59,7 +61,7 @@ namespace DX11Raz
 
 		UINT CreateVertexCB(std::string cbname, UINT slot, void * bufferdata, UINT buffersize);
 		UINT CreatePixelCB(std::string cbname, UINT slot, void* bufferdata, UINT buffersize);
-		bool CreateTextureBuffer(std::string tname, UINT slot, UINT buffersize);
+		bool CreateTextureBuffer(std::string tname, UINT slot, UINT buffersize, bool isarray = false);
 		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex, ID3D11ShaderResourceView* texturev);
 		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex);
 		bool UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev);

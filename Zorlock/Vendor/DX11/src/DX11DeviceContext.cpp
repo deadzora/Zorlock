@@ -130,6 +130,7 @@ namespace DX11Raz
 		depthstencildesc.DepthEnable = true;
 		depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &m_depth_stencilstate);
 		if (FAILED(hr))
 		{
@@ -166,6 +167,9 @@ namespace DX11Raz
 
 	bool DX11DeviceContext::setstencilbuffer()
 	{
+		UINT samples;
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CheckMultisampleQualityLevels(DXGI_FORMAT_D24_UNORM_S8_UINT, D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT, &samples);
+
 		D3D11_TEXTURE2D_DESC depthstencildesc;
 		ZeroMemory(&depthstencildesc, sizeof(depthstencildesc));
 		depthstencildesc.Width = width;
@@ -173,20 +177,27 @@ namespace DX11Raz
 		depthstencildesc.MipLevels = 1;
 		depthstencildesc.ArraySize = 1;
 		depthstencildesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthstencildesc.SampleDesc.Count = 1;
-		depthstencildesc.SampleDesc.Quality = 0;
+		depthstencildesc.SampleDesc.Count = 4;
+		depthstencildesc.SampleDesc.Quality = samples-1;
 		depthstencildesc.Usage = D3D11_USAGE_DEFAULT;
 		depthstencildesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		depthstencildesc.CPUAccessFlags = 0;
 		depthstencildesc.MiscFlags = 0;
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
+
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Surface\r\n");
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthdetencilviewdesc;
+		ZeroMemory(&depthdetencilviewdesc, sizeof(depthdetencilviewdesc));
+		depthdetencilviewdesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+		depthdetencilviewdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, &depthdetencilviewdesc, &m_depth_stencilview);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Stencil View\r\n");
@@ -200,15 +211,15 @@ namespace DX11Raz
 
 	bool DX11DeviceContext::setrasterizer()
 	{
-		CD3D11_RASTERIZER_DESC rasterDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE,
-			FALSE /* FrontCounterClockwise */,
+		CD3D11_RASTERIZER_DESC rasterDesc(D3D11_FILL_SOLID, D3D11_CULL_BACK,
+			TRUE /* FrontCounterClockwise */,
 			D3D11_DEFAULT_DEPTH_BIAS,
 			D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
 			D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS,
 			TRUE /* DepthClipEnable */,
 			FALSE /* ScissorEnable */,
 			TRUE /* MultisampleEnable */,
-			FALSE /* AntialiasedLineEnable */);
+			TRUE /* AntialiasedLineEnable */);
 
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 		if (FAILED(hr))

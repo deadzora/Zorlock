@@ -33,8 +33,5 @@ namespace Zorlock {
 		static Scope<SceneData> s_SceneData;
 	};
 
-#ifdef ZL_PLATFORM_WINDOWS
-	//auto i = (float)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::now()).count();
-#define GETTIME (Renderer::GetAPI() == RendererAPI::API::DX11) ? (float)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::now()).count() : (float)glfwGetTime()
-#endif
+
 }

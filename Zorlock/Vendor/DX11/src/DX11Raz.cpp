@@ -33,7 +33,7 @@ namespace DX11Raz
 
 		D3D_FEATURE_LEVEL feature_levels[] =
 		{
-			D3D_FEATURE_LEVEL_11_0
+			D3D_FEATURE_LEVEL_11_1
 		};
 		UINT num_feature_levels = ARRAYSIZE(feature_levels);
 		HRESULT res = 0;
@@ -43,10 +43,11 @@ namespace DX11Raz
 		for (UINT driver_type_index = 0; driver_type_index < num_driver_types;)
 		{
 			//NO IMMEDIATE CONTEXT!
-#ifdef ZL_DEBUG
+#ifdef ZL_DEBUG_DX11
+			
 			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, D3D11_DEBUG_FEATURE_FINISH_PER_RENDER_OP, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
 #else
-			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, NULL);//&m_imm_context);
+			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
 #endif
 			if (SUCCEEDED(res))
 				break;
@@ -705,11 +706,23 @@ namespace DX11Raz
 	void RazApplyShaderTexture(RazShader* shader, std::string name, RazTexture* texture)
 	{
 		shader->UpdateTextureBuffer(name, texture->GetTexture());
+		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
 	}
 
 	void RazApplyShaderTexture(std::string name, RazTexture* texture)
 	{
 		RazGetCurrentShader()->UpdateTextureBuffer(name, texture->GetTexture());
+		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
+	}
+
+	void RazApplyShaderTexture(RazTexture* texture)
+	{
+		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
+	}
+
+	void RazApplyShaderTexture(RazTexture* texture, UINT slot)
+	{
+		RazGetCurrentContext()->setshadertexture( slot,texture->GetTextureView());
 	}
 
 	void RazApplyVertexBuffer(RazVertexBuffer* v)
@@ -726,6 +739,8 @@ namespace DX11Raz
 	{
 		RazGetCurrentContext()->setindexbuffer(ibuffer);
 	}
+
+
 
 
 

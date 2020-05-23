@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "DX11VBuffer.h"
 #include "DX11Vertex.h"
+#include "DX11Shaders.h"
 #include "DX11Raz.h"
 
 DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_vertex(0), m_size_list(0), stride(0)
@@ -100,9 +101,9 @@ void DX11Raz::RazVertexBuffer::SetIndexValue(UINT index, D3D11_INPUT_ELEMENT_DES
 
 void DX11Raz::RazVertexBuffer::SetVertices(UINT size)
 {
-	//UINT count = size / sizeof(float);
-	//float* arr = new float[count];
-	//SetVertices(&arr, size);
+	// we're not going to create a buffer until we have actual data, by then we will have the stride from the shader.
+	this->m_buffer = 0;
+
 }
 
 void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
@@ -141,7 +142,7 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
-	buff_desc.ByteWidth = sizeof(vertices);// *size;
+	buff_desc.ByteWidth = size;
 	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	buff_desc.CPUAccessFlags = 0;
 	buff_desc.MiscFlags = 0;
@@ -149,14 +150,15 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = vertices;
 	//this->m_size_vertex = sizeof(float);
-	this->m_size_list = size;
-	this->m_size_vertex = sizeof(float);
-
+	this->m_size_list = size/stride;
+	this->m_size_vertex = stride;
+	//printf("Vertices size: %u list size %u byte width: %u \n",size, this->m_size_list, this->m_size_vertex);
 	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
 	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
 	if (FAILED(hr))
 	{
 		m_buffer = 0;
+		printf("Failed to Create Vertex Buffer !!");
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
