@@ -4,6 +4,8 @@
 #include "Zorlock/Renderer/OrthographicCamera.h"
 #include "Zorlock/Renderer/Shader.h"
 
+#define ZLRENDERER Zorlock::Renderer
+
 namespace Zorlock {
 
 	class Renderer
@@ -17,8 +19,9 @@ namespace Zorlock {
 		//static void BeginScene(Camera& camera);
 		ZL_DEPRECATED("Rolling out new base Camera class")
 		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene();
 		static void EndScene();
-
+		static void RenderScene();
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform = MATRIX4().IDENTITY());
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }

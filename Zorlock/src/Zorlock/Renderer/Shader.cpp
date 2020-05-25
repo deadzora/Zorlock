@@ -8,7 +8,7 @@
 namespace Zorlock {
 
 	ShaderLibrary shaderLibrary;
-
+	Ref<ShaderLibrary> m_shaderLibrary;
 
 	void Shader::Process()
 	{
@@ -205,6 +205,8 @@ namespace Zorlock {
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
 		ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
 		ismapped = true;
+
+		
 	}
 
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
@@ -239,6 +241,17 @@ namespace Zorlock {
 		return m_Shaders[name];
 	}
 
+	Ref<Shader> ShaderLibrary::GetStandard()
+	{
+		if (m_standardShader == nullptr)
+		{
+			m_standardShader = Shader::Create("Standard", "assets/shaders/standard.zlsl");
+			m_standardShader->Bind();
+			m_standardShader->SetInt("u_Texture", 0);
+		}
+		return m_standardShader;
+	}
+
 	bool ShaderLibrary::Exists(const std::string& name) const
 	{
 		return m_Shaders.find(name) != m_Shaders.end();
@@ -249,7 +262,7 @@ namespace Zorlock {
 		return ShaderVarMap[v];
 	}
 
-	ShaderLibrary* ShaderLibrary::GetInstance()
+	Ref<ShaderLibrary> ShaderLibrary::GetInstance()
 	{
 		if (shaderLibrary.ismapped == false)
 		{
@@ -268,7 +281,11 @@ namespace Zorlock {
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
 			shaderLibrary.ismapped = true;
 		}
-		return &shaderLibrary;
+		if (m_shaderLibrary == nullptr)
+		{
+			m_shaderLibrary = CreateRef <ShaderLibrary>(shaderLibrary);
+		}
+		return m_shaderLibrary;
 	}
 
 }

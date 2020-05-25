@@ -23,14 +23,15 @@ IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
 IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
-IncludeDir["assimp"] = "Zorlock/vendor/assimp/includes"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
 IncludeDir["ZLSL"] = "Zorlock/vendor/ZLSL"
+IncludeDir["Assimp"] = "Zorlock/vendor/assimp/include"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
 	include "Zorlock/vendor/Glad"
 	include "Zorlock/vendor/imgui"
+	include "Zorlock/vendor/assimp"
 group ""
 
 project "Zorlock"
@@ -77,26 +78,26 @@ project "Zorlock"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.assimp}",
 		"%{IncludeDir.DX11}",
-		"%{IncludeDir.ZLSL}"
-	}
-	
-	libdirs 
-	{ 
-		"%{prj.name}/vendor/assimp/lib"
+		"%{IncludeDir.ZLSL}",
+		"%{IncludeDir.Assimp}",
 
 	}
+	
+--	libdirs 
+--	{ 
+--		"%{prj.name}/vendor/assimp/lib"
+--	}
 
 	links 
 	{ 
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"Assimp",
 		"opengl32.lib",
 		"d3d11.lib",
 		"d3dcompiler.lib",
-		"assimp-vc140-mt.lib",
 		"dxguid.lib"
 	}
 	
@@ -122,6 +123,9 @@ project "Zorlock"
 		runtime "Release"
 		optimize "on"
 
+
+
+
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -145,7 +149,7 @@ project "Sandbox"
 		"Zorlock/src",
 		"Zorlock/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.ZLSL}"
+		"%{IncludeDir.ZLSL}",
 	}
 
 	links

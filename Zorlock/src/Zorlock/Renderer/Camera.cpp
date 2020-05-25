@@ -7,18 +7,26 @@
 namespace Zorlock {
 	Camera::Camera() : viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
 	{
+
+	}
+	Camera::Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+	{
+		SetProjectionValues(fovDegrees, aspectRatio, nearZ, farZ);
 	}
 	Camera::Camera(MATRIX4 proj, MATRIX4 view) : viewMatrix(view), projectionMatrix(proj)
 	{
-
+		
 	}
-	void Zorlock::Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+	void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
+		float fovRadians = RADIANS_FROM_DEGREES(fovDegrees);
+		projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
+		UpdateViewMatrix();
 	}
 
 
 
-	void Zorlock::Camera::SetLookAtPos(VECTOR3 lookAtPos)
+	void Camera::SetLookAtPos(VECTOR3 lookAtPos)
 	{
 		if (lookAtPos.x == this->transform->position.x && lookAtPos.y == this->transform->position.y && lookAtPos.z == this->transform->position.z)
 		{
@@ -55,18 +63,10 @@ namespace Zorlock {
 
 	void Zorlock::Camera::UpdateViewMatrix()
 	{
-		
-		MATRIX3 camRotationMatrix = MathF::rotationMatrix(this->transform->rotation.ToEulerAngles());
+		viewMatrix.SetInverseTransRotScale(this->transform->position, this->transform->rotation, VECTOR3(1, 1, 1));
 
-		VECTOR3 camTarget = camRotationMatrix * camTarget.Forward();
-
-		camTarget += this->transform->position;
-
-		VECTOR3 upDir = camRotationMatrix * camTarget.Up();
-
-		this->viewMatrix = MATRIX4::lookAt(this->transform->position, camTarget, upDir);
-
-		this->UpdateDirectionVectors();
+		this->transform->UpdateDirectionVectors();
 
 	}
 }
+

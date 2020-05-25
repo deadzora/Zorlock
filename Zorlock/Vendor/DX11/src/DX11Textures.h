@@ -1,7 +1,7 @@
 #pragma once
 typedef unsigned char BYTE;
 #include <d3d11.h>
-#include <material.h>
+#include <assimp/material.h>
 
 namespace DX11Raz
 {

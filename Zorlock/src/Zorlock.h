@@ -28,8 +28,11 @@
 #include "Zorlock/Renderer/Texture.h"
 #include "Zorlock/Renderer/VertexArray.h"
 
-//#include "Zorlock/Renderer/OrthographicCamera.h"
-// -----------------------------------
+// ---Game--------------------------------
+
+#include "Zorlock/Game/SceneManager.h"
+#include "Zorlock/Game/GameObject.h"
+
 
 
 //---Utility------------------------------

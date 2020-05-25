@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\DX11\src;vendor\ZLSL;vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -90,8 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -100,7 +99,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\DX11\src;vendor\ZLSL;vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -116,8 +115,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -126,7 +124,7 @@
       <PrecompiledHeaderFile>ZLpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ZL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\includes;vendor\DX11\src;vendor\ZLSL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\DX11\src;vendor\ZLSL;vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -142,8 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -197,13 +194,13 @@
     <ClInclude Include="src\Zorlock\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Zorlock\Renderer\Material.h" />
     <ClInclude Include="src\Zorlock\Renderer\Mesh.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Model.h" />
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="src\Zorlock\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Zorlock\Renderer\Renderer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
     <ClInclude Include="src\Zorlock\Renderer\Texture.h" />
     <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
@@ -1075,6 +1072,8 @@
     <ClCompile Include="src\Zorlock\Core\Window.cpp" />
     <ClCompile Include="src\Zorlock\Game\GameObject.cpp" />
     <ClCompile Include="src\Zorlock\Game\Object.cpp" />
+    <ClCompile Include="src\Zorlock\Game\Scene.cpp" />
+    <ClCompile Include="src\Zorlock\Game\SceneManager.cpp" />
     <ClCompile Include="src\Zorlock\Game\Transform.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp" />
@@ -1083,6 +1082,7 @@
     <ClCompile Include="src\Zorlock\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Material.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Mesh.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Model.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\RenderCommand.cpp" />
@@ -1122,6 +1122,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\assimp\Assimp.vcxproj">
+      <Project>{5234E0A7-3ED6-0A7E-2791-1ED213D291CE}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

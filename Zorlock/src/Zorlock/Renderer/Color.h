@@ -83,7 +83,7 @@ namespace Zorlock {
 	};
 
 	struct ColorRGBA {
-	
+
 		float x, y, z, w;
 	
 		ColorRGBA() : x(0), y(0), z(0), w(1) {};
@@ -94,6 +94,16 @@ namespace Zorlock {
 		{
 		}
 	public:
+		uint32_t ToColor()
+		{
+			uint32_t r = x * 255.0f;
+			uint32_t g = y * 255.0f;
+			uint32_t b = z * 255.0f;
+			uint32_t a = w * 255.0f;
+
+			return r << g | b << a;
+
+		}
 		static ColorRGBA WHITE()
 		{
 			return ColorRGBA().White();

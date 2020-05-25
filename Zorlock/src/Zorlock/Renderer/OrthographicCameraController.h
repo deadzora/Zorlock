@@ -6,11 +6,14 @@
 #include "Zorlock/Events/ApplicationEvent.h"
 #include "Zorlock/Events/MouseEvent.h"
 
+
 namespace Zorlock {
 
+	
 	class OrthographicCameraController
 	{
 	public:
+		ZL_DEPRECATED("Convert Controller to Component")
 		OrthographicCameraController(float aspectRatio, bool rotation = false);
 
 		void OnUpdate(Timestep ts);
@@ -37,3 +40,6 @@ namespace Zorlock {
 	};
 
 }
+
+#define ZLCAMERACONTROLLER(x) x
+#define ZLORTHO Zorlock::OrthographicCameraController

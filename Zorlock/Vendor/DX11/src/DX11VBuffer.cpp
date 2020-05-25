@@ -7,6 +7,7 @@
 DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_vertex(0), m_size_list(0), stride(0)
 {
 	DX11GraphicsEngine::Get()->AddVertexBuffer(this);
+
 }
 
 bool DX11Raz::RazVertexBuffer::SetLayout()
@@ -134,6 +135,36 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 	}
 
 }
+
+void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT bytewidth, UINT size)
+{
+	if (this->m_buffer != 0) this->m_buffer->Release();
+
+	D3D11_BUFFER_DESC buff_desc = {};
+	buff_desc.Usage = D3D11_USAGE_DEFAULT;
+	buff_desc.ByteWidth = bytewidth;
+	buff_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buff_desc.CPUAccessFlags = 0;
+	buff_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data = {};
+	init_data.pSysMem = vertices;
+
+	//this->m_size_vertex = sizeof(float);
+	this->m_size_list = size;
+	this->m_size_vertex = bytewidth;
+
+	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	if (FAILED(hr))
+	{
+		m_buffer = 0;
+		OutputDebugStringW(L"Failed to Create Vertex Buffer");
+		return;
+	}
+
+}
+
 
 void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 {

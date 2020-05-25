@@ -13,6 +13,8 @@ namespace DX11Raz {
 
 namespace Zorlock {
 
+	class Texture2D;
+
 	class DX11Shader : public Shader
 	{
 	public:
@@ -25,6 +27,7 @@ namespace Zorlock {
 		
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+		ZL_DEPRECATED("No longer need this for DX11")
 		virtual void Apply() const override;
 		virtual void SetInt(const std::string& name, int value) override;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
@@ -62,5 +65,7 @@ namespace Zorlock {
 		DX11Raz::RazShader * m_RendererID;
 		std::string m_Name;
 	};
+
+
 
 }

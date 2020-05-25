@@ -9,37 +9,97 @@ namespace Zorlock {
 
 	public:
 		GameObject();
+		GameObject(std::string name);
+
 		template <class T>
-		T* GetComponent()
+		Ref<T> GetComponent()
 		{
-			for each (Component c in components)
+			if (std::is_convertible<T*, Component*>::value)
 			{
-				if (std::is_same<T, c>::value)
+				for each (Ref<Component> c in components)
 				{
-					return *c;
+					if (std::is_same<Ref<T>, typeid(c)>::value)
+					{
+						return c;
+					}
 				}
-				
 			}
 			return nullptr;
 		}
+
 		template <class T>
-		T* CreateComponent()
+		Ref<T> CreateComponent()
 		{
-			if (std::is_same<T, c>::value)
+			if (std::is_convertible<T*, Component*>::value)
 			{
-				T* c = new T();
+				Ref<T> c = CreateRef<T>();
+				Ref<Component> a = c;
+				a->SetParent(Ref<GameObject>(this));
+				components.push_back(c);
 				return c;
 			}
 			return nullptr;
 		}
+
+		template <class T>
+		void AddComponent(Ref<T> c)
+		{
+			if (std::is_convertible<T*, Component*>::value)
+			{
+				components.push_back(c);
+			}
+		}
+		template <class T>
+		void RemoveComponent()
+		{
+			uint32_t index = 0;
+			for each (Ref<Component> c in components)
+			{
+				if (std::is_convertible<T*, Component*>::value)
+				{
+					if (std::is_same<Ref<T>, typeid(c)>::value)
+					{
+						components.erase(components.begin() + index);
+						components.shrink_to_fit();
+						return;
+					}
+				}
+				index++;
+			}
+		}
+		template <class T>
+		void RemoveComponents()
+		{
+			uint32_t index = 0;
+			for each (Ref<Component> c in components)
+			{
+				if (std::is_convertible<T*, Component*>::value)
+				{
+					if (std::is_same<Ref<T>, typeid(c)>::value)
+					{
+						components.erase(components.begin() + index);
+						components.shrink_to_fit();
+						
+					}
+				}
+				index++;
+			}
+		}
+
 		~GameObject();
 
-		void UpdateDirectionVectors();
+		virtual void Start() override;
+		virtual void Awake() override;
+		virtual void Update(Timestep ts) override;
+		virtual void Render() override;
+		virtual void Destroy() override;
 
-		void Destroy();
+		
 	protected:
-		std::vector<Component> components;	
+		std::vector<Ref<Component>> components;
 	};
 
 
 }
+
+#define ZLGAMEOBJECT Zorlock::GameObject

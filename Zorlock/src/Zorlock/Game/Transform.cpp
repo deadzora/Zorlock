@@ -6,7 +6,7 @@
 namespace Zorlock
 {
 
-	Transform::Transform() : position(VECTOR3()), rotation(QUATERNION::IDENTITY()), scale(VECTOR2(1,1))
+	Transform::Transform() : position(VECTOR3()), rotation(QUATERNION::IDENTITY()), scale(VECTOR3(1,1,1)), transformation(MATRIX4::IDENTITY()), draw_transformation(MATRIX4::IDENTITY())
 	{
 	}
 	Transform::~Transform()
@@ -58,6 +58,7 @@ namespace Zorlock
 
 	void Transform::AdjustRotation(const VECTOR3& rot)
 	{
+		SetMatrix(MATRIX4::TRS(position, rotation, scale));
 	}
 
 	void Transform::AdjustRotation(float x, float y, float z)
@@ -79,6 +80,22 @@ namespace Zorlock
 	void Transform::AdjustScale(float x, float y, float z)
 	{
 	}
+	void Transform::SetMatrix(MATRIX4 matrix)
+	{
+		transformation = matrix;
+	}
+	void Transform::SetDrawMatrix(MATRIX4 matrix)
+	{
+		draw_transformation = matrix;
+	}
+	MATRIX4 Transform::GetDrawMatrix()
+	{
+		return draw_transformation;
+	}
+	MATRIX4 Transform::GetTransformationMatrix()
+	{
+		return transformation;
+	}
 	void Transform::UpdateDirectionVectors()
 	{
 		MATRIX4 vecRotationMatrix = MATRIX4::IDENTITY().toRotationMatrix(Quaternion().FromEulerAngles(VECTOR3(this->rotation.ToEulerAngles().x, this->rotation.ToEulerAngles().y,0.0f)));
@@ -96,6 +113,10 @@ namespace Zorlock
 		this->vec_right_noY = vecRotationMatrix_noY * this->DEFAULT_RIGHT_VECTOR;
 
 
+	}
+	void Transform::UpdateTransformationMatrix()
+	{
+		SetMatrix(MATRIX4::TRS(position, rotation,scale));
 	}
 	const VECTOR4& Transform::GetFowardVector(bool omitY)
 	{

@@ -19,3 +19,5 @@ namespace Zorlock {
 	};
 
 }
+
+#define ZLTIME Zorlock::Timestep

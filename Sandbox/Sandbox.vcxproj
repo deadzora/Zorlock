@@ -139,6 +139,7 @@
     <ClInclude Include="src\ExampleLayer.h" />
     <ClInclude Include="src\GraphicsTestLayer.h" />
     <ClInclude Include="src\Sandbox2D.h" />
+    <ClInclude Include="src\SceneLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DX11Layer.cpp" />
@@ -146,11 +147,16 @@
     <ClCompile Include="src\GraphicsTestLayer.cpp" />
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
+    <ClCompile Include="src\SceneLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zorlock\Zorlock.vcxproj">
       <Project>{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\ChernoLogo.png" />
+    <Image Include="assets\textures\SciFi_Fighter.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

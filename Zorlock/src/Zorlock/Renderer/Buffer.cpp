@@ -32,6 +32,19 @@ namespace Zorlock {
 		return nullptr;
 	}
 
+	Ref<VertexBuffer> VertexBuffer::Create(Vertex* vertices, uint32_t size)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:    ZL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLVertexBuffer>(vertices, size);
+		case RendererAPI::API::DX11:	return CreateRef<DX11VertexBuffer>(vertices, size);
+		}
+
+		ZL_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
 	Ref<VertexBuffer> VertexBuffer::Create(void* vertices, uint32_t size)
 	{
 		switch (Renderer::GetAPI())

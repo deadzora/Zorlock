@@ -8,6 +8,7 @@ namespace Zorlock {
 	{
 	public:
 		Camera();
+		Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ);
 		Camera(MATRIX4 view, MATRIX4 proj);
 		void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
 		const MATRIX4& GetProjectionMatrix() const { return projectionMatrix; }
@@ -30,3 +31,5 @@ namespace Zorlock {
 
 
 }
+
+#define ZLCAMERA Zorlock::Camera

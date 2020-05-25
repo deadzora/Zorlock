@@ -2,6 +2,7 @@
 #include "Zorlock/Renderer/RendererAPI.h"
 #include "Color.h"
 
+#define ZLRENDERCOMMAND Zorlock::RenderCommand
 namespace Zorlock {
 
 	class RenderCommand

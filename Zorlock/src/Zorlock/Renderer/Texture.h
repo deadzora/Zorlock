@@ -31,3 +31,5 @@ namespace Zorlock {
 	};
 
 }
+
+#define ZLTEXTURE2D Zorlock::Texture2D

@@ -1,6 +1,6 @@
 #pragma once
 #include "Zorlock/Core/Math.h"
-#define TRANSFORM Zorlock::Transform
+
 
 namespace Zorlock {
 
@@ -12,10 +12,12 @@ namespace Zorlock {
 		Transform();
 		~Transform();
 		
-		Transform * parent;
+		ZLREF<Transform> parent;
+		std::vector<ZLREF<Transform>> children;
 		VECTOR3 position;
 		QUATERNION rotation;
 		VECTOR3 scale;
+		
 		virtual VECTOR3 GetPosition();
 		virtual void SetPosition(const VECTOR3& pos);
 		virtual void SetPosition(float x, float y, float z);
@@ -31,8 +33,14 @@ namespace Zorlock {
 		virtual void SetScale(float x, float y, float z);
 		virtual void AdjustScale(const VECTOR3& pos);
 		virtual void AdjustScale(float x, float y, float z);
-	protected:
+		void SetMatrix(MATRIX4 matrix);
+		virtual void SetDrawMatrix(MATRIX4 matrix);
+		virtual MATRIX4 GetDrawMatrix();
+		virtual MATRIX4 GetTransformationMatrix();
 		virtual void UpdateDirectionVectors();
+		virtual void UpdateTransformationMatrix();
+	protected:
+		
 		const VECTOR4& GetFowardVector(bool omitY = false);
 		const VECTOR4& GetRightVector(bool omitY = false);
 		const VECTOR4& GetLeftVector(bool omitY = false);
@@ -43,7 +51,8 @@ namespace Zorlock {
 		const VECTOR4 DEFAULT_LEFT_VECTOR = VECTOR4(-1.0f, 0.0f, 0.0f, 0.0f);
 		const VECTOR4 DEFAULT_RIGHT_VECTOR = VECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
 		const VECTOR4 DEFAULT_DOWN_VECTOR = VECTOR4(0.0f, -1.0f, 0.0f, 0.0f);
-
+		MATRIX4 draw_transformation;
+		MATRIX4 transformation;
 		VECTOR4 vec_forward;
 		VECTOR4 vec_left;
 		VECTOR4 vec_right;
@@ -57,3 +66,4 @@ namespace Zorlock {
 
 
 }
+#define TRANSFORM Zorlock::Transform

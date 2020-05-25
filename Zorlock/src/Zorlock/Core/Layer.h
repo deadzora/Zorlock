@@ -14,7 +14,7 @@ namespace Zorlock {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate(Timestep ts) {}
+		virtual void OnUpdate(ZLTIME ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 
@@ -25,3 +25,5 @@ namespace Zorlock {
 	};
 
 }
+
+#define ZLLAYER Zorlock::Layer

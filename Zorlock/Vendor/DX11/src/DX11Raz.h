@@ -5,7 +5,7 @@
 #include <ZWindow.h>
 #include <vector>
 #include <filesystem>
-#include <material.h>
+#include <assimp/material.h>
 
 namespace DX11Raz
 {
@@ -72,6 +72,7 @@ namespace DX11Raz
 	void RazBindIndices(std::vector<DWORD> indices);
 	void RazBindVertices(RazVertexBuffer* vbuffer, float* verts, UINT size);
 	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT size);
+	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT bytewidth, UINT size);
 	void RazBindVertices(float* verts, UINT size);
 	void RazBindVertices(void* vertices, UINT size);
 	void RazBindVertices(UINT size);

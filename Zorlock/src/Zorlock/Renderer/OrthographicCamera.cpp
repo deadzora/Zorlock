@@ -34,7 +34,7 @@ namespace Zorlock {
 	{
 
 		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
-		this->UpdateDirectionVectors();
+		this->transform->UpdateDirectionVectors();
 	}
 
 }

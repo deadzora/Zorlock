@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Renderer/Renderer2D.h"
+#include "Zorlock/Game/SceneManager.h"
 
 namespace Zorlock {
 
@@ -28,11 +29,25 @@ namespace Zorlock {
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = (camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		
+	}
 
+	void Renderer::BeginScene()
+	{
+		if (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera())
+		{
+			s_SceneData->ViewProjectionMatrix =  ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
+		}
 	}
 
 	void Renderer::EndScene()
 	{
+	}
+
+	void Renderer::RenderScene()
+	{
+		//use scenemanager here to handle rendering the scene
+		ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Render();
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)

@@ -23,3 +23,5 @@ namespace Zorlock {
 	};
 
 }
+
+#define ZLVARRAY Zorlock::VertexArray

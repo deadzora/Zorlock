@@ -1,22 +1,36 @@
 #pragma once
 #include "ObjectRenderer.h"
-#include "Zorlock/Renderer/Mesh.h"
+
+
+
 
 namespace Zorlock {
 	
-	
+	class Model;
+
 	class MeshRenderer : public ObjectRenderer
 	{
 	public:
 		MeshRenderer();
-		virtual ~MeshRenderer() override;
-		virtual void Awake() const override;
-		virtual void Start() const override;
-		virtual void Update() const override;
-		virtual void Destroy() const override;
+		MeshRenderer(std::string name);
+		~MeshRenderer();
+		virtual void Awake() override;
+		virtual void Start() override;
+		virtual void Update(Timestep ts) override;
+		virtual void Render() override;
+		virtual void Destroy() override;
+		bool AddModel(const std::string& name, const std::string& filename);
+		Ref<Model> GetModel(uint32_t index);
+		void RemoveModel(std::string name);
+		void RemoveModel(Ref<Model> model);
+
 	protected:
-		std::vector<Mesh> m_meshes;
+		
+		std::vector<Ref<Model>> m_models;
 	};
 	
 	
 }
+
+#define ZLMESHRENDERER Zorlock::MeshRenderer
+

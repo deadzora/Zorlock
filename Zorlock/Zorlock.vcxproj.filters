@@ -243,6 +243,9 @@
     <ClInclude Include="src\Zorlock\Renderer\Mesh.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Model.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\OrthographicCamera.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
@@ -259,9 +262,6 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h">
-      <Filter>src\Zorlock\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Zorlock\Renderer\SceneRenderer.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Shader.h">
@@ -2867,6 +2867,12 @@
     <ClCompile Include="src\Zorlock\Game\Object.cpp">
       <Filter>src\Zorlock\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Game\Scene.cpp">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Game\SceneManager.cpp">
+      <Filter>src\Zorlock\Game</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Game\Transform.cpp">
       <Filter>src\Zorlock\Game</Filter>
     </ClCompile>
@@ -2889,6 +2895,9 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Mesh.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Model.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\OrthographicCamera.cpp">

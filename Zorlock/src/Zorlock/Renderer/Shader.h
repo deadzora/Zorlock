@@ -127,16 +127,16 @@ namespace Zorlock {
 		bool Normalized;
 		bool isArray;
 
-		ShaderVariable() : Name(""), Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false), Slot(0)
+		ShaderVariable() : Name(""), Type(ShaderDataType::None), Size(0), Offset(0), Normalized(false), Slot(0), isArray(false)
 		{};
 
 		ShaderVariable(ShaderDataType type, const std::string & name, bool normalized)
-			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized), Slot(0)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized), Slot(0), isArray(false)
 		{
 		}
 
 		ShaderVariable(ShaderDataType type, const std::string& name, uint32_t slot , size_t offset, bool normalized)
-			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Slot(slot)
+			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(offset), Normalized(normalized), Slot(slot), isArray(false)
 		{
 		}
 		ShaderVariable(ShaderDataType type, const std::string& name, uint32_t slot, size_t offset, bool normalized, bool isarray)
@@ -256,13 +256,21 @@ namespace Zorlock {
 		Ref<Shader> Load(const std::string& filepath);
 		Ref<Shader> Load(const std::string& name, const std::string& filepath);
 		Ref<Shader> Get(const std::string& name);
-		static ShaderLibrary* GetInstance();
+		Ref<Shader> GetStandard();
+		static Ref<ShaderLibrary> GetInstance();
 		bool Exists(const std::string& name) const;
 		ShaderDataType GetMappedValue(ZLSLParser::VariableTypes v);
 	private:
+		Ref<Shader> m_standardShader;
 		bool ismapped;
 		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 		std::map<ZLSLParser::VariableTypes, ShaderDataType> ShaderVarMap;
 	};
 
+
+
+
 }
+
+#define ZLSHADER Zorlock::Shader
+#define ZLSHADERLIBRARY Zorlock::ShaderLibrary

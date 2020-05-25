@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Zorlock.h"
-
 using namespace Zorlock;
 
-class ExampleLayer : public Zorlock::Layer
+class ExampleLayer : public ZLLAYER
 {
 public:
 	ExampleLayer();
@@ -16,17 +15,14 @@ public:
 	void OnUpdate(Zorlock::Timestep ts) override;
 	virtual void OnImGuiRender() override;
 	void OnEvent(Zorlock::Event& e) override;
-private:
-	
-	Zorlock::Ref<Zorlock::Shader> m_Shader;
-	Zorlock::Ref<Zorlock::VertexArray> m_VertexArray;
-
-	Zorlock::Ref<Zorlock::Shader> m_FlatColorShader;
-	Zorlock::Ref<Zorlock::VertexArray> m_SquareVA;
-	Zorlock::Ref<Zorlock::Shader> textureShader;
-	Zorlock::Ref<Zorlock::Texture2D> m_Texture, m_ChernoLogoTexture;
-
-	Zorlock::OrthographicCameraController m_CameraController;
+private:	
+	ZLREF<ZLSHADER> m_Shader;
+	ZLREF<ZLVARRAY> m_VertexArray;
+	ZLREF<ZLSHADER> m_FlatColorShader;
+	ZLREF<ZLVARRAY> m_SquareVA;
+	ZLREF<ZLSHADER> textureShader;
+	ZLREF<ZLTEXTURE2D> m_Texture, m_ChernoLogoTexture;
+	ZLCAMERACONTROLLER(ZLORTHO) m_CameraController;
 	COLOR m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 

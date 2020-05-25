@@ -595,6 +595,11 @@ namespace DX11Raz
 		vbuffer->SetVertices(vertices, size);
 	}
 
+	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT bytewidth, UINT size)
+	{
+		vbuffer->SetVertices(vertices, bytewidth, size);
+	}
+
 	void RazBindVertices(float* verts, UINT size)
 	{
 		RazGetCurrentVertexBuffer()->SetVertices(verts, size);

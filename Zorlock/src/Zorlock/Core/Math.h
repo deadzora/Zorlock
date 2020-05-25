@@ -333,98 +333,12 @@ namespace Zorlock {
 		}
 	};
 
-	struct VertexP
-	{
-		Vector3 value;
-		VertexP() {};
-		VertexP(float x, float y, float z) : value(Vector3(x,y,z))
-		{
-		}
-		//for template compatability
-		VertexP(float x, float y, float z, float w) : value(Vector3(x, y, z))
-		{
-			//ignore w
-		}
-		VertexP(float x, float y) : value(Vector3(x, y, 0))
-		{
-		}
-	};
-
-	struct VertexN
-	{
-		Vector3 value;
-		VertexN() {};
-		VertexN(float x, float y, float z) : value(Vector3(x, y, z))
-		{
-		}
-		//for template compatability
-		VertexN(float x, float y, float z, float w) : value(Vector3(x, y, z))
-		{
-			//ignore w
-		}
-		VertexN(float x, float y) : value(Vector3(x, y, 0))
-		{
-		}
-		
-	};
-
-	struct UV {
-		Vector2 value;
-
-		UV() : value(Vector2())
-		{};
-		UV(float x, float y) : value(Vector2(x,y))
-		{
-			this->value.x = x;
-			this->value.y = y;
-
-		}
-		UV(float x, float y, float z) : value(Vector2(x, y))
-		{
-		}
-		//for template compatability
-		UV(float x, float y, float z, float w) : value(Vector2(x, y))
-		{
-			//ignore w
-		}
-		
-	};
-
-	struct UVW {
-		Vector3 value;
-
-		UVW() : value(Vector3()) {};
-		UVW(float x, float y, float z) : value(Vector3(x, y, z))
-		{
-			this->value.x = x;
-			this->value.y = y;
-			this->value.z = z;
-		}
-		UVW(float x, float y) : value(Vector3(x, y, 0))
-		{
-			this->value.x = x;
-			this->value.y = y;
-
-		}
-		//for template compatability
-		UVW(float x, float y, float z, float w) : value(Vector3(x, y, z))
-		{
-			//ignore w
-		}
-	};
 
 
 
 
-	template <class... T>
-	class VertexT : public T...
-	{
-	public:
-		VertexT(T&&... base_classes) : T(base_classes)...{
-		}
-		VertexT(T&&... base_classes, T... params) : T(base_classes(params...))...{
-		}
-	};
+
+
 
 
 
@@ -470,23 +384,28 @@ namespace Zorlock {
 
 	struct Vertex
 	{
-		Vertex() {};
-		Vertex(float x, float y, float z)
+	public:
+		Vector4 position;
+		Vector3 normal;
+		Vector3 color;
+		Vector2 uvw;
+
+		Vertex() : position(VECTOR4(0,0,0,1)), normal(VECTOR3(0,0,0)), color(VECTOR3(1,1,1)), uvw(VECTOR2(0,0)) {};
+		Vertex(float x, float y, float z) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1)), uvw(VECTOR2(0, 0))
 		{
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
 		};
-		Vertex(float x, float y, float z, float u, float v, float w)
+		Vertex(float x, float y, float z, float u, float v) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1))
 		{
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
 			this->uvw.x = u;
 			this->uvw.y = v;
-			this->uvw.z = w;
 		};
-		Vertex(float x, float y, float z, float nx, float ny, float nz, float u, float v, float w)
+		Vertex(float x, float y, float z, float nx, float ny, float nz, float u, float v) : color(VECTOR3(1, 1, 1))
 		{
 			this->position.x = x;
 			this->position.y = y;
@@ -496,9 +415,8 @@ namespace Zorlock {
 			this->normal.z = nz;
 			this->uvw.x = u;
 			this->uvw.y = v;
-			this->uvw.z = w;
 		};
-		Vertex(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float u, float v, float w)
+		Vertex(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float u, float v)
 		{
 			this->position.x = x;
 			this->position.y = y;
@@ -508,15 +426,11 @@ namespace Zorlock {
 			this->normal.z = nz;
 			this->uvw.x = u;
 			this->uvw.y = v;
-			this->uvw.z = w;
 			this->color.x = r;
 			this->color.y = b;
 			this->color.z = g;
 		};
-		Vector3 position;
-		Vector3 normal;
-		Vector3 color;
-		Vector3 uvw;
+
 
 	};
 
@@ -1054,6 +968,53 @@ namespace Zorlock {
 			return mat;
 		}
 
+		static Matrix4 projectionPerspective(const float& horzFOV, float aspect, float znear, float zfar, bool positiveZ = false)
+		{
+			static constexpr float INFINITE_FAR_PLANE_ADJUST = 0.00001f;
+
+			float thetaX = horzFOV * 0.5f;
+			float tanThetaX = tan(thetaX);
+			float tanThetaY = tanThetaX / aspect;
+
+			float half_w = tanThetaX * znear;
+			float half_h = tanThetaY * znear;
+
+			float left = -half_w;
+			float right = half_w;
+			float bottom = -half_h;
+			float top = half_h;
+
+			float inv_w = 1 / (right - left);
+			float inv_h = 1 / (top - bottom);
+			float inv_d = 1 / (zfar - znear);
+
+			float A = 2 * znear * inv_w;
+			float B = 2 * znear * inv_h;
+			float C = (right + left) * inv_w;
+			float D = (top + bottom) * inv_h;
+			float q, qn;
+			float sign = positiveZ ? 1.0f : -1.0f;
+
+			if (zfar == 0)
+			{
+				// Infinite far plane
+				q = INFINITE_FAR_PLANE_ADJUST - 1;
+				qn = znear * (INFINITE_FAR_PLANE_ADJUST - 2);
+			}
+			else
+			{
+				q = sign * (zfar + znear) * inv_d;
+				qn = -2.0f * (zfar * znear) * inv_d;
+			}
+
+			Matrix4 mat;
+			mat.i.x = A;		mat.i.y = 0.0f;		mat.i.z = C;		mat.i.w = 0.0f;
+			mat.j.x = 0.0f;		mat.j.y = B;		mat.j.z = D;		mat.j.w = 0.0f;
+			mat.k.x = 0.0f;		mat.k.y = 0.0f;		mat.k.z = q;		mat.k.w = qn;
+			mat.l.x = 0.0f;		mat.l.y = 0.0f;		mat.l.z = sign;		mat.l.w = 0.0f;
+
+			return mat;
+		}
 
 		static Matrix4 Matrix4::projection(const Vector3& projection)
 		{

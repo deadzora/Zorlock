@@ -81,3 +81,4 @@ namespace Zorlock {
 
 }
 
+#define ZLEVENT Zorlock::Event
