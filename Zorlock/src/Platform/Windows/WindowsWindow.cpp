@@ -11,6 +11,9 @@
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
+#define GLFW_INCLUDE_VULKAN
+#include "glfw3.h"
+
 namespace Zorlock {
 	
 	static uint8_t s_GLFWWindowCount = 0;
@@ -57,6 +60,8 @@ namespace Zorlock {
 		#if defined(ZL_DEBUG)
 			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
 				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+			if (Renderer::GetAPI() == RendererAPI::API::Vulkan)
+				glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		#endif
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
@@ -157,6 +162,11 @@ namespace Zorlock {
 			MouseMovedEvent event((float)xPos, (float)yPos);
 			data.EventCallback(event);
 		});
+	}
+
+	void WindowsWindow::CreateSurface(VkInstance m_instance, VkSurfaceKHR m_surface)
+	{
+		glfwCreateWindowSurface(m_instance, m_Window, nullptr, &m_surface);
 	}
 
 	void WindowsWindow::Shutdown()

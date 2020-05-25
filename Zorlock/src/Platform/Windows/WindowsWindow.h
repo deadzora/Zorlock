@@ -2,6 +2,7 @@
 
 #include "Zorlock/Core/Window.h"
 #include "Zorlock/Renderer/GraphicsContext.h"
+#include "vulkan.h"
 
 #include <glfw3.h>
 
@@ -23,7 +24,9 @@ namespace Zorlock {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+
 		virtual void* GetNativeWindow() const { return m_Window; }
+		void CreateSurface(VkInstance m_instance, VkSurfaceKHR m_surface);
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();

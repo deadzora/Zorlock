@@ -23,6 +23,7 @@ IncludeDir["Glad"] = "Zorlock/vendor/Glad/include"
 IncludeDir["ImGui"] = "Zorlock/vendor/imgui"
 IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
+IncludeDir["Vulkan"] = "Zorlock/vendor/Vulkan/Include/vulkan"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -68,7 +69,8 @@ project "Zorlock"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.Vulkan}"
 	}
 
 	links 
@@ -76,7 +78,9 @@ project "Zorlock"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib"
+		"opengl32.lib",
+		"vulkan-1.lib"
+
 	}
 
 	filter "system:windows"

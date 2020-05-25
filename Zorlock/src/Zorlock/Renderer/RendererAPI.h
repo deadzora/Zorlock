@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 
 #include "Zorlock/Renderer/VertexArray.h"
-
 namespace Zorlock {
 
 	class RendererAPI
@@ -11,7 +10,7 @@ namespace Zorlock {
 	public:
 		enum class API
 		{
-			None = 0, OpenGL = 1
+			None = 0, OpenGL = 1, Vulkan = 2
 		};
 	public:
 		virtual void Init() = 0;
