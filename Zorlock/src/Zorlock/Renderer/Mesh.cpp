@@ -5,35 +5,39 @@
 
 namespace Zorlock
 {
-	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY())
+	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0)
 	{
 	}
-	void Mesh::CreateVertexArray()
+	Ref<VertexArray> Mesh::CreateVertexArray()
 	{
 		m_VertexArray = VertexArray::Create();
-
+		return m_VertexArray;
 	}
 
-	void Mesh::CreateVertexBuffer(float* vertices, uint32_t size)
+	Ref<VertexBuffer> Mesh::CreateVertexBuffer(float* vertices, uint32_t size)
 	{
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		m_VertexBuffer = VertexBuffer::Create(vertices, size);
+		return m_VertexBuffer;
 	}
 
-	void Mesh::CreateVertexBuffer(Vertex* vertices, uint32_t size)
+	Ref<VertexBuffer> Mesh::CreateVertexBuffer(Vertex* vertices, uint32_t size)
 	{
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		m_VertexBuffer = VertexBuffer::Create(vertices, size);
+		return m_VertexBuffer;
 	}
 
-	void Mesh::CreateVertexBuffer(void* vertices, uint32_t size)
+	Ref<VertexBuffer> Mesh::CreateVertexBuffer(void* vertices, uint32_t size)
 	{
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		m_VertexBuffer = VertexBuffer::Create(vertices, size);
+		return m_VertexBuffer;
 	}
 
 
-	void Mesh::CreateIndexBuffer(uint32_t* indices, uint32_t count)
+	Ref<IndexBuffer> Mesh::CreateIndexBuffer(uint32_t* indices, uint32_t count)
 	{
 		m_IndexBuffer = IndexBuffer::Create(indices, count);
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+		//m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+		return m_IndexBuffer;
 	}
 
 	Ref<VertexArray> Mesh::GetVertexArray()
@@ -75,31 +79,36 @@ namespace Zorlock
 	void Mesh::SetLayout(const BufferLayout& layout)
 	{
 		m_VertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		//m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 
 	void Mesh::SetLayout(const BufferLayout& layout, Ref<Shader> shader)
 	{
 		m_VertexBuffer->SetLayout(layout, shader.get());
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		//m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 
 	void Mesh::SetLayout(const BufferLayout& layout, Ref<Material> material)
 	{
 		m_material = material;
 		m_VertexBuffer->SetLayout(layout, material->GetShader().get());
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		//m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 	void Mesh::Draw()
 	{
 
-			m_material->GetShader()->Bind();			
+			m_material->GetShader()->Bind();
 			m_material->ApplyMainTexture();
+			/*
+			
 			m_material->ApplyViewMatrix();
 			m_material->ApplyTransform(drawMatrix);		
 			m_material->GetShader()->Apply();
 			m_VertexArray->Bind();
 			RenderCommand::DrawIndexed(m_VertexArray);
+			*/
+			Zorlock::Renderer::Submit(m_material->GetShader(), m_VertexArray, drawMatrix);
+
 
 	}
 	void Mesh::Destroy()

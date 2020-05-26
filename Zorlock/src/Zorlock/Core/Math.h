@@ -29,9 +29,9 @@ typedef float VECTOR4ARRAY[4];
 #define DEG_CIRCLE 360
 #define DEG_TO_RAD (M_PI / (DEG_CIRCLE / 2))
 #define RAD_TO_DEG ((DEG_CIRCLE / 2) / M_PI)
-#define TWOPI M_PI * 2.0f;			//360 degrees
-#define HALFPI M_PI * .5f;			//90  degrees
-#define QUARTERPI  M_PI * .25f;		//45  degrees
+#define TWOPI M_PI * 2.0f			//360 degrees
+#define HALFPI M_PI * .5f			//90  degrees
+#define QUARTERPI  M_PI * .25f		//45  degrees
 #define EPSILON 0.000001f
 #define DEGREES_FROM_RADIANS(r) MathF::DegreesFromRadians(r)
 #define RADIANS_FROM_DEGREES(r) MathF::RadiansFromDegrees(r)
@@ -382,6 +382,15 @@ namespace Zorlock {
 	};
 	*/
 
+	struct Point
+	{
+	public:
+		uint32_t x, y, z;
+
+		Point(): x(0), y(0), z(0) {};
+		Point(uint32_t x, uint32_t y, uint32_t z) : x(x), y(y), z(z) {};
+	};
+
 	struct Vertex
 	{
 	public:
@@ -396,12 +405,14 @@ namespace Zorlock {
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
+			this->position.w = 1.0f;
 		};
 		Vertex(float x, float y, float z, float u, float v) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1))
 		{
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
+			this->position.w = 1.0f;
 			this->uvw.x = u;
 			this->uvw.y = v;
 		};
@@ -410,6 +421,7 @@ namespace Zorlock {
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
+			this->position.w = 1.0f;
 			this->normal.x = nx;
 			this->normal.y = ny;
 			this->normal.z = nz;
@@ -421,6 +433,7 @@ namespace Zorlock {
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
+			this->position.w = 1.0f;
 			this->normal.x = nx;
 			this->normal.y = ny;
 			this->normal.z = nz;
@@ -430,7 +443,21 @@ namespace Zorlock {
 			this->color.y = b;
 			this->color.z = g;
 		};
-
+		Vertex(float x, float y, float z, float w, float nx, float ny, float nz, float r, float g, float b, float u, float v)
+		{
+			this->position.x = x;
+			this->position.y = y;
+			this->position.z = z;
+			this->position.w = w;
+			this->normal.x = nx;
+			this->normal.y = ny;
+			this->normal.z = nz;
+			this->uvw.x = u;
+			this->uvw.y = v;
+			this->color.x = r;
+			this->color.y = b;
+			this->color.z = g;
+		};
 
 	};
 
@@ -815,6 +842,7 @@ namespace Zorlock {
 			float tyy = ty * q.y;
 			float tyz = tz * q.y;
 			float tzz = tz * q.z;
+
 			Matrix mat;
 			mat.i.x = 1.0f - (tyy + tzz);
 			mat.i.y = txy - twz;

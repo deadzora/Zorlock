@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Zorlock.h"
-
+#include "Zorlock/Components/MeshRenderer.h"
 
 class SceneLayer : public Zorlock::Layer
 {
@@ -31,7 +31,7 @@ private:
 	ZLREF<ZLVARRAY> m_SquareVA;
 	ZLREF<ZLSHADER> textureShader;
 	ZLREF<ZLTEXTURE2D> m_ChernoLogoTexture;
-	ZLREF<ZLCOMPONENT> m_meshrenderer;
+	ZLREF<Zorlock::MeshRenderer> m_meshrenderer;
 	Zorlock::COLOR m_SquareColor = { 0.2f, 0.3f, 0.8f };
 
 };

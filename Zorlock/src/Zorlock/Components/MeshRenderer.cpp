@@ -30,13 +30,18 @@ namespace Zorlock
 
 	}
 
-	Ref<Model> MeshRenderer::GetModel(uint32_t index)
+	Ref<ZModel> MeshRenderer::GetModel(uint32_t index)
 	{
 		if (index < m_models.size())
 		{
 			return m_models[index];
 		}
 		return nullptr;
+	}
+
+	Ref<Mesh> MeshRenderer::GetMesh(uint32_t index, uint32_t indexb)
+	{
+		return GetModel(index)->GetMesh(indexb);
 	}
 
 
@@ -71,9 +76,45 @@ namespace Zorlock
 		}
 	}
 
+	bool MeshRenderer::CreateQuad()
+	{
+		Ref<ZModel> model = Ref<ZModel>(new ZModel(ZorlockPrimitiveType::Quad, Ref<MeshRenderer>(this)));
+		m_models.push_back(model);
+		return true;
+
+	}
+
+	bool MeshRenderer::CreateCube()
+	{
+		Ref<ZModel> model = Ref<ZModel>(new ZModel(ZorlockPrimitiveType::Cube, Ref<MeshRenderer>(this)));
+		m_models.push_back(model);
+		return true;
+	}
+
+	bool MeshRenderer::CreateSphere(uint32_t segments)
+	{
+		Ref<ZModel> model = Ref<ZModel>(new ZModel(ZorlockPrimitiveType::Sphere, Ref<MeshRenderer>(this), segments));
+		m_models.push_back(model);
+		return true;
+	}
+
+	bool MeshRenderer::CreateCylinder(uint32_t segments)
+	{
+		Ref<ZModel> model = Ref<ZModel>(new ZModel(ZorlockPrimitiveType::Cylinder, Ref<MeshRenderer>(this), segments));
+		m_models.push_back(model);
+		return true;
+	}
+
+	bool MeshRenderer::CreateCone(uint32_t segments)
+	{
+		Ref<ZModel> model = Ref<ZModel>(new ZModel(ZorlockPrimitiveType::Cone, Ref<MeshRenderer>(this), segments));
+		m_models.push_back(model);
+		return true;
+	}
+
 	bool MeshRenderer::AddModel(const std::string& name, const std::string& filename)
 	{
-		Ref<Model> model = Ref<Model>(new Model("model", filename, Ref<MeshRenderer>(this)));
+		Ref<ZModel> model = Ref<ZModel>(new ZModel("model", filename, Ref<MeshRenderer>(this)));
 		m_models.push_back(model);
 		return true;
 
@@ -90,7 +131,7 @@ namespace Zorlock
 			}
 		}
 	}
-	void MeshRenderer::RemoveModel(Ref<Model> model)
+	void MeshRenderer::RemoveModel(Ref<ZModel> model)
 	{
 		for (size_t i = 0; i < m_models.size(); i++)
 		{

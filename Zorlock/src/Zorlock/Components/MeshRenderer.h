@@ -6,7 +6,8 @@
 
 namespace Zorlock {
 	
-	class Model;
+	class ZModel;
+	class Mesh;
 
 	class MeshRenderer : public ObjectRenderer
 	{
@@ -19,14 +20,20 @@ namespace Zorlock {
 		virtual void Update(Timestep ts) override;
 		virtual void Render() override;
 		virtual void Destroy() override;
+		bool CreateQuad();
+		bool CreateCube();
+		bool CreateSphere(uint32_t segments);
+		bool CreateCylinder(uint32_t segments);
+		bool CreateCone(uint32_t segments);
 		bool AddModel(const std::string& name, const std::string& filename);
-		Ref<Model> GetModel(uint32_t index);
+		Ref<ZModel> GetModel(uint32_t index);
+		Ref<Mesh> GetMesh(uint32_t index, uint32_t indexb);
 		void RemoveModel(std::string name);
-		void RemoveModel(Ref<Model> model);
+		void RemoveModel(Ref<ZModel> model);
 
 	protected:
 		
-		std::vector<Ref<Model>> m_models;
+		std::vector<Ref<ZModel>> m_models;
 	};
 	
 	

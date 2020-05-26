@@ -5,8 +5,6 @@ SamplerState u_TextureSampler : SAMPLER : register(s0);
 struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
-	float3 v_Normal : NORMAL;
-	float3 v_Color : COLOR;
 	float2 v_TexCoord : TEXCOORD;
 };
 /* Change function body return type to 	float4 color;

@@ -11,9 +11,9 @@ class Sandbox : public Zorlock::Application
 public:
 	Sandbox()
 	{
-
+		PushLayer(new SceneLayer());
 		//PushLayer(new DX11Layer());
-		PushLayer(new Sandbox2D());
+		//PushLayer(new Sandbox2D());
 		//PushLayer(new ExampleLayer());
 	}
 

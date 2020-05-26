@@ -154,10 +154,6 @@
       <Project>{C99EF11E-357E-70BA-3E96-FB90AAF4D61B}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\textures\ChernoLogo.png" />
-    <Image Include="assets\textures\SciFi_Fighter.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

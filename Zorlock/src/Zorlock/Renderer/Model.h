@@ -23,18 +23,33 @@ namespace Zorlock
 	};
 
 
+	enum class ZorlockPrimitiveType
+	{
+		None,
+		Quad,
+		Cube,
+		Cylinder,
+		Sphere,
+		Cone
+	};
 
-	class Model
+	class ZModel
 	{
 	public:
-		virtual ~Model() {};
-		Model(const std::string& name,const std::string& modelfile);
-		Model(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer);
+		~ZModel();
+		ZModel();
+		ZModel(ZorlockPrimitiveType primitive,Ref<MeshRenderer> renderer, uint32_t segments = 12);
+		ZModel(const std::string& name,const std::string& modelfile);
+		ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer);
 		virtual void Update(Timestep ts);
 		virtual void Draw();
 		virtual void Destroy();
 		void SetMeshRenderer(Ref<MeshRenderer> m);
-
+		void CreateCube();
+		void CreateQuad();
+		void CreateSphere(uint32_t segments);
+		void CreateCylinder(uint32_t segments);
+		void CreateCone(uint32_t segments);
 		Ref<Mesh> CreateMesh();
 		void AddMesh(Ref<Mesh> mesh);
 		void RemoveMesh(Ref<Mesh> mesh);
@@ -53,4 +68,4 @@ namespace Zorlock
 
 }
 
-#define ZLMODEL Zorlock::Model
+#define ZLMODEL Zorlock::ZModel

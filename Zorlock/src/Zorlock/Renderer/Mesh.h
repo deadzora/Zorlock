@@ -9,11 +9,11 @@ namespace Zorlock {
 	public:
 		Mesh();
 		~Mesh() {};
-		void CreateVertexArray();
-		void CreateVertexBuffer(float* vertices, uint32_t size);
-		void CreateVertexBuffer(Vertex* vertices, uint32_t size);
-		void CreateVertexBuffer(void* vertices, uint32_t size);
-		void CreateIndexBuffer(uint32_t* indices, uint32_t count);
+		Ref<VertexArray> CreateVertexArray();
+		Ref<VertexBuffer> CreateVertexBuffer(float* vertices, uint32_t size);
+		Ref<VertexBuffer> CreateVertexBuffer(Vertex* vertices, uint32_t size);
+		Ref<VertexBuffer> CreateVertexBuffer(void* vertices, uint32_t size);
+		Ref<IndexBuffer> CreateIndexBuffer(uint32_t* indices, uint32_t count);
 		Ref<VertexArray> GetVertexArray();
 
 		void Bind();
