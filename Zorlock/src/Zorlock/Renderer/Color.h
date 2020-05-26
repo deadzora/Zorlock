@@ -10,7 +10,8 @@ namespace Zorlock {
 	public:
 		float x, y, z;
 	
-		ColorRGB() = default;
+		ColorRGB() : x(0),y(0),z(0)
+		{};
 		ColorRGB(float x, float y, float z) : x(x), y(y), z(z)
 		{
 		}
@@ -64,6 +65,9 @@ namespace Zorlock {
 		}
 		ColorRGB& operator=(const COLOR3ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2];  return *this;
+		}
+		ColorRGB& operator=(const ColorRGB& q) {
+			x = q.x; y = q.y; z = q.z; return *this;
 		}
 		COLOR3ARRAY& ToArray()
 		{
@@ -157,6 +161,9 @@ namespace Zorlock {
 		ColorRGBA& operator=(const COLOR4ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2]; w = q[3];  return *this;
 		}
+		ColorRGBA& operator=(const ColorRGBA& q) {
+			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
+		}
 		COLOR4ARRAY& ToArray()
 		{
 			COLOR4ARRAY vec4;
@@ -167,6 +174,16 @@ namespace Zorlock {
 
 			return vec4;
 
+		}
+		float* ToArrayPTR()
+		{
+			static float vec4[4];
+			vec4[0] = x;
+			vec4[1] = y;
+			vec4[2] = z;
+			vec4[3] = z;
+
+			return vec4;
 		}
 		Vector4 ToVector4()
 		{

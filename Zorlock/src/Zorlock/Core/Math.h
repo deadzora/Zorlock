@@ -48,7 +48,10 @@ namespace Zorlock {
 	public:
 		float x, y;
 
-		Vector2() = default;
+		Vector2() : x(0), y(0)
+		{
+		};
+
 		Vector2(float x, float y) : x(x), y(y)
 		{}
 		//for template compatability
@@ -60,6 +63,7 @@ namespace Zorlock {
 		{
 			//we ignore Z and W
 		}
+
 		VECTOR2ARRAY& ToArray()
 		{
 			VECTOR2ARRAY vec2;
@@ -79,7 +83,9 @@ namespace Zorlock {
 		Vector2& operator=(const VECTOR2ARRAY q) {
 			x = q[0]; y = q[1]; return *this;
 		}
-
+		Vector2& operator=(const Vector2& q) {
+			x = q.x; y = q.y; return *this;
+		}
 		
 	};
 
@@ -95,7 +101,8 @@ namespace Zorlock {
 				pow(vec->z - this->z, 2) * 1.0f);
 			return d;
 		}
-		Vector3() = default;
+		Vector3() : x(0), y(0), z(0)
+		{};
 
 		Vector3(Vector2 v) : x(v.x), y(v.y), z(0) {
 
@@ -183,9 +190,11 @@ namespace Zorlock {
 			}
 			return 0.0f;
 		}
-		Vector3& operator=(const Vector3 q) {
+		
+		Vector3& operator=(const Vector3& q) {
 			x = q.x; y = q.y; z = q.z; return *this;
 		}
+		
 		Vector3& operator=(const VECTOR3ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2]; return *this;
 		}
@@ -272,6 +281,7 @@ namespace Zorlock {
 		{
 
 		}
+
 		float distance(const Vector4* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -323,10 +333,11 @@ namespace Zorlock {
 		Vector4& operator-=(const Vector4& q) {
 			x -= q.x; y -= q.y; z -= q.z; w -= q.w; return *this;
 		}
-		Vector4& operator=(const Vector4 q) {
+		
+		Vector4& operator=(const Vector4& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
-
+		
 		Vector3 ToVector3()
 		{
 			return Vector3(x, y, z);
@@ -398,7 +409,9 @@ namespace Zorlock {
 		Vector3 normal;
 		Vector3 color;
 		Vector2 uvw;
-
+		Vertex& operator=(const Vertex& q) {
+			position = q.position; normal = q.normal; color = q.color; uvw = q.uvw; return *this;
+		}
 		Vertex() : position(VECTOR4(0,0,0,1)), normal(VECTOR3(0,0,0)), color(VECTOR3(1,1,1)), uvw(VECTOR2(0,0)) {};
 		Vertex(float x, float y, float z) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1)), uvw(VECTOR2(0, 0))
 		{
@@ -535,6 +548,9 @@ namespace Zorlock {
 		Quaternion(float w, const Vector3& v) : x(v.x), y(v.y), z(v.z) ,w(w) {
 		}
 		Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {
+		}
+		Quaternion& operator=(const Quaternion& q) {
+			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
 		static Quaternion ZERO()
 		{
@@ -690,8 +706,13 @@ namespace Zorlock {
 		friend class Transform;
 	public:
 		Vector3 i, j, k;
-		Matrix() = default;
+		Matrix() : i(Vector3(0,0,0)), j(Vector3(0,0,0)), k(Vector3(0,0,0))
+		{};
 
+
+		Matrix& operator=(const Matrix& q) {
+			i = q.i; j = q.j; k = q.k; return *this;
+		}
 		Matrix(const Vector3& i, const Vector3& j, const Vector3& k) :i(i), j(j), k(k) {
 		}
 		Matrix(const Vector4& i, const Vector4& j, const Vector4& k) :i(Vector3(i.x,i.y,i.z)), j(Vector3(j.x,j.y,j.z)), k(Vector3(k.x,k.y,k.z)) {
@@ -736,27 +757,27 @@ namespace Zorlock {
 			return mat3;
 		}
 
-		MATRIX3X3ARRAY* To3x3PtrArray()
+		float * To3x3PtrArray()
 		{
-			MATRIX3X3ARRAY mat3;
+			static float mat3[9];
 
 			mat3[0] = i.x; mat3[1] = i.y; mat3[2] = i.z;
 			mat3[3] = j.x; mat3[4] = j.y; mat3[5] = j.z;
 			mat3[6] = k.x; mat3[7] = k.y; mat3[8] = k.z;
 
-			return &mat3;
+			return mat3;
 		}
 
 
-		MATRIX3ARRAY* ToPtrArray()
+		float * ToPtrArray()
 		{
-			MATRIX3ARRAY mat3;
+			static float mat3[3][3];
 			mat3[0][0] = i.x; mat3[0][1] = i.y; mat3[0][2] = i.z;
 			mat3[1][0] = j.x; mat3[1][1] = j.y; mat3[1][2] = j.z;
 			mat3[2][0] = k.x; mat3[2][1] = k.y; mat3[2][2] = k.z;
 
 
-			return &mat3;
+			return *mat3;
 
 		}
 
@@ -891,11 +912,13 @@ namespace Zorlock {
 	class Matrix4 {
 	public:
 		Vector4 i, j, k, l;
-		Matrix4() = default;
-		constexpr Matrix4(const Matrix4&) = default;
-		constexpr Matrix4& operator=(const Matrix4&) = default;
+		Matrix4() : i(Vector4()), j(Vector4()), k(Vector4()), l(Vector4())
+		{
 
-
+		}
+		Matrix4& operator=(const Matrix4& q) {
+			i = q.i; j = q.j; k = q.k; l = q.l; return *this;
+		}
 
 		Matrix4(const Matrix& mat3)
 		{
@@ -943,15 +966,15 @@ namespace Zorlock {
 		}
 
 
-		MATRIX4X4ARRAY* To4x4PtrArray()
+		float * To4x4PtrArray()
 		{
-			MATRIX4X4ARRAY mat4;
+			static float mat4[16];
 
 			mat4[0] = i.x; mat4[1] = i.y; mat4[2] = i.z; mat4[3] = i.w;
 			mat4[4] = j.x; mat4[5] = j.y; mat4[6] = j.z; mat4[7] = j.w;
 			mat4[8] = k.x; mat4[9] = k.y; mat4[10] = k.z; mat4[11] = k.w;
 			mat4[12] = l.x; mat4[13] = l.y; mat4[14] = l.z; mat4[15] = l.w;
-			return &mat4;
+			return mat4;
 		}
 
 
@@ -984,7 +1007,7 @@ namespace Zorlock {
 			return !operator==(rhs);
 		}
 
-		static Matrix4 Matrix4::translation(const Vector3& translation)
+		static Matrix4 translation(const Vector3& translation)
 		{
 			Matrix4 mat;
 
@@ -1044,7 +1067,7 @@ namespace Zorlock {
 			return mat;
 		}
 
-		static Matrix4 Matrix4::SimplePerspectiveProj(const float& horzFOV, float ar, float zNear, float zFar)
+		static Matrix4 SimplePerspectiveProj(const float& horzFOV, float ar, float zNear, float zFar)
 		{
 			Matrix4 m;
 
@@ -1073,7 +1096,7 @@ namespace Zorlock {
 			return m;
 		}
 
-		static Matrix4 Matrix4::projection(const Vector3& projection)
+		static Matrix4 projection(const Vector3& projection)
 		{
 			Matrix4 mat;
 
@@ -1088,7 +1111,7 @@ namespace Zorlock {
 
 
 
-		static Matrix4 Matrix4::rotation(const Quaternion& quat)
+		static Matrix4 rotation(const Quaternion& quat)
 		{
 			Matrix mat = Matrix4::IDENTITY().toRotationMatrix(quat);
 			
@@ -1296,7 +1319,7 @@ namespace Zorlock {
 		}
 
 
-		void Matrix4::makeProjectionOrtho(float left, float right, float top,
+		void makeProjectionOrtho(float left, float right, float top,
 			float bottom, float fnear, float ffar)
 		{
 			// Create a matrix that transforms coordinate to normalized device coordinate in range:
@@ -1342,7 +1365,7 @@ namespace Zorlock {
 
 		}
 
-		Matrix4 Matrix4::projectionOrthographic(float left, float right, float top, float bottom, float fnear, float ffar)
+		Matrix4 projectionOrthographic(float left, float right, float top, float bottom, float fnear, float ffar)
 		{
 			Matrix4 output;
 			output.makeProjectionOrtho(left, right, top, bottom, fnear, ffar);
@@ -1444,7 +1467,7 @@ namespace Zorlock {
 			return mat;
 		}
 
-		void Matrix4::SetTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		void SetTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 		{
 			Matrix rot3x3 = Matrix::ToRotationMatrix(rotation);
 		
@@ -1456,7 +1479,7 @@ namespace Zorlock {
 			l.x = 0; l.y = 0; l.z = 0; l.w = 1;
 		}
 
-		void Matrix4::SetInverseTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		void SetInverseTransRotScale(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 		{
 			// Invert the parameters
 			Vector3 invTranslate = -translation;
@@ -1481,7 +1504,7 @@ namespace Zorlock {
 			l.x = 0; l.y = 0; l.z = 0; l.w = 1;
 		}
 
-		Matrix4 Matrix4::inverse() const
+		Matrix4 inverse() const
 		{
 			float m00 = i.x, m01 = i.y, m02 = i.z, m03 = i.w;
 			float m10 = j.x, m11 = j.y, m12 = j.z, m13 = j.w;
@@ -1570,7 +1593,7 @@ namespace Zorlock {
 			k.w = trans.z;
 		}
 
-		static Matrix4 Matrix4::TRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		static Matrix4 TRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 		{
 			Matrix4 mat = Matrix4::IDENTITY();
 			mat.SetTransRotScale(translation, rotation, scale);
@@ -1578,7 +1601,7 @@ namespace Zorlock {
 			return mat;
 		}
 
-		static Matrix4 Matrix4::inverseTRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+		static Matrix4 inverseTRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 		{
 			Matrix4 mat = Matrix4::IDENTITY();
 			mat.SetInverseTransRotScale(translation, rotation, scale);

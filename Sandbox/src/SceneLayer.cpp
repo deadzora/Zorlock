@@ -5,11 +5,6 @@
 
 SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 720.0f), m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f)
 {
-
-
-}
-void SceneLayer::OnAttach()
-{
 	ZL_PROFILE_FUNCTION();
 	ZLREF<ZLSCENEMANAGER> scenemanager = ZLSCENEMANAGER::GetInstance();
 	ZLREF<ZLSCENE> nscene = scenemanager->CreateScene("Main Scene");
@@ -27,11 +22,11 @@ void SceneLayer::OnAttach()
 	ZLREF<ZLMESHRENDERER> meshrenderer = mainmodel->CreateComponent<Zorlock::MeshRenderer>();
 	standard->Bind();
 	//Uncomment a model to view it
-	meshrenderer->CreateQuad();	
-	meshrenderer->CreateCylinder(32);
-	meshrenderer->CreateCone(32);
-	meshrenderer->CreateSphere(32);
-	meshrenderer->CreateCube();
+	//meshrenderer->CreateQuad();	
+	//meshrenderer->CreateCylinder(32);
+	//meshrenderer->CreateCone(32);
+	//meshrenderer->CreateSphere(32);
+	//meshrenderer->CreateCube();
 	//meshrenderer->AddModel("woman","assets/models/Woman_OBJ.obj");
 	meshrenderer->AddModel("spaceship", "assets/models/MK6_OBJ.obj");
 	m_meshrenderer = meshrenderer;
@@ -42,6 +37,11 @@ void SceneLayer::OnAttach()
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Start();
 
 	m_CheckerboardTexture = Zorlock::Texture2D::Create("assets/textures/Checkerboard.png");
+
+}
+void SceneLayer::OnAttach()
+{
+
 }
 void SceneLayer::OnDetach()
 {
@@ -60,8 +60,8 @@ void SceneLayer::OnUpdate(ZLTIME ts)
 	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0,rotation,180));
 	
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Update(ts);
-	mainCam->transform->position.z = 0.0f;
-	mainCam->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 0));
+	mainCam->transform->position.z = -10.0f;
+	//mainCam->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 0));
 	mainCam->UpdateViewMatrix();
 	ZLRENDERER::RenderScene();
 

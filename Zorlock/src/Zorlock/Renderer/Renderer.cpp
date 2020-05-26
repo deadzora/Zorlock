@@ -29,9 +29,6 @@ namespace Zorlock {
 	void Renderer::BeginScene(Camera& camera)
 	{
 		
-
-
-		//s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
 		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 		{
 			s_SceneData->ViewProjectionMatrix = (camera.GetViewMatrix() * camera.GetProjectionMatrix());
@@ -51,13 +48,12 @@ namespace Zorlock {
 			if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 			{
 				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix());
+
 			}
 			else {
 				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix());
 			}
 
-
-			//s_SceneData->ViewProjectionMatrix =  ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
 		}
 	}
 

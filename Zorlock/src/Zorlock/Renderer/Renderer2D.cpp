@@ -126,6 +126,7 @@ namespace Zorlock {
 		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 		{
 			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewMatrix() * camera.GetProjectionMatrix());
+
 		}
 		else {
 			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());

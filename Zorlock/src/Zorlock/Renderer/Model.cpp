@@ -80,6 +80,7 @@ namespace Zorlock
 			{
 				if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 				{
+					//m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
 					m_meshes[i]->SetDrawMatrix(meshRenderer->parent->transform->GetTransformationMatrix()* m_meshes[i]->GetMatrix());
 				}
 				else {

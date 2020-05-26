@@ -1,2 +1,2 @@
-C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\bin\Debug-windows-x86_64\Zorlock\Zorlock.pdb
-C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\bin-int\Debug-windows-x86_64\Zorlock\Zorlock.pdb
+C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\Zorlock\bin\Debug-windows-x86_64\Zorlock\Zorlock.pdb
+C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\Zorlock\bin-int\Debug-windows-x86_64\Zorlock\Zorlock.pdb

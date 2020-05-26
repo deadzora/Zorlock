@@ -1,2 +1,4 @@
 C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\Zorlock\vendor\Glad\bin\Debug-windows-x86_64\Glad\Glad.pdb
 C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\Zorlock\vendor\Glad\bin-int\Debug-windows-x86_64\Glad\Glad.pdb
+C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\Zorlock\Zorlock\vendor\Glad\bin\Debug-windows-x86_64\Glad\Glad.pdb
+C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\Zorlock\Zorlock\vendor\Glad\bin-int\Debug-windows-x86_64\Glad\Glad.pdb

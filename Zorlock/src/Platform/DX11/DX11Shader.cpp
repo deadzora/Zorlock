@@ -487,7 +487,7 @@ namespace Zorlock
 			if (m_VUniformVars[i].Name.compare(name) == 0)
 			{
 
-				m_RendererID->UpdateVertexCB(&m, name);
+				m_RendererID->UpdateVertexCB(m.To4x4PtrArray(), name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
 			}
@@ -497,7 +497,7 @@ namespace Zorlock
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
 
-				m_RendererID->UpdatePixelCB(&m, name);
+				m_RendererID->UpdatePixelCB(m.To4x4PtrArray(), name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}
