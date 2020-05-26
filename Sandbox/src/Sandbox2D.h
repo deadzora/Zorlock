@@ -23,5 +23,5 @@ private:
 
 	Zorlock::Ref<Zorlock::Texture2D> m_CheckerboardTexture;
 
-	Zorlock::COLOR4 m_SquareColor;
+	COLOR4 m_SquareColor;
 };

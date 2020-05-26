@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "Zorlock/Renderer/Camera.h"
+#include "Zorlock/Renderer/OrthographicCamera.h"
 
 namespace Zorlock {
 
@@ -19,7 +19,7 @@ namespace Zorlock {
 		virtual void Destroy() override;
 		Ref<Camera> CreateCamera();
 		Ref<Camera> CreateCamera(float fovDegrees, float aspectRatio, float nearZ, float farZ);
-		Ref<Camera> CreateCamera2D(float left, float right, float bottom, float top);
+		Ref<OrthographicCamera> CreateCamera2D(float left, float right, float bottom, float top);
 		Ref<Camera> MainCamera();
 		void SetMainCamera(Ref<Camera> cam);
 		Ref<GameObject> CreateGameObject();

@@ -18,6 +18,8 @@ struct VS_INPUT
 struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
+	float3 v_Normal : NORMAL;
+	float3 v_Color : COLOR;
 	float2 v_TexCoord : TEXCOORD;
 };
 PS_INPUT main(VS_INPUT input)
@@ -26,6 +28,8 @@ PS_INPUT main(VS_INPUT input)
 
 
 	output.v_TexCoord = input.a_TexCoord;
+	output.v_Normal = input.a_Normal;
+	output.v_Color = input.a_Color;
 	output.v_Position = input.a_Position;
 	output.v_Position = mul(u_Transform,output.v_Position);	
 	output.v_Position = mul(u_ViewProjection,output.v_Position);

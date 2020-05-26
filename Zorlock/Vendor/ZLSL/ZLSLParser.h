@@ -155,7 +155,7 @@ namespace Zorlock
 		{
 			SEM_NONE,
 			POSITION,
-			COLOR,
+			SCOLOR,
 			TEXCOORD,
 			NORMAL,
 			BINORMAL,
@@ -403,11 +403,13 @@ namespace Zorlock
 
 		std::vector<ZLSLDeclaredVariables> vertexVars;
 		std::vector<ZLSLDeclaredVariables> vertexUniforms;
+		std::vector<ZLSLDeclaredVariables> vertexSamplers;
 		std::vector<ZLSLDeclaredVariables> vlayoutVars;
 		std::vector<ZLSLDeclaredVariables> voutVars;
 
 		std::vector<ZLSLDeclaredVariables> pixelVars;
 		std::vector<ZLSLDeclaredVariables> pixelUniforms;
+		std::vector<ZLSLDeclaredVariables> pixelSamplers;
 		std::vector<ZLSLDeclaredVariables> playoutVars;
 		std::vector<ZLSLDeclaredVariables> pinVars;
 		

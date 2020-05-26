@@ -240,7 +240,9 @@ namespace Zorlock {
 		std::vector<ShaderVariable> m_VInputVars;
 		std::vector<ShaderVariable> m_VOutputVars;
 		std::vector<ShaderVariable> m_VUniformVars;
+		std::vector<ShaderVariable> m_VSamplerVars;
 		std::vector<ShaderVariable> m_FUniformVars;
+		std::vector<ShaderVariable> m_FSamplerVars;
 		BufferLayout ShaderLayout;
 	};
 

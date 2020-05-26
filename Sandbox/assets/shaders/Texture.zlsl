@@ -27,6 +27,8 @@ function void main()
 	v_Position = vec4(a_Position,1.0);
 	v_Position = Z_Mul(u_ViewProjection, v_Position);
 	Z_Return(v_Position);
+	
+
 }
 
 type fragment

@@ -124,7 +124,14 @@ namespace Zorlock {
 						vlayoutVars.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Uniform) {
-						vertexUniforms.push_back(variable);
+						if (variable.vartype == VariableTypes::SAMPLER2D)
+						{
+							vertexSamplers.push_back(variable);
+						}
+						else {
+							vertexUniforms.push_back(variable);
+						}
+						
 					}
 					else if (variable.command == VarCommandValue::Out) {
 						variable.semantic = SemanticTypes::SEM_NONE;
@@ -168,8 +175,13 @@ namespace Zorlock {
 						pinVars.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Uniform) {
-
-						pixelUniforms.push_back(variable);
+						if (variable.vartype == VariableTypes::SAMPLER2D)
+						{
+							pixelSamplers.push_back(variable);
+						}
+						else {
+							pixelUniforms.push_back(variable);
+						}						
 					}
 					else {
 						pixelVars.push_back(variable);
@@ -396,6 +408,8 @@ namespace Zorlock {
 				shaderFile += ReturnGLSLDeclares(vlayoutVars);
 				//next add uniforms
 				shaderFile += ReturnGLSLDeclares(vertexUniforms);
+				//next add samplers
+				shaderFile += ReturnGLSLDeclares(vertexSamplers);
 				//Next add output declares
 				shaderFile += ReturnGLSLDeclares(voutVars);
 				//Next add functions
@@ -414,6 +428,8 @@ namespace Zorlock {
 				shaderFile += ReturnGLSLDeclares(pinVars);
 				//next add uniforms
 				shaderFile += ReturnGLSLDeclares(pixelUniforms);
+				//next add samplers
+				shaderFile += ReturnGLSLDeclares(pixelSamplers);
 				//Next add functions
 				shaderFile += ReturnGLSLFunctions(pixelFunctions, false);
 				break;
@@ -429,6 +445,8 @@ namespace Zorlock {
 			{
 				//start with constant buffer declares
 				shaderFile += ReturnHLSLDeclares(vertexUniforms,true);
+				//Add Samplers
+				shaderFile += ReturnHLSLDeclares(vertexSamplers, true);
 				//next add with some var declares
 				shaderFile += ReturnHLSLDeclares(vertexVars,true);
 				//start with layout declares
@@ -449,6 +467,8 @@ namespace Zorlock {
 			{
 				//start with constant buffer declares
 				shaderFile += ReturnHLSLDeclares(pixelUniforms,false);
+				//Add Samplers
+				shaderFile += ReturnHLSLDeclares(pixelSamplers, false);
 				//next add with some var declares
 				shaderFile += ReturnHLSLDeclares(pixelVars,false);
 				//start with input declares
@@ -458,8 +478,8 @@ namespace Zorlock {
 				shaderFile += "};" + EOL;
 				//Next add functions
 
-				shaderFile += "/* Change function body return type to " + ReturnHLSLDeclares(playoutVars,false);
-				shaderFile += "*/" + EOL;
+				//shaderFile += ReturnHLSLDeclares(playoutVars,false);
+
 				shaderFile += ReturnHLSLFunctions(pixelFunctions, false);
 				break;
 			}
@@ -1182,7 +1202,7 @@ namespace Zorlock {
 		
 		s_mapStringSemantics[""] = SEM_NONE;
 		s_mapStringSemantics["Z_Position"] = POSITION;
-		s_mapStringSemantics["Z_Color"] = COLOR;
+		s_mapStringSemantics["Z_Color"] = SCOLOR;
 		s_mapStringSemantics["Z_Texcoord"] = TEXCOORD;
 		s_mapStringSemantics["Z_Normal"] = NORMAL;
 		s_mapStringSemantics["Z_Binormal"] = BINORMAL;
@@ -1249,7 +1269,7 @@ namespace Zorlock {
 		s_mapGLSLCommands[Z_Mul] = "";
 
 		s_mapGLSLLayouts[POSITION] = "";
-		s_mapGLSLLayouts[COLOR] = "";
+		s_mapGLSLLayouts[SCOLOR] = "";
 		s_mapGLSLLayouts[TEXCOORD] = "";
 		s_mapGLSLLayouts[NORMAL] = "";
 		s_mapGLSLLayouts[BINORMAL] = "";
@@ -1304,7 +1324,7 @@ namespace Zorlock {
 		s_mapHLSLCommands[Z_Mul] = "mul";
 
 		s_mapHLSLLayouts[POSITION] = "POSITION";
-		s_mapHLSLLayouts[COLOR] = "COLOR";
+		s_mapHLSLLayouts[SCOLOR] = "COLOR";
 		s_mapHLSLLayouts[TEXCOORD] = "TEXCOORD";
 		s_mapHLSLLayouts[NORMAL] = "NORMAL";
 		s_mapHLSLLayouts[BINORMAL] = "BINORMAL";

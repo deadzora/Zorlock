@@ -65,7 +65,7 @@ namespace Zorlock {
 		s_Data.TextureShader->Bind();
 		s_Data.QuadVertexArray = VertexArray::Create();
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		printf("Size of quad vertex is %d ", sizeof(QuadVertex));
+		printf("Size of quad vertex is %u ", (uint32_t)sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetLayout(s_Data.TextureShader->GetLayout(),s_Data.TextureShader.get());
 
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
@@ -119,10 +119,17 @@ namespace Zorlock {
 
 	void Renderer2D::BeginScene(OrthographicCamera& camera)
 	{
+		
 		ZL_PROFILE_FUNCTION();
 		camera.UpdateViewMatrix();
 		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+		{
+			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		}
+		else {
+			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+		}
 		s_Data.QuadIndexCount = 0;
 		s_Data.Stats.QuadCount = 0;
 		s_Data.Stats.DrawCalls = 0;

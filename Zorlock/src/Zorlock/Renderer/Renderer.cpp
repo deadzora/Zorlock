@@ -26,17 +26,38 @@ namespace Zorlock {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(OrthographicCamera& camera)
+	void Renderer::BeginScene(Camera& camera)
 	{
-		s_SceneData->ViewProjectionMatrix = (camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		
+
+
+		//s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
+		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+		{
+			s_SceneData->ViewProjectionMatrix = (camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		}
+		else {
+			s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
+		}
+		
 		
 	}
 
 	void Renderer::BeginScene()
 	{
+		//Get main camera if none is supplied
 		if (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera())
 		{
-			s_SceneData->ViewProjectionMatrix =  ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
+			if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+			{
+				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix());
+			}
+			else {
+				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix());
+			}
+
+
+			//s_SceneData->ViewProjectionMatrix =  ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
 		}
 	}
 

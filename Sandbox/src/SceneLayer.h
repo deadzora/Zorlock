@@ -24,7 +24,7 @@ private:
 	ZLREF<ZLGAMEOBJECT> mainmodel;
 	ZLREF<ZLTEXTURE2D> m_Texture;
 	ZLREF<ZLCAMERA> mainCam;
-
+	ZLREF<ZLORTHOCAM> mainCam2D;
 	ZLREF<ZLSHADER> m_Shader;
 	ZLREF<ZLVARRAY> m_VertexArray;
 	ZLREF<ZLSHADER> m_FlatColorShader;
@@ -32,6 +32,8 @@ private:
 	ZLREF<ZLSHADER> textureShader;
 	ZLREF<ZLTEXTURE2D> m_ChernoLogoTexture;
 	ZLREF<Zorlock::MeshRenderer> m_meshrenderer;
-	Zorlock::COLOR m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	COLOR4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+	ZLREF<ZLTEXTURE2D> m_CheckerboardTexture;
+	Zorlock::OrthographicCameraController m_CameraController;
 
 };

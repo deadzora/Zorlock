@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Components/MeshRenderer.h"
-
+#include "Zorlock/Renderer/RendererAPI.h"
 
 namespace Zorlock
 {
@@ -78,7 +78,14 @@ namespace Zorlock
 		{
 			if (meshRenderer != nullptr)
 			{
-				m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
+				if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+				{
+					m_meshes[i]->SetDrawMatrix(meshRenderer->parent->transform->GetTransformationMatrix()* m_meshes[i]->GetMatrix());
+				}
+				else {
+					m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
+				}
+				//m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
 				//m_meshes[i]->SetDrawMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, -10.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(0.0001f, 0.0001f, 0.0001f))); //m_meshes[i]->GetMatrix());// * meshRenderer->parent->transform->GetTransformationMatrix());
 			}
 		}

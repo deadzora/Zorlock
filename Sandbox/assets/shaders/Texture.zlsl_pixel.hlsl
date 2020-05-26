@@ -10,8 +10,6 @@ struct PS_INPUT
 	float v_TexIndex : PSIZE;
 	float v_TilingFactor : BLENDWEIGHT;
 };
-/* Change function body return type to 	float4 color;
-*/
 float4 main(PS_INPUT input) : SV_Target
 {
 	float4 color;

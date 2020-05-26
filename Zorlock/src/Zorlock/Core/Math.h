@@ -1044,6 +1044,35 @@ namespace Zorlock {
 			return mat;
 		}
 
+		static Matrix4 Matrix4::SimplePerspectiveProj(const float& horzFOV, float ar, float zNear, float zFar)
+		{
+			Matrix4 m;
+
+			const float zRange = zNear - zFar;
+			const float tanHalfFOV = tanf((horzFOV / 2.0)* 180.0f / 3.141592653589793238463f);
+
+			m.i.x = 1.0f / (tanHalfFOV * ar);
+			m.i.y = 0.0f;
+			m.i.z = 0.0f;
+			m.i.w = 0.0f;
+
+			m.j.x = 0.0f;
+			m.j.y = 1.0f / tanHalfFOV;
+			m.j.z = 0.0f;
+			m.j.w = 0.0f;
+
+			m.k.x = 0.0f;
+			m.k.y = 0.0f;
+			m.k.z = (-zNear - zFar) / zRange;
+			m.k.w = 2.0f * zFar * zNear / zRange;
+
+			m.l.x = 0.0f;
+			m.l.y = 0.0f;
+			m.l.z = 1.0f;
+			m.l.w = 0.0f;
+			return m;
+		}
+
 		static Matrix4 Matrix4::projection(const Vector3& projection)
 		{
 			Matrix4 mat;
@@ -1055,6 +1084,9 @@ namespace Zorlock {
 
 			return mat;
 		}
+
+
+
 
 		static Matrix4 Matrix4::rotation(const Quaternion& quat)
 		{

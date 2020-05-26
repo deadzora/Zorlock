@@ -45,7 +45,7 @@ namespace Zorlock
 	{
 		ZL_PROFILE_FUNCTION();
 		m_RendererID = DX11Raz::RazCreateVertexBuffer();
-		DX11Raz::RazBindVertices(m_RendererID, vertices, sizeof(Vertex)*size, size);
+		DX11Raz::RazBindVertices(m_RendererID, vertices, sizeof(Vertex), size);
 	}
 	/*
 	DX11VertexBuffer::DX11VertexBuffer(void* vertices)

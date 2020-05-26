@@ -220,7 +220,21 @@ namespace Zorlock
 				}
 				
 			}
+			for (size_t i = 0; i < m_VSamplerVars.size(); i++)
+			{
+				switch (m_VSamplerVars[i].Type)
+				{
+				case ShaderDataType::Sampler2D:
+				{
+					printf("Texture var: %s slot %u \n", m_VSamplerVars[i].Name.c_str(), m_VSamplerVars[i].Slot);
+					m_RendererID->CreateTextureBuffer(m_VSamplerVars[i].Name, m_VSamplerVars[i].Slot, sizeof(ID3D11ShaderResourceView));
+
+					break;
+				}
+				}
+			}
 		}
+
 		if (m_RendererID->InitPixel(pixelshadersource))
 		{
 			for (size_t i = 0; i < m_FUniformVars.size(); i++)
@@ -269,15 +283,22 @@ namespace Zorlock
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
 					break;
 				}
+
+				}
+
+			}
+			for (size_t i = 0; i < m_FSamplerVars.size(); i++)
+			{
+				switch (m_FSamplerVars[i].Type)
+				{
 				case ShaderDataType::Sampler2D:
 				{
-					printf("Texture var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
-					m_RendererID->CreateTextureBuffer(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, sizeof(ID3D11ShaderResourceView));
+					printf("Texture var: %s slot %u \n", m_FSamplerVars[i].Name.c_str(), m_FSamplerVars[i].Slot);
+					m_RendererID->CreateTextureBuffer(m_FSamplerVars[i].Name, m_FSamplerVars[i].Slot, sizeof(ID3D11ShaderResourceView));
 
 					break;
 				}
 				}
-
 			}
 		}
 		//get constant buffers
@@ -459,13 +480,14 @@ namespace Zorlock
 
 	void DX11Shader::UploadUniformMat4(const std::string& name, const MATRIX4& matrix)
 	{
+		MATRIX4 m = matrix;
 		//figure out if this is pixelor vertex
 		for (size_t i = 0; i < m_VUniformVars.size(); i++)
 		{
 			if (m_VUniformVars[i].Name.compare(name) == 0)
 			{
 
-				m_RendererID->UpdateVertexCB((void*)&matrix, name);
+				m_RendererID->UpdateVertexCB(&m, name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
 			}
@@ -475,7 +497,7 @@ namespace Zorlock
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
 
-				m_RendererID->UpdatePixelCB((void*)&matrix, name);
+				m_RendererID->UpdatePixelCB(&m, name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}

@@ -61,24 +61,50 @@ namespace Zorlock
 
 	Ref<Camera> Scene::CreateCamera()
 	{
-		m_mainCamera = CreateRef<Camera>();
-
-		m_scene_Objects.push_back(m_mainCamera);
-		return m_mainCamera;
+		if (m_mainCamera == nullptr)
+		{
+			m_mainCamera = CreateRef<Camera>();
+			m_scene_Objects.push_back(m_mainCamera);
+			return m_mainCamera;
+		}
+		else {
+			Ref<Camera> c = CreateRef<Camera>();
+			m_scene_Objects.push_back(c);
+			return c;
+		}
 	}
 
 	Ref<Camera> Scene::CreateCamera(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
-		m_mainCamera = CreateRef<Camera>(fovDegrees,aspectRatio,nearZ,farZ);
-		m_scene_Objects.push_back(m_mainCamera);
-		return m_mainCamera;
+		if (m_mainCamera == nullptr)
+		{
+			m_mainCamera = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ);
+			m_scene_Objects.push_back(m_mainCamera);
+			return m_mainCamera;
+		}
+		else {
+			Ref<Camera> c = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ);
+			m_scene_Objects.push_back(c);
+			return c;
+		}
+
 	}
 
-	Ref<Camera> Scene::CreateCamera2D(float left, float right, float bottom, float top)
+	Ref<OrthographicCamera> Scene::CreateCamera2D(float left, float right, float bottom, float top)
 	{
-		m_mainCamera = CreateRef<OrthographicCamera>(left,right,bottom,top);
-		m_scene_Objects.push_back(m_mainCamera);
-		return m_mainCamera;
+		if (m_mainCamera == nullptr)
+		{
+			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top);
+			m_scene_Objects.push_back(c);
+			m_mainCamera = c;
+			return c;
+		}
+		else {
+			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top);
+			m_scene_Objects.push_back(c);
+			return c;
+		}
+
 	}
 
 	Ref<Camera> Scene::MainCamera()

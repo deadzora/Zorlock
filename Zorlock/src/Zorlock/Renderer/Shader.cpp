@@ -13,7 +13,10 @@ namespace Zorlock {
 	void Shader::Process()
 	{
 		uint32_t vertexuniforms = 0;
+		uint32_t vertexsamplers = 0;
+
 		uint32_t pixeluniforms = 0;
+		uint32_t pixelsamplers = 0;
 		m_VInputVars.clear();
 		for (size_t i = 0; i < parser->vlayoutVars.size(); i++)
 		{
@@ -54,6 +57,23 @@ namespace Zorlock {
 				}
 			}
 		}
+		m_VSamplerVars.clear();
+		for (size_t i = 0; i < parser->vertexSamplers.size(); i++)
+		{
+			if (parser->vertexSamplers[i].command == ZLSLParser::VarCommandValue::Uniform)
+			{
+				ShaderVariable s;
+				s.Name = parser->vertexSamplers[i].varname;
+				s.Slot = vertexsamplers;//parser->vertexUniforms[i].index;
+				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexSamplers[i].vartype);
+				s.Size = ShaderDataTypeSize(s.Type);
+				m_VSamplerVars.push_back(s);
+				if (parser->vertexSamplers[i].vartype == Zorlock::ZLSLParser::SAMPLER2D)
+				{
+					vertexsamplers++;
+				}
+			}
+		}
 		m_FUniformVars.clear();
 		for (size_t i = 0; i < parser->pixelUniforms.size(); i++)
 		{
@@ -76,6 +96,23 @@ namespace Zorlock {
 				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{
 					pixeluniforms++;
+				}
+			}
+		}
+		m_FSamplerVars.clear();
+		for (size_t i = 0; i < parser->pixelSamplers.size(); i++)
+		{
+			if (parser->pixelSamplers[i].command == ZLSLParser::VarCommandValue::Uniform)
+			{
+				ShaderVariable s;
+				s.Name = parser->pixelSamplers[i].varname;
+				s.Slot = pixelsamplers;//parser->vertexUniforms[i].index;
+				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelSamplers[i].vartype);
+				s.Size = ShaderDataTypeSize(s.Type);
+				m_FSamplerVars.push_back(s);
+				if (parser->pixelSamplers[i].vartype == Zorlock::ZLSLParser::SAMPLER2D)
+				{
+					pixelsamplers++;
 				}
 			}
 		}

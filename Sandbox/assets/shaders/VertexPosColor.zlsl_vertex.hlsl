@@ -15,8 +15,8 @@ struct VS_INPUT
 };
 struct PS_INPUT
 {
-	float4 v_Color : COLOR;
 	float4 v_Position : SV_POSITION;
+	float4 v_Color : COLOR;
 };
 PS_INPUT main(VS_INPUT input)
 {

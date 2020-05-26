@@ -21,6 +21,7 @@ namespace Zorlock {
 	{
 		float fovRadians = RADIANS_FROM_DEGREES(fovDegrees);
 		projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
+		//projectionMatrix = MATRIX4::SimplePerspectiveProj(fovDegrees, aspectRatio, nearZ, farZ);
 		UpdateViewMatrix();
 	}
 
@@ -64,7 +65,7 @@ namespace Zorlock {
 	void Zorlock::Camera::UpdateViewMatrix()
 	{
 		viewMatrix.SetInverseTransRotScale(this->transform->position, this->transform->rotation, VECTOR3(1, 1, 1));
-
+		
 		this->transform->UpdateDirectionVectors();
 
 	}

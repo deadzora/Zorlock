@@ -1,6 +1,6 @@
 #pragma once
-#define COLOR ColorRGB
-#define COLOR4 ColorRGBA
+#define COLOR Zorlock::ColorRGB
+#define COLOR4 Zorlock::ColorRGBA
 typedef float COLOR3ARRAY[3];
 typedef float COLOR4ARRAY[4];
 

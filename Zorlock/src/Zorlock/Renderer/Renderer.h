@@ -18,7 +18,7 @@ namespace Zorlock {
 		//Soon use
 		//static void BeginScene(Camera& camera);
 		ZL_DEPRECATED("Rolling out new base Camera class")
-		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(Camera& camera);
 		static void BeginScene();
 		static void EndScene();
 		static void RenderScene();

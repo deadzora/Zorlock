@@ -6,8 +6,9 @@
 namespace Zorlock
 {
 
-	Transform::Transform() : position(VECTOR3()), rotation(QUATERNION::IDENTITY()), scale(VECTOR3(1,1,1)), transformation(MATRIX4::IDENTITY()), draw_transformation(MATRIX4::IDENTITY())
+	Transform::Transform() : position(VECTOR3(0,0,0)), rotation(QUATERNION::EulerAngles(VECTOR3(0,0,0))), scale(VECTOR3(1,1,1)), transformation(MATRIX4::IDENTITY()), draw_transformation(MATRIX4::IDENTITY())
 	{
+		UpdateTransformationMatrix();
 	}
 	Transform::~Transform()
 	{
@@ -19,6 +20,7 @@ namespace Zorlock
 	void Transform::SetPosition(const VECTOR3& pos)
 	{
 		position = pos;
+		UpdateTransformationMatrix();
 	}
 
 	void Transform::SetPosition(float x, float y, float z)
@@ -26,6 +28,7 @@ namespace Zorlock
 		position.x = x;
 		position.y = y;
 		position.z = z;
+		UpdateTransformationMatrix();
 	}
 
 	void Transform::AdjustPosition(const VECTOR3& pos)
@@ -38,7 +41,7 @@ namespace Zorlock
 
 	QUATERNION Transform::GetRotation()
 	{
-		return QUATERNION();
+		return rotation;
 	}
 
 	void Transform::SetRotation(const VECTOR3& rot)
@@ -94,6 +97,7 @@ namespace Zorlock
 	}
 	MATRIX4 Transform::GetTransformationMatrix()
 	{
+		UpdateTransformationMatrix();
 		return transformation;
 	}
 	void Transform::UpdateDirectionVectors()
@@ -116,7 +120,7 @@ namespace Zorlock
 	}
 	void Transform::UpdateTransformationMatrix()
 	{
-		SetMatrix(MATRIX4::TRS(position, rotation,scale));
+		SetMatrix(MATRIX4::TRS(position, rotation, scale));
 	}
 	const VECTOR4& Transform::GetFowardVector(bool omitY)
 	{

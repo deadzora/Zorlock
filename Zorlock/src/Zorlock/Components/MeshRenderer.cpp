@@ -50,7 +50,7 @@ namespace Zorlock
 		
 		for (size_t i = 0; i < m_materials.size(); i++)
 		{
-			m_materials[i]->SetViewMatrix(ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix());
+			//m_materials[i]->SetViewMatrix(ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix());
 			
 		}
 

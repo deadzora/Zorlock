@@ -76,13 +76,13 @@ void ExampleLayer::OnUpdate(Zorlock::Timestep ts)
 	m_Texture->Bind();
 	Zorlock::Renderer::Submit(textureShader, m_SquareVA, MATRIX4::TRS(Vector3(0,0,-0.125f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)),VECTOR3(1.5f, 1.5f, 1.5f)));
 	m_ChernoLogoTexture->Bind();
-	Zorlock::Renderer::Submit(textureShader, m_SquareVA, MATRIX4::TRS(Vector3(0.5,0,-0.1f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.5f, 1.5f, 1.5f)));
+	Zorlock::Renderer::Submit(textureShader, m_SquareVA, MATRIX4::TRS(Vector3(0.5f,0,-0.1f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.5f, 1.5f, 1.5f)));
 
 
 
 	// Triangle
 	m_Shader->Bind();
-	Zorlock::Renderer::Submit(m_Shader, m_VertexArray, MATRIX4::TRS(Vector3(0, 0, -0.05f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
+	Zorlock::Renderer::Submit(m_Shader, m_VertexArray,  MATRIX4::TRS(Vector3(0, 0, -0.05f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 	Zorlock::Renderer::EndScene();
 
 	//ZL_CORE_TRACE("Renderer Loaded");

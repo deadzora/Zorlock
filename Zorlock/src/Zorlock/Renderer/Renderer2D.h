@@ -42,4 +42,6 @@ namespace Zorlock {
 		static void FlushAndReset();
 	};
 
+
 }
+#define ZLRENDER2D Zorlock::Renderer2D
