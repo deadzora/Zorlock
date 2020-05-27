@@ -12,15 +12,15 @@ namespace DX11Raz
 	{
 		ID3D11Device* device = DX11GraphicsEngine::Get()->GetDevice();
 		UINT samples;
-		HRESULT hr = device->CheckMultisampleQualityLevels(DXGI_FORMAT_R10G10B10A2_UNORM, D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT, &samples);
+		HRESULT hr = device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT, &samples);
 
 
 		DXGI_SWAP_CHAIN_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.BufferCount = 2;
+		desc.BufferCount = 1;
 		desc.BufferDesc.Width = width;
 		desc.BufferDesc.Height = height;
-		desc.BufferDesc.Format = DXGI_FORMAT_R10G10B10A2_UNORM;
+		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.BufferDesc.RefreshRate.Numerator = 60;
 		desc.BufferDesc.RefreshRate.Denominator = 1;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;

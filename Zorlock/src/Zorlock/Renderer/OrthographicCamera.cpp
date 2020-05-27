@@ -4,12 +4,12 @@
 
 namespace Zorlock {
 
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) : m_Rotation(0)
 	{
 		ZL_PROFILE_FUNCTION();
 
 
-		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, -1.0f, 1.0f);
+		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, 1.0f, -1.0f);
 		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
 
 	}
@@ -18,7 +18,7 @@ namespace Zorlock {
 	{
 		ZL_PROFILE_FUNCTION();
 
-		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, -1.0f, 1.0f);
+		projectionMatrix.makeProjectionOrtho(left, right, top, bottom, 1.0f, -1.0f);
 		viewMatrix.SetInverseTransRotScale(this->transform->position, QUATERNION::EulerAngles(Vector3(0, 0, DEGREES_FROM_RADIANS(m_Rotation))), VECTOR3(1, 1, 1));
 
 	}

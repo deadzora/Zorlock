@@ -32,7 +32,7 @@ namespace Zorlock {
 			MATRIX4 ViewMatrix;
 		};
 	public:
-		ZL_DEPRECATED("Rolling out new SceneRenderer")
+
 		static Scope<SceneData> s_SceneData;
 	};
 

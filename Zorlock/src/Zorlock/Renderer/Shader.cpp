@@ -47,7 +47,7 @@ namespace Zorlock {
 			{
 				ShaderVariable s;
 				s.Name = parser->vertexUniforms[i].varname;
-				s.Slot = i;//parser->vertexUniforms[i].index;
+				s.Slot = (uint32_t)i;//parser->vertexUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
 				s.Size = ShaderDataTypeSize(s.Type);
 				m_VUniformVars.push_back(s);
@@ -86,7 +86,7 @@ namespace Zorlock {
 					s.Slot = (vertexuniforms+ pixeluniforms);
 				}
 				else {
-					s.Slot = i;
+					s.Slot = (uint32_t)i;
 				}
 				//parser->pixelUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
@@ -129,7 +129,7 @@ namespace Zorlock {
 		ShaderLayout.Clear();
 		for (size_t i = 0; i < m_VInputVars.size(); i++)
 		{
-			ShaderVariable s = GetSlotVariable(i);
+			ShaderVariable s = GetSlotVariable((uint32_t)i);
 			BufferElement a;
 			a.Name = s.Name;
 			a.SemanticName = s.SemanticName;

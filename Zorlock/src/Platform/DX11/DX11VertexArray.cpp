@@ -88,11 +88,11 @@ namespace Zorlock
 				l.SemanticIndex = 0;
 				l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);
 				l.InputSlot = 0;
-				l.AlignedByteOffset = (index==0) ? 0 : element.Offset;
+				l.AlignedByteOffset = (index==0) ? 0 : (int)element.Offset;
 				l.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				l.InstanceDataStepRate = 0;
 				m_RendererID->SetIndexValue(m_VertexBufferIndex, l);
-				printf("Layout NAME %s FORMAT %i INDEX %i OFFSET %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, element.Offset);
+				//printf("Layout NAME %s FORMAT %i INDEX %i OFFSET %i \r\n", element.SemanticName.c_str(), l.Format, m_VertexBufferIndex, element.Offset);
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -104,7 +104,6 @@ namespace Zorlock
 				{
 					m_RendererID->SetIndex(m_VertexBufferIndex);
 					D3D11_INPUT_ELEMENT_DESC& l = m_RendererID->GetLayoutPointer(m_VertexBufferIndex);
-					char buffer[100];
 					l.SemanticName = element.Name.c_str();
 					l.SemanticIndex = count;
 					l.Format = ShaderDataTypeToOpenDXBaseType(element.Type);

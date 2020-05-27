@@ -149,7 +149,7 @@ namespace Zorlock {
 		uint32_t lasttexture = -1;
 		for (size_t i = 0; i < s_Data.Stats.QuadCount; i++)
 		{
-			uint32_t index = s_Data.QuadVertexBufferBase[i*4].TexIndex;
+			uint32_t index = (uint32_t)s_Data.QuadVertexBufferBase[i*4].TexIndex;
 			uint32_t bound = 0;
 			//DX11 will retain the shader texture assigned between each draw call but openGL doesn't
 			//However OpenGL keeps texture in memory so its ok to assign it per pass where as DX11 must reupload it each time it changes.

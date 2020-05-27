@@ -6,6 +6,6 @@ in vec4 v_Color;
 
 void main()
 {
-	color = vec4(v_Position.x,v_Position.y,v_Position.z,1.0) * 0.5 + 0.5;
+	color = vec4(v_Color.x,v_Color.y,v_Color.z,1.0) * 0.5 + 0.5;
 	
 }

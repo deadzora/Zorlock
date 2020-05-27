@@ -448,17 +448,17 @@ namespace Zorlock
 
 	void DX11Shader::UploadUniformMat3(const std::string& name, const MATRIX3& matrix)
 	{
+		MATRIX3 m = matrix;
 		//figure out if this is pixelor vertex
 		for (size_t i = 0; i < m_VUniformVars.size(); i++)
 		{
 			if (m_VUniformVars[i].Name.compare(name) == 0)
 			{
 				//printf("Sent Mat4 \n");
-				MATRIX3 p = matrix;
 				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
 
 				//&XMMatrixTranspose(mat)
-				m_RendererID->UpdateVertexCB(&p, name);
+				m_RendererID->UpdateVertexCB(m.To3x3PtrArray(), name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
 			}
@@ -471,7 +471,7 @@ namespace Zorlock
 				//DirectX::XMMATRIX mat = DirectX::XMMATRIX(p.ToArray());
 
 				//&XMMatrixTranspose(mat)
-				m_RendererID->UpdatePixelCB(&p, name);
+				m_RendererID->UpdatePixelCB(m.To3x3PtrArray(), name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}

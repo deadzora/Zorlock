@@ -25,7 +25,7 @@ function void main()
 	v_Position = a_Position;
 	v_Position = Z_Mul(u_Transform, v_Position);	
 	v_Position = Z_Mul(u_ViewProjection, v_Position);
-	Z_Return(v_Position);
+	Z_Return(v_Position);		
 	
 }
 

@@ -100,10 +100,10 @@ namespace Zorlock {
 	public:
 		uint32_t ToColor()
 		{
-			uint32_t r = x * 255.0f;
-			uint32_t g = y * 255.0f;
-			uint32_t b = z * 255.0f;
-			uint32_t a = w * 255.0f;
+			uint32_t r = (uint32_t)(x * 255.0f);
+			uint32_t g = (uint32_t)(y * 255.0f);
+			uint32_t b = (uint32_t)(z * 255.0f);
+			uint32_t a = (uint32_t)(w * 255.0f);
 
 			return r << g | b << a;
 

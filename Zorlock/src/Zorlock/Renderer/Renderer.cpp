@@ -36,8 +36,9 @@ namespace Zorlock {
 		else {
 			s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
 		}
-		
-		
+	
+		//s_SceneData->ViewProjectionMatrix = camera.GetProjectionMatrix();
+		//s_SceneData->ViewMatrix = camera.GetViewMatrix();
 	}
 
 	void Renderer::BeginScene()
@@ -52,6 +53,7 @@ namespace Zorlock {
 			}
 			else {
 				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix());
+
 			}
 
 		}
@@ -70,7 +72,8 @@ namespace Zorlock {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
-		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix); //(s_SceneData->ViewProjectionMatrix).transpose());
+		//shader->SetMat4("u_ViewMatrix", s_SceneData->ViewMatrix);
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 		shader->SetMat4("u_Transform", transform);
 		shader->Apply();
 		vertexArray->Bind();

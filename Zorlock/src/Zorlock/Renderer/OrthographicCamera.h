@@ -11,7 +11,7 @@ namespace Zorlock {
 
 		void SetProjection(float left, float right, float bottom, float top);
 		ZL_DEPRECATED("No need to get position on camera anymore, handled by inhereted transform")
-		const VECTOR3& GetPosition() const { return transform->GetPosition(); }
+		const VECTOR3 GetPosition() const { return transform->GetPosition(); }
 		ZL_DEPRECATED("No need to set position on camera anymore, handled by inhereted transform")
 		void SetPosition(const VECTOR3& position) { transform->SetPosition(position); RecalculateViewMatrix(); }
 

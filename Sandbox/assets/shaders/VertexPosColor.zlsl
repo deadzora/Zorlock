@@ -12,7 +12,7 @@ out vec4 v_Color as Z_Color;
 
 function void main()
 {
-	v_Color = a_Color;
+	v_Color = a_Position;
 	v_Position = a_Position;
 	v_Position = Z_Mul(u_Transform, v_Position);	
 	v_Position = Z_Mul(u_ViewProjection, v_Position);
@@ -29,6 +29,6 @@ in vec4 v_Color;
 
 function void main()
 {
-	color = vec4(v_Position.x,v_Position.y,v_Position.z,1.0) * 0.5 + 0.5;
+	color = vec4(v_Color.x,v_Color.y,v_Color.z,1.0) * 0.5 + 0.5;
 	Z_Return(color);
 }

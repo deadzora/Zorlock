@@ -2,8 +2,6 @@
 #include "Camera.h"
 
 
-
-
 namespace Zorlock {
 	Camera::Camera() : viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
 	{
@@ -20,8 +18,7 @@ namespace Zorlock {
 	void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
 		float fovRadians = RADIANS_FROM_DEGREES(fovDegrees);
-		projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
-		//projectionMatrix = MATRIX4::SimplePerspectiveProj(fovDegrees, aspectRatio, nearZ, farZ);
+	    projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
 		UpdateViewMatrix();
 	}
 
@@ -58,14 +55,14 @@ namespace Zorlock {
 
 	}
 
-	Zorlock::Camera::~Camera()
+	Camera::~Camera()
 	{
 	}
 
-	void Zorlock::Camera::UpdateViewMatrix()
+	void Camera::UpdateViewMatrix()
 	{
+		//SetLookAtPos(Vector3(0, 0, 0));
 		viewMatrix.SetInverseTransRotScale(this->transform->position, this->transform->rotation, VECTOR3(1, 1, 1));
-		
 		this->transform->UpdateDirectionVectors();
 
 	}

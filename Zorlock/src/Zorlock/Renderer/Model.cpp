@@ -80,14 +80,12 @@ namespace Zorlock
 			{
 				if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 				{
-					//m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
+
 					m_meshes[i]->SetDrawMatrix(meshRenderer->parent->transform->GetTransformationMatrix()* m_meshes[i]->GetMatrix());
 				}
 				else {
 					m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
 				}
-				//m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
-				//m_meshes[i]->SetDrawMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, -10.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(0.0001f, 0.0001f, 0.0001f))); //m_meshes[i]->GetMatrix());// * meshRenderer->parent->transform->GetTransformationMatrix());
 			}
 		}
 	}
@@ -403,7 +401,7 @@ namespace Zorlock
 		quadmesh->vcount = (uint32_t)indices.size();
 		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)((sizeof(float) * 12) * vertices.size()));
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * (uint32_t)vertices.size());
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
@@ -453,12 +451,12 @@ namespace Zorlock
 		if (segments < 3 || segments>100) return;
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
-		int h_segs = segments * 2, v_segs = segments;
+		uint32_t h_segs = segments * 2, v_segs = segments;
 		Vertex v;
 		Point t;
 		v.position = Vector4(0, 1, 0, 1);
 		v.normal = Vector3(0, 1, 0);
-		int k;
+		uint32_t k;
 		for (k = 0; k < h_segs; ++k) {
 			v.uvw.x = (k + .5f) / h_segs;
 			v.uvw.y = 0;
@@ -466,7 +464,7 @@ namespace Zorlock
 		}
 		for (k = 1; k < v_segs; ++k) {
 			float pitch = k * M_PI / v_segs - HALFPI;
-			for (int j = 0; j <= h_segs; ++j) {
+			for (uint32_t j = 0; j <= h_segs; ++j) {
 				float yaw = (j % h_segs) * TWOPI / h_segs;
 				v.normal = MathF::rotationMatrix(pitch, yaw, 0).k;
 				v.position = Vector4(v.normal, 1.0f);
@@ -489,7 +487,7 @@ namespace Zorlock
 			indices.push_back(t.x); indices.push_back(t.y); indices.push_back(t.z);
 		}
 		for (k = 1; k < v_segs - 1; ++k) {
-			for (int j = 0; j < h_segs; ++j) {
+			for (uint32_t j = 0; j < h_segs; ++j) {
 				t.x = k * (h_segs + 1) + j - 1;
 				t.y = t.x + 1;
 				t.z = t.y + h_segs + 1;
@@ -521,7 +519,7 @@ namespace Zorlock
 		quadmesh->vcount = (uint32_t)indices.size();
 		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * (uint32_t)vertices.size());
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
@@ -538,7 +536,7 @@ namespace Zorlock
 		Vertex v;
 		Point t;
 
-		int k;
+		uint32_t k;
 		for (k = 0; k <= segments; ++k) {
 			float yaw = (k % segments) * TWOPI / segments;
 			v.position = Vector4(MathF::rotationMatrix(0, yaw, 0).k, 1.0f);
@@ -611,7 +609,7 @@ namespace Zorlock
 		std::vector<uint32_t> indices;
 		Vertex v;
 		Point t;
-		int k;
+		uint32_t k;
 
 		v.normal = Vector3(0, 1, 0);
 		v.position = Vector4(v.normal, 1.0f);

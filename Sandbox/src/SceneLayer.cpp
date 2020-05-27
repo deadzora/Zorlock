@@ -57,8 +57,8 @@ void SceneLayer::OnUpdate(ZLTIME ts)
 	ZLRENDERER::BeginScene(*mainCam.get());
 	static float rotation = 0.0f;
 	rotation += ts * 50.0f;
-	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0,rotation,180));
-	
+	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation,0));
+	mainmodel->transform->position.z = 10.0f;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Update(ts);
 	mainCam->transform->position.z = -10.0f;
 	//mainCam->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 0));

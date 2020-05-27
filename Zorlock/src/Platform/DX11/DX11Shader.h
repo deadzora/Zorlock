@@ -41,7 +41,7 @@ namespace Zorlock {
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) override;
 		virtual void PostProcess() override;
 		virtual void* GetShaderID() const override;
-		virtual const std::string& GetName() const override { return m_Name; }
+		virtual const std::string GetName() const override { return m_Name; }
 		void Compile(std::string vertexshadersource, std::string pixelshadersource);
 
 		void UploadUniformInt(const std::string& name, int value);

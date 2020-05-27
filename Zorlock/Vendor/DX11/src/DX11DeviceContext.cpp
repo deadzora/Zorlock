@@ -53,7 +53,7 @@ namespace DX11Raz
 		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
 		m_device_context->RSSetState(m_pRasterState);
 		//create depth stencil state
-		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_device_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	void DX11DeviceContext::setviewportsize(UINT width, UINT height)
@@ -94,7 +94,7 @@ namespace DX11Raz
 		//create blend state - move to class to handle this
 		D3D11_BLEND_DESC blendDesc = {};
 		D3D11_RENDER_TARGET_BLEND_DESC rtbd = {};
-
+		ZeroMemory(&rtbd, sizeof(rtbd));
 		rtbd.BlendEnable = true;
 		rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
 		rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
@@ -129,7 +129,7 @@ namespace DX11Raz
 		ZeroMemory(&depthstencildesc, sizeof(depthstencildesc));
 		depthstencildesc.DepthEnable = true;
 		depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
 
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &m_depth_stencilstate);
 		if (FAILED(hr))

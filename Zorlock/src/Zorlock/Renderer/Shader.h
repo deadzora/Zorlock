@@ -220,7 +220,7 @@ namespace Zorlock {
 
 
 		void Process();
-		virtual const std::string& GetName() const { return "";  };
+		virtual const std::string GetName() const { return "";  };
 		void CreateParser();
 		void GenerateLayout();
 		BufferLayout& GetLayout();

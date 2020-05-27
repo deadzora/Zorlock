@@ -271,6 +271,10 @@ namespace DX11Raz
 		case WM_KEYDOWN:
 		{
 			unsigned char keycode = static_cast<unsigned char>(wparam);
+			if (keyboard.KeyIsPressed(keycode))
+			{
+				this->keyboard.EnableAutoRepeatKeys();
+			}
 			if (this->keyboard.IsKeysAutoRepeat())
 			{
 				this->WKCallback(this, keycode, keycode, DX_KEYACTION::DX_REPEATE, 0);
@@ -293,6 +297,8 @@ namespace DX11Raz
 		{
 			unsigned char keycode = static_cast<unsigned char>(wparam);
 			this->keyboard.OnKeyReleased(keycode);
+			this->keyboard.DisableAutoRepeatKeys();
+			this->keyboard.DisableAutoRepeatChars();
 			this->WKCallback(this, keycode, keycode, DX_KEYACTION::DX_RELEASE, 0);
 			return 0;
 		}
@@ -300,6 +306,10 @@ namespace DX11Raz
 		case WM_CHAR:
 		{
 			unsigned char ch = static_cast<unsigned char>(wparam);
+			if (this->keyboard.KeyIsPressed(ch))
+			{
+				this->keyboard.EnableAutoRepeatChars();
+			}
 			if (this->keyboard.IsCharsAutoRepeat())
 			{	
 				this->WCharCallback(this, ch);
