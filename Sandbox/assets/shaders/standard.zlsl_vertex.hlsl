@@ -33,6 +33,7 @@ PS_INPUT main(VS_INPUT input)
 	output.v_Position = input.a_Position;
 	output.v_Position = mul(u_Transform,output.v_Position);	
 	output.v_Position = mul(u_ViewProjection,output.v_Position);
+	output.v_Position = float4(input.a_Position.x,input.a_Position.y,input.a_Position.z,0.0);
 	return output;
 
 }

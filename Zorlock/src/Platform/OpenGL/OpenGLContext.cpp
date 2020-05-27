@@ -30,7 +30,7 @@ namespace Zorlock {
 		int versionMinor;
 		glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
-
+		glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 		ZL_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "Zorlock requires at least OpenGL version 4.5!");
 	#endif
 	}
