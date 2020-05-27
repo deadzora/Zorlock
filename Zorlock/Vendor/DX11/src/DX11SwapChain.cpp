@@ -17,7 +17,7 @@ namespace DX11Raz
 
 		DXGI_SWAP_CHAIN_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.BufferCount = 1;
+		desc.BufferCount = 2;
 		desc.BufferDesc.Width = width;
 		desc.BufferDesc.Height = height;
 		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -25,10 +25,11 @@ namespace DX11Raz
 		desc.BufferDesc.RefreshRate.Denominator = 1;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		desc.OutputWindow = hwnd;
-		desc.SampleDesc.Count = 4;
-		desc.SampleDesc.Quality = samples-1;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
 		desc.Windowed = TRUE;
-		desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		//desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		hr = DX11GraphicsEngine::Get()->GetFactory()->CreateSwapChain(device, &desc, &m_swapchain);
 
 		if (FAILED(hr))

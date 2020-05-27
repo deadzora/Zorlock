@@ -51,7 +51,7 @@ namespace DX11Raz
 		m_device_context->OMSetRenderTargets(1, &m_contextswapchain->m_rtv, m_depth_stencilview);
 		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
 		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
-		m_device_context->RSSetState(m_pRasterState);
+		//m_device_context->RSSetState(m_pRasterState);
 		//create depth stencil state
 		m_device_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
@@ -82,10 +82,10 @@ namespace DX11Raz
 		{
 			//log the error
 		}
-		if (!setrasterizer())
-		{
+		//if (!setrasterizer())
+		//{
 			//log the error
-		}
+		//}
 		 
 	}
 
@@ -94,7 +94,7 @@ namespace DX11Raz
 		//create blend state - move to class to handle this
 		D3D11_BLEND_DESC blendDesc = {};
 		D3D11_RENDER_TARGET_BLEND_DESC rtbd = {};
-		ZeroMemory(&rtbd, sizeof(rtbd));
+		//ZeroMemory(&rtbd, sizeof(rtbd));
 		rtbd.BlendEnable = true;
 		rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
 		rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
@@ -129,7 +129,7 @@ namespace DX11Raz
 		ZeroMemory(&depthstencildesc, sizeof(depthstencildesc));
 		depthstencildesc.DepthEnable = true;
 		depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &m_depth_stencilstate);
 		if (FAILED(hr))
@@ -177,8 +177,8 @@ namespace DX11Raz
 		depthstencildesc.MipLevels = 1;
 		depthstencildesc.ArraySize = 1;
 		depthstencildesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthstencildesc.SampleDesc.Count = 4;
-		depthstencildesc.SampleDesc.Quality = samples-1;
+		depthstencildesc.SampleDesc.Count = 1;
+		depthstencildesc.SampleDesc.Quality = 0;
 		depthstencildesc.Usage = D3D11_USAGE_DEFAULT;
 		depthstencildesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		depthstencildesc.CPUAccessFlags = 0;
@@ -191,13 +191,13 @@ namespace DX11Raz
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
-
+		/*
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthdetencilviewdesc;
 		ZeroMemory(&depthdetencilviewdesc, sizeof(depthdetencilviewdesc));
 		depthdetencilviewdesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 		depthdetencilviewdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, &depthdetencilviewdesc, &m_depth_stencilview);
+		*/
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Stencil View\r\n");
