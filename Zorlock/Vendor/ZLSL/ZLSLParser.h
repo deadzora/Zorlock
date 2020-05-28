@@ -109,6 +109,7 @@ namespace Zorlock
 			Layout,
 			Function,
 			Texture,
+			For,
 			Int,
 			Z_Position,
 			Z_PointSize,
@@ -120,7 +121,9 @@ namespace Zorlock
 			Z_FragDepth,
 			Z_Return,
 			Z_Constructor,
-			Z_Mul
+			Z_Mul,
+			Z_Define,
+			Z_Struct
 			
 
 		};
@@ -166,6 +169,7 @@ namespace Zorlock
 			FOG,
 			VFACE,
 			PSIZE,
+			WORLD_POSITION
 			
 		};
 
@@ -175,6 +179,7 @@ namespace Zorlock
 			VarCommandValue command;
 			VariableTypes vartype;
 			std::string varname;
+			std::string value;
 			std::string arithmetic;
 			uint32_t index;
 			bool isArray;
@@ -400,16 +405,19 @@ namespace Zorlock
 		unsigned int vertexuniformcount = 0;
 		unsigned int fragmentuniformcount = 0;
 
-
+		std::vector<ZLSLDeclaredVariables> vertexdefines;
 		std::vector<ZLSLDeclaredVariables> vertexVars;
 		std::vector<ZLSLDeclaredVariables> vertexUniforms;
 		std::vector<ZLSLDeclaredVariables> vertexSamplers;
+		std::vector<ZLSLDeclaredVariables> vertexStructs;
 		std::vector<ZLSLDeclaredVariables> vlayoutVars;
 		std::vector<ZLSLDeclaredVariables> voutVars;
 
+		std::vector<ZLSLDeclaredVariables> pixeldefines;
 		std::vector<ZLSLDeclaredVariables> pixelVars;
 		std::vector<ZLSLDeclaredVariables> pixelUniforms;
 		std::vector<ZLSLDeclaredVariables> pixelSamplers;
+		std::vector<ZLSLDeclaredVariables> pixelStructs;
 		std::vector<ZLSLDeclaredVariables> playoutVars;
 		std::vector<ZLSLDeclaredVariables> pinVars;
 		

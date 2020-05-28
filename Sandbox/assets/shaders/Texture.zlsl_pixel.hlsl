@@ -1,7 +1,7 @@
+//version 330 core
 Texture2D u_Textures : TEXTURE : register(t0);
 SamplerState u_TexturesSampler : SAMPLER : register(s0);
 //type 
-//version 330 core
 struct PS_INPUT
 {
 	float4 v_Position : SV_POSITION;
@@ -13,7 +13,6 @@ struct PS_INPUT
 float4 main(PS_INPUT input) : SV_Target
 {
 	float4 color;
-
 
 	//color = input.v_Color;
 	color = u_Textures.Sample(u_TexturesSampler,input.v_TexCoord * input.v_TilingFactor) * input.v_Color;

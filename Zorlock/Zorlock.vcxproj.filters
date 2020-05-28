@@ -183,6 +183,12 @@
     <ClInclude Include="src\Zorlock\Core\MouseCodes.h">
       <Filter>src\Zorlock\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Core\Time.h">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Core\Timer.h">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Core\Timestep.h">
       <Filter>src\Zorlock\Core</Filter>
     </ClInclude>
@@ -2787,12 +2793,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Core\Timer.h">
-      <Filter>src\Zorlock\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Zorlock\Core\Time.h">
-      <Filter>src\Zorlock\Core</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2868,6 +2868,12 @@
       <Filter>src\Zorlock\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Core\Math.cpp">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Core\Time.cpp">
+      <Filter>src\Zorlock\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Core\Timer.cpp">
       <Filter>src\Zorlock\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Core\Window.cpp">
@@ -2987,8 +2993,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Core\Timer.cpp" />
-    <ClCompile Include="src\Zorlock\Core\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

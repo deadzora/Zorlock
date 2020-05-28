@@ -51,21 +51,9 @@ namespace Zorlock {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
-		switch (RendererAPI::GetAPI())
-		{
-		case RendererAPI::API::OpenGL:
-		{
-			shader->SetMat4("u_Transform", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
-
-			break;
-		}
-		case RendererAPI::API::DX11:
-		{
-			shader->SetMat4("u_Transform", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
-			break;
-		}
-		}
-		
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
+		shader->SetMat4("u_Transform", transform);
+		shader->SetFloat4("u_Ambient", VECTOR4(1,1,1,1));//For light calculations		
 		shader->Apply();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

@@ -1,9 +1,9 @@
+//version 330 core
 cbuffer c_u_ViewProjection_buffer : register(b0)
 {
 float4x4 u_ViewProjection;
 };
 //type 
-//version 330 core
 struct VS_INPUT
 {
 	float3 a_Position : POSITION;
@@ -23,7 +23,6 @@ struct PS_INPUT
 PS_INPUT main(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT) 0; 
-
 	
 	output.v_Color = input.a_Color;
 	output.v_TexCoord = input.a_TexCoord;
