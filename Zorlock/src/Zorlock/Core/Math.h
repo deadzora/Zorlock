@@ -1065,7 +1065,7 @@ namespace Zorlock {
 			mat.j.x = 0.0f;		mat.j.y = B;		mat.j.z = D;		mat.j.w = 0.0f;
 			mat.k.x = 0.0f;		mat.k.y = 0.0f;		mat.k.z = q;		mat.k.w = qn;
 			mat.l.x = 0.0f;		mat.l.y = 0.0f;		mat.l.z = sign;		mat.l.w = 0.0f;
-
+			//printf("A: %f B: %f C: %f D: %f q: %f qn: %f \n", A, B, C, D, q, qn);
 			return mat;
 		}
 		
@@ -1105,7 +1105,11 @@ namespace Zorlock {
 			else
 			{
 				q = sign * (zfar + znear) * inv_d;
-				qn = -2.0f * (zfar * znear) * inv_d;
+				qn = (-2.0f) * (zfar * znear) * inv_d;
+				printf("zfar: %f znear: %f sign: %f \n", q, qn, sign);
+				//q = (zfar + znear) / (znear - zfar);
+				//qn = (2.0f * zfar * znear) / (znear - zfar);
+				//printf("zfar: %f znear: %f sign: %f \n", q, qn, sign);
 			}
 
 			Matrix4 mat;
@@ -1114,6 +1118,7 @@ namespace Zorlock {
 			mat.k.x = 0.0f;		mat.k.y = 0.0f;		mat.k.z = q;		mat.k.w = qn;
 			mat.l.x = 0.0f;		mat.l.y = 0.0f;		mat.l.z = sign;		mat.l.w = 0.0f;
 
+			
 			return mat;
 		}
 
@@ -1163,7 +1168,7 @@ namespace Zorlock {
 			m.l.y = 0.0f;
 			m.l.z = zFar * -zNear / zRange;
 			m.l.w = 0.0f;
-			return m.transpose();
+			return m;
 		}
 
 		static Matrix4 projection(const Vector3& projection)
@@ -1457,18 +1462,16 @@ namespace Zorlock {
 			{
 				k.z = 1.0f;
 				k.w = 0.0f;
-				//l.z = 0.0f;
 			}
 			else
 			{
 				k.z = -2.0F / deltaZ;
 				k.w = -(ffar + fnear) / deltaZ;
-				//l.z = -(ffar + fnear) / deltaZ;
+				printf("k.z: %f k.w: %f \n",k.z, k.w);
 			}
 
 			l.x = 0.0f;
 			l.y = 0.0f;
-			//k.w = 0.0f;
 			l.z = 0.0f;
 			l.w = 1.0f;
 
@@ -1837,6 +1840,10 @@ namespace Zorlock {
 	class MathF
 	{
 	public:
+
+		template<class T>
+		static constexpr T divideAndRoundUp(T n, T d) { return (n + d - 1) / d; }
+
 		static float DegreesFromRadians(float r)
 		{
 			return r * 180.0f / 3.141592653589793238463f;

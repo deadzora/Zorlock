@@ -25,7 +25,8 @@ namespace DX11Raz
 	struct RazSamplerBuffer
 	{
 	public:
-		RazSamplerBuffer() = default;
+		RazSamplerBuffer() : isuploaded(false), slot(0), buffersize(0), texture(nullptr), textureview(nullptr), varname(""), isArray(false)
+		{};
 		~RazSamplerBuffer() = default;
 		ID3D11ShaderResourceView* textureview;
 		ID3D11Resource* texture;
@@ -33,7 +34,8 @@ namespace DX11Raz
 		UINT slot;
 		UINT buffersize;
 		bool isArray;
-		std::vector< ID3D11Resource*> texturearray;
+		bool isuploaded;
+		std::vector<ID3D11Resource*> texturearray;
 		void Release()
 		{
 			//handled on the texture side
@@ -66,6 +68,8 @@ namespace DX11Raz
 		bool UpdateTextureBuffer(std::string tname, ID3D11Resource* tex);
 		bool UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev);
 		bool UpdateTextureBuffer(std::string tname, RazTexture* texture);
+		bool GetTextureBufferUploaded(UINT slot);
+		void SetTextureBufferUploaded(UINT slot, bool uploaded);
 		bool UpdateVertexCB(void* bufferdata, std::string cbname);
 		bool UpdatePixelCB(void* bufferdata, std::string cbname);
 		bool ApplyVertexCB(std::string cbname);

@@ -50,8 +50,10 @@ namespace Zorlock
 	}
 	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name)
 	{
+		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
+
 		Assimp::Importer importer;
-		const aiScene* pScene = importer.ReadFile(modelfile, aiProcess_Triangulate | aiProcess_PreTransformVertices);
+		const aiScene* pScene = importer.ReadFile(modelfile, flags);
 
 		if (pScene != NULL)
 		{
@@ -62,9 +64,10 @@ namespace Zorlock
 	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer) : name(name)
 	{
 		meshRenderer = renderer;
+		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
 
 		Assimp::Importer importer;
-		const aiScene* pScene = importer.ReadFile(modelfile, aiProcess_Triangulate | aiProcess_PreTransformVertices); // | aiProcess_ConvertToLeftHanded
+		const aiScene* pScene = importer.ReadFile(modelfile, flags); // | aiProcess_ConvertToLeftHanded
 
 		if (pScene != NULL)
 		{
@@ -78,14 +81,7 @@ namespace Zorlock
 		{
 			if (meshRenderer != nullptr)
 			{
-				if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
-				{
-
-					m_meshes[i]->SetDrawMatrix(meshRenderer->parent->transform->GetTransformationMatrix()* m_meshes[i]->GetMatrix());
-				}
-				else {
-					m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
-				}
+				m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
 			}
 		}
 	}
@@ -399,9 +395,9 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)((sizeof(float) * 12) * vertices.size()));
+		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)sizeof(vertices.data()));
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * (uint32_t)vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex)*vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
@@ -519,7 +515,7 @@ namespace Zorlock
 		quadmesh->vcount = (uint32_t)indices.size();
 		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * (uint32_t)vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
@@ -595,7 +591,7 @@ namespace Zorlock
 		quadmesh->vcount = (uint32_t)indices.size();
 		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
@@ -662,7 +658,7 @@ namespace Zorlock
 		quadmesh->vcount = (uint32_t)indices.size();
 		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
-		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex) * vertices.size());
+		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());

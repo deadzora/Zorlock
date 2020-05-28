@@ -3,17 +3,15 @@
 #include "Zorlock/Core/Log.h"
 #include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Core/Input.h"
+#include "Zorlock/Core/Time.h"
 #include <glfw3.h>
 
 namespace Zorlock {
 
 #ifdef ZL_PLATFORM_WINDOWS
-	double GetTimeAsDouble() {
-		using namespace std::chrono;
-		using SecondsFP = std::chrono::duration<double>;
-		return duration_cast<SecondsFP>(high_resolution_clock::now().time_since_epoch()).count();
-	}
-#define GETTIME (Renderer::GetAPI() == RendererAPI::API::DX11) ? (float)Zorlock::GetTimeAsDouble() : (float)glfwGetTime()
+
+#define GETTIME Time::GetInstance()->getFrameDelta() 
+
 #endif
 
 	Application* Application::s_Instance = nullptr;
@@ -82,9 +80,11 @@ namespace Zorlock {
 			ZL_PROFILE_SCOPE("RunLoop");
 
 			//declared in Renderer.h so it's based on platform and renderer.
+			
 			float time = GETTIME;
 			
-			Timestep timestep = time - m_LastFrameTime;
+			Time::GetInstance()->_update();
+			//Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
@@ -93,7 +93,7 @@ namespace Zorlock {
 					ZL_PROFILE_SCOPE("LayerStack OnUpdate");
 
 					for (Layer* layer : m_LayerStack)
-						layer->OnUpdate(timestep);
+						layer->OnUpdate(time);
 				}
 
 				m_ImGuiLayer->Begin();
@@ -105,7 +105,7 @@ namespace Zorlock {
 				}
 				m_ImGuiLayer->End();
 			}
-
+			
 			m_Window->OnUpdate();
 		}
 	}

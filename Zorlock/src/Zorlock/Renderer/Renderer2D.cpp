@@ -123,14 +123,7 @@ namespace Zorlock {
 		ZL_PROFILE_FUNCTION();
 		camera.UpdateViewMatrix();
 		s_Data.TextureShader->Bind();
-		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
-		{
-			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewMatrix() * camera.GetProjectionMatrix());
-
-		}
-		else {
-			s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
-		}
+		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 		s_Data.QuadIndexCount = 0;
 		s_Data.Stats.QuadCount = 0;
 		s_Data.Stats.DrawCalls = 0;

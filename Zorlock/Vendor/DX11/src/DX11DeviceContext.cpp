@@ -50,10 +50,11 @@ namespace DX11Raz
 		m_device_context->ClearDepthStencilView(m_depth_stencilview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		m_device_context->OMSetRenderTargets(1, &m_contextswapchain->m_rtv, m_depth_stencilview);
 		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
+		m_device_context->RSSetState(m_pRasterState);
 		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
-		//m_device_context->RSSetState(m_pRasterState);
+		
 		//create depth stencil state
-		m_device_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	void DX11DeviceContext::setviewportsize(UINT width, UINT height)
@@ -69,11 +70,16 @@ namespace DX11Raz
 		this->height = height;
 		m_device_context->RSSetViewports(1, &vp);
 
+		if (!setrasterizer())
+		{
+			//log the error
+		}
 
 		if (!setstencilbuffer())
 		{
 			//log the error
 		}
+
 		if (!setstencilstate())
 		{
 			//log the error
@@ -82,11 +88,8 @@ namespace DX11Raz
 		{
 			//log the error
 		}
-		//if (!setrasterizer())
-		//{
-			//log the error
-		//}
-		 
+
+		
 	}
 
 	bool DX11DeviceContext::createblendstate()
@@ -191,13 +194,13 @@ namespace DX11Raz
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
-		/*
+		
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthdetencilviewdesc;
 		ZeroMemory(&depthdetencilviewdesc, sizeof(depthdetencilviewdesc));
 		depthdetencilviewdesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 		depthdetencilviewdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		*/
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, NULL, &m_depth_stencilview);
+		
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, &depthdetencilviewdesc, &m_depth_stencilview);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Stencil View\r\n");
@@ -211,7 +214,7 @@ namespace DX11Raz
 
 	bool DX11DeviceContext::setrasterizer()
 	{
-		CD3D11_RASTERIZER_DESC rasterDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE,
+		CD3D11_RASTERIZER_DESC rasterDesc(D3D11_FILL_SOLID, D3D11_CULL_BACK,
 			TRUE /* FrontCounterClockwise */,
 			D3D11_DEFAULT_DEPTH_BIAS,
 			D3D11_DEFAULT_DEPTH_BIAS_CLAMP,

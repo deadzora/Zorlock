@@ -21,7 +21,7 @@ namespace DX11Raz
 		desc.BufferDesc.Width = width;
 		desc.BufferDesc.Height = height;
 		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.BufferDesc.RefreshRate.Numerator = 60;
+		desc.BufferDesc.RefreshRate.Numerator = 144;
 		desc.BufferDesc.RefreshRate.Denominator = 1;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		desc.OutputWindow = hwnd;
@@ -63,7 +63,7 @@ namespace DX11Raz
 
 	bool DX11SwapChain::flip(bool vsync)
 	{
-		m_swapchain->Present(vsync, NULL);
+		m_swapchain->Present(false, NULL);
 		return true;
 	}
 

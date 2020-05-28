@@ -48,7 +48,17 @@ namespace Zorlock
 	{
 		ZL_PROFILE_FUNCTION();
 		DX11Raz::RazSetCurrentTexture(m_RendererID);
-		DX11Raz::RazApplyShaderTexture(m_RendererID, slot);
+		DX11Raz::RazShader* rs = nullptr; 
+		rs = DX11Raz::RazGetCurrentShader();
+		if (rs != nullptr)
+		{
+			if (!rs->GetTextureBufferUploaded(slot))
+			{
+				printf("APPLY SHADER \n");
+				rs->SetTextureBufferUploaded(slot,true);
+				DX11Raz::RazApplyShaderTexture(m_RendererID, slot);
+			}
+		}
 
 	}
 

@@ -89,6 +89,7 @@ namespace Zorlock
 				uint32_t i = 0;
 				//m_Shader->SetInt("u_Texture", 0);
 				//m_Shader->Bind();
+				
 				sharedTexture->Bind();
 				
 			}

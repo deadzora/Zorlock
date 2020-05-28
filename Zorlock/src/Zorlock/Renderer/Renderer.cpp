@@ -27,36 +27,15 @@ namespace Zorlock {
 	}
 
 	void Renderer::BeginScene(Camera& camera)
-	{
-		
-		if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
-		{
-			s_SceneData->ViewProjectionMatrix = (camera.GetViewMatrix() * camera.GetProjectionMatrix());
-		}
-		else {
-			s_SceneData->ViewProjectionMatrix = (camera.GetProjectionMatrix() * camera.GetViewMatrix());
-		}
-	
-		//s_SceneData->ViewProjectionMatrix = camera.GetProjectionMatrix();
-		//s_SceneData->ViewMatrix = camera.GetViewMatrix();
+	{	
+		s_SceneData->ViewProjectionMatrix = camera.GetProjectionMatrix();//(camera.GetViewMatrix() * camera.GetProjectionMatrix());
+		s_SceneData->ViewMatrix = camera.GetViewMatrix();
 	}
 
 	void Renderer::BeginScene()
 	{
-		//Get main camera if none is supplied
-		if (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera())
-		{
-			if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
-			{
-				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix());
-
-			}
-			else {
-				s_SceneData->ViewProjectionMatrix = (ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix() * ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix());
-
-			}
-
-		}
+		s_SceneData->ViewProjectionMatrix = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix();
+		s_SceneData->ViewMatrix = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -72,9 +51,21 @@ namespace Zorlock {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
-		//shader->SetMat4("u_ViewMatrix", s_SceneData->ViewMatrix);
-		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-		shader->SetMat4("u_Transform", transform);
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::OpenGL:
+		{
+			shader->SetMat4("u_Transform", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
+
+			break;
+		}
+		case RendererAPI::API::DX11:
+		{
+			shader->SetMat4("u_Transform", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
+			break;
+		}
+		}
+		
 		shader->Apply();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

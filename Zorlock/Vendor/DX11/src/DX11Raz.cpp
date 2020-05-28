@@ -7,7 +7,7 @@
 #include "DX11Shaders.h"
 #include "DX11Textures.h"
 #include <D3d11sdklayers.h>
-#define ZL_DEBUG_DX11
+//#define ZL_DEBUG_DX11
 namespace DX11Raz
 {
 

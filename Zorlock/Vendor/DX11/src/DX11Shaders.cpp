@@ -273,6 +273,30 @@ bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RazTexture* text
 	return true;
 }
 
+bool DX11Raz::RazShader::GetTextureBufferUploaded(UINT slot)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (slot == tx_buffer[i]->slot)
+		{
+			return tx_buffer[i]->isuploaded;
+		}
+	}
+
+	return false;
+}
+
+void DX11Raz::RazShader::SetTextureBufferUploaded(UINT slot, bool uploaded)
+{
+	for (size_t i = 0; i < tx_buffer.size(); i++)
+	{
+		if (slot == tx_buffer[i]->slot)
+		{
+			tx_buffer[i]->isuploaded = uploaded;
+		}
+	}
+}
+
 
 
 bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
@@ -511,8 +535,11 @@ void DX11Raz::RazShader::ApplyTexture(std::string cbname)
 		OutputDebugStringW(L"Texture Buffer Pointer was Null");
 		return;
 	}
-
-	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->setshadertexture(buffer->slot, buffer->textureview);
+	if (!buffer->isuploaded)
+	{
+		buffer->isuploaded = true;
+		DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->setshadertexture(buffer->slot, buffer->textureview);
+	}
 }
 
 void DX11Raz::RazShader::ApplyTextureArray(std::string cbname)
