@@ -39,9 +39,15 @@ namespace Zorlock
 	{
 		this->transform->UpdateTransformationMatrix();
 		this->transform->UpdateDirectionVectors();
+
 		for (size_t i = 0; i < components.size(); i++)
 		{
 			components[i]->Update(ts);
+		}
+
+		for (size_t i = 0; i < transform->children.size(); i++)
+		{
+
 		}
 
 

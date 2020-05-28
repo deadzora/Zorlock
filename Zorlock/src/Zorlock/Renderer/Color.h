@@ -1,10 +1,14 @@
 #pragma once
-#define COLOR Zorlock::ColorRGB
-#define COLOR4 Zorlock::ColorRGBA
 typedef float COLOR3ARRAY[3];
 typedef float COLOR4ARRAY[4];
+#define COLOR Zorlock::ColorRGB
+#define COLOR4 Zorlock::ColorRGBA
 
 namespace Zorlock {
+
+
+	struct Vector3;
+	struct Vector4;
 
 	struct ColorRGB {
 	public:
@@ -15,6 +19,8 @@ namespace Zorlock {
 		ColorRGB(float x, float y, float z) : x(x), y(y), z(z)
 		{
 		}
+		ColorRGB(Vector3& v);
+
 		//for template compatability
 		ColorRGB(float x, float y, float z, float w) : x(x), y(y), z(z)
 		{
@@ -23,6 +29,10 @@ namespace Zorlock {
 		ColorRGB(float x, float y) : x(x), y(y), z(0)
 		{
 		}
+		ColorRGB operator=(const ColorRGB& q) {
+			x = q.x; y = q.y; z = q.z;  return *this;
+		}
+
 	public:
 		ColorRGB White()
 		{
@@ -63,12 +73,11 @@ namespace Zorlock {
 			this->z = 0.0f;
 			return *this;
 		}
-		ColorRGB& operator=(const COLOR3ARRAY q) {
+		ColorRGB operator=(const COLOR3ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2];  return *this;
 		}
-		ColorRGB& operator=(const ColorRGB& q) {
-			x = q.x; y = q.y; z = q.z; return *this;
-		}
+
+
 		COLOR3ARRAY& ToArray()
 		{
 			COLOR3ARRAY vec3;
@@ -80,10 +89,7 @@ namespace Zorlock {
 			return vec3;
 
 		}
-		Vector3 ToVector3()
-		{
-			return Vector3(x, y, z);
-		}
+		
 	};
 
 	struct ColorRGBA {
@@ -97,6 +103,9 @@ namespace Zorlock {
 		ColorRGBA(float x, float y, float z) : x(x), y(y), z(z), w(1)
 		{
 		}
+		ColorRGBA(Vector3& v);
+		ColorRGBA(Vector4& v);
+
 	public:
 		uint32_t ToColor()
 		{
@@ -158,12 +167,13 @@ namespace Zorlock {
 			return *this;
 		};
 
-		ColorRGBA& operator=(const COLOR4ARRAY q) {
+		ColorRGBA operator=(const COLOR4ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2]; w = q[3];  return *this;
 		}
-		ColorRGBA& operator=(const ColorRGBA& q) {
+		ColorRGBA operator=(const ColorRGBA& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
+
 		COLOR4ARRAY& ToArray()
 		{
 			COLOR4ARRAY vec4;
@@ -185,15 +195,7 @@ namespace Zorlock {
 
 			return vec4;
 		}
-		Vector4 ToVector4()
-		{
-			return Vector4(x, y, z,w);
-		}
 
-		Vector3 ToVector3()
-		{
-			return Vector3(x, y, z);
-		}
 	};
 
 }

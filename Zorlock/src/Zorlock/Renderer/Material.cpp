@@ -9,20 +9,23 @@ namespace Zorlock
 
 	Material::Material() : name("material") , m_viewmatrix(MATRIX4::IDENTITY())
 	{
+		m_lights.resize(ZMAXLIGHTS, LightBase());
 	}
 
 	Material::Material(const Ref<Shader>& shader) : name(shader->GetName()), m_viewmatrix(MATRIX4::IDENTITY())
 	{
 		m_Shader = shader;
+		m_lights.resize(ZMAXLIGHTS, LightBase());
 	}
 	Material::Material(const std::string name) : name(name), m_viewmatrix(MATRIX4::IDENTITY())
 	{
-		
+		m_lights.resize(ZMAXLIGHTS, LightBase());
 		//m_Shader = ShaderLibrary::GetInstance()->Get(shadername);
 	}
 	Material::Material(const std::string name, const std::string shaderfile): name(name), m_viewmatrix(MATRIX4::IDENTITY())
 	{
 		m_Shader = Shader::Create(name, shaderfile);
+		m_lights.resize(ZMAXLIGHTS, LightBase());
 	}
 	void Material::Apply()
 	{
@@ -61,6 +64,10 @@ namespace Zorlock
 	void Material::SetViewMatrix(MATRIX4 view)
 	{
 		m_viewmatrix = view;
+	}
+	void Material::SetLight(LightBase s, uint32_t index)
+	{
+		m_lights[index] = s;
 	}
 	void Material::ApplyViewMatrix()
 	{

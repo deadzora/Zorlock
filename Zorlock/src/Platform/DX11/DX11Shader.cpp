@@ -105,8 +105,7 @@ namespace Zorlock
 
 	void DX11Shader::Apply() const
 	{
-		m_RendererID->ApplyAllVertexCB();
-		m_RendererID->ApplyAllPixelCB();
+
 	}
 
 	void DX11Shader::SetInt(const std::string& name, int value)
@@ -376,7 +375,7 @@ namespace Zorlock
 		{
 			if (m_VUniformVars[i].Name.compare(name) == 0)
 			{
-				VECTOR3 p = value;
+				VECTOR2 p = value;
 				m_RendererID->UpdateVertexCB(&p, name);
 				m_RendererID->ApplyVertexCB(name);
 				break;
@@ -387,7 +386,7 @@ namespace Zorlock
 			if (m_FUniformVars[i].Name.compare(name) == 0)
 			{
 				//printf("Sent float3 \n");
-				VECTOR3 p = value;
+				VECTOR2 p = value;
 				m_RendererID->UpdatePixelCB(&p, name);
 				m_RendererID->ApplyPixelCB(name);
 				break;

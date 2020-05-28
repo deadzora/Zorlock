@@ -13,6 +13,7 @@
 #define MATHTRANSFORM Zorlock::MathTransform
 #define BOX Zorlock::Box
 #define QUATERNION Zorlock::Quaternion
+
 typedef float MATRIX3ARRAY[3][3];
 typedef float MATRIX4ARRAY[4][4];
 typedef float MATRIX3X3ARRAY[9];
@@ -42,6 +43,9 @@ namespace Zorlock {
 
 	enum ZORLOCK_ZERO { Zero };
 	enum ZORLOCK_IDENTITY { Identity };
+
+	struct ColorRGB;
+	struct ColorRGBA;
 
 	struct Vector2
 	{
@@ -104,10 +108,9 @@ namespace Zorlock {
 		Vector3() : x(0), y(0), z(0)
 		{};
 
-		Vector3(Vector2 v) : x(v.x), y(v.y), z(0) {
+		Vector3(Vector2& v) : x(v.x), y(v.y), z(0) {
 
 		}
-
 		Vector3(float x, float y, float z) : x(x), y(y), z(z) 
 		{				
 		}
@@ -116,7 +119,7 @@ namespace Zorlock {
 		{
 			//we ignore Z and W
 		}
-
+		Vector3(ColorRGB& c);
 		VECTOR3ARRAY& ToArray()
 		{
 			VECTOR3ARRAY vec3;
@@ -281,7 +284,8 @@ namespace Zorlock {
 		{
 
 		}
-
+		Vector4(ColorRGB& c);
+		Vector4(ColorRGBA& c);
 		float distance(const Vector4* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -337,7 +341,7 @@ namespace Zorlock {
 		Vector4 operator=(const Vector4& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
-		
+
 		Vector3 ToVector3()
 		{
 			return Vector3(x, y, z);

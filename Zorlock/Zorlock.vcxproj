@@ -195,6 +195,7 @@
     <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
     <ClInclude Include="src\Zorlock\Renderer\Color.h" />
     <ClInclude Include="src\Zorlock\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Light.h" />
     <ClInclude Include="src\Zorlock\Renderer\Material.h" />
     <ClInclude Include="src\Zorlock\Renderer\Mesh.h" />
     <ClInclude Include="src\Zorlock\Renderer\Model.h" />
@@ -1085,7 +1086,9 @@
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Color.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Light.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Material.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Mesh.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Model.cpp" />
@@ -1136,4 +1139,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

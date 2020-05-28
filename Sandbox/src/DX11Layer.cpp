@@ -47,7 +47,7 @@ void DX11Layer::OnUpdate(Zorlock::Timestep ts)
 
 	Zorlock::Renderer::BeginScene(m_CameraController.GetCamera());
 	m_FlatColorShader->Bind();
-	m_FlatColorShader->SetFloat3("u_Color", m_SquareColor.ToVector3());
+	m_FlatColorShader->SetFloat3("u_Color", VECTOR3(m_SquareColor));
 
 	for (float y = 0; y < 20; y++)
 	{

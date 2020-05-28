@@ -939,7 +939,6 @@ namespace glTF
         float falloffAngle;
         float falloffExponent;
 
-        Light() {}
         void Read(Value& obj, Asset& r);
 
         void SetDefaults();

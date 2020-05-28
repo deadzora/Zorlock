@@ -1,13 +1,16 @@
 #pragma once
 #include "Shader.h"
+#include "Light.h"
 #include "Color.h"
 #include "Texture.h"
 
 #define ZLMATERIAL Zorlock::Material
 #define ZLMATERIALLIBRARY Zorlock::MaterialLibrary
-
+#define ZMAXLIGHTS 16
 
 namespace Zorlock {
+
+	struct LightBase;
 
 	class Material {
 	public:
@@ -23,9 +26,11 @@ namespace Zorlock {
 		void LoadTexture(const std::string filename);
 		void LoadTexture(uint32_t width, uint32_t height, uint32_t color);
 		void SetViewMatrix(MATRIX4 view);
+		void SetLight(LightBase s, uint32_t index = 0);
 		void ApplyViewMatrix();
 		void ApplyTransform(MATRIX4 transform);
 		void ApplyMainTexture();
+
 		std::string name;
 		COLOR4 materialColor;
 		Ref<Texture2D> sharedTexture;
@@ -34,6 +39,7 @@ namespace Zorlock {
 		bool Process();
 		Ref<Shader> m_Shader;
 		std::vector <Ref<Texture2D>> m_textures;
+		std::vector <LightBase> m_lights;
 	};
 
 	class MaterialLibrary

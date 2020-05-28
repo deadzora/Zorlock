@@ -5,6 +5,8 @@
 namespace Zorlock {
 
 	class GameObject;
+	
+
 
 	class Scene : public Object
 	{
@@ -31,7 +33,6 @@ namespace Zorlock {
 	protected:
 		Ref<Camera> m_mainCamera;
 		std::vector<Ref<GameObject>> m_scene_Objects;
-
 	};
 
 

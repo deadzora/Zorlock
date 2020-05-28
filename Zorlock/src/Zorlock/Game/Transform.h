@@ -4,7 +4,7 @@
 
 namespace Zorlock {
 
-	//class GameObject;
+	class GameObject;
 
 	class Transform : public MathTransform
 	{
@@ -13,6 +13,7 @@ namespace Zorlock {
 		~Transform();
 		
 		ZLREF<Transform> parent;
+		ZLREF<GameObject> gameObject;
 		std::vector<ZLREF<Transform>> children;
 		VECTOR3 position;
 		QUATERNION rotation;
