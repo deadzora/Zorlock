@@ -32,13 +32,17 @@ namespace Zorlock {
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		
+
+		
 	}
 
 	Application::~Application()
 	{
 		ZL_PROFILE_FUNCTION();
 
-		Renderer::Shutdown();
+		
 	}
 
 	void Application::PushLayer(Layer* layer)
@@ -76,6 +80,7 @@ namespace Zorlock {
 	void Application::Run()
 	{
 		ZL_PROFILE_FUNCTION();
+		physics.Init();
 
 		while (m_Running)
 		{
@@ -114,6 +119,8 @@ namespace Zorlock {
 	{
 		m_Running = false;
 		return true;
+		physics.End();
+		Renderer::Shutdown();
 	}
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)

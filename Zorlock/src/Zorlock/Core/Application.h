@@ -6,6 +6,7 @@
 #include "Zorlock/Core/LayerStack.h"
 #include "Zorlock/Events/Event.h"
 #include "Zorlock/Events/ApplicationEvent.h"
+#include "Zorlock/Physics/Physics.h"
 
 #include "Zorlock/Core/Timestep.h"
 
@@ -38,6 +39,7 @@ namespace Zorlock {
 	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
+		Physics physics;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;

@@ -26,6 +26,7 @@ IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
 IncludeDir["ZLSL"] = "Zorlock/vendor/ZLSL"
 IncludeDir["Assimp"] = "Zorlock/vendor/assimp/include"
+IncludeDir["PhysX"] = "Zorlock/vendor/PhysX-4.1/physx/include"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"
@@ -60,7 +61,8 @@ project "Zorlock"
 		"%{prj.name}/vendor/DX11/src/**.cpp",
 		"%{prj.name}/vendor/ZLSL/**.hpp",
 		"%{prj.name}/vendor/ZLSL/**.cpp",
-		"%{prj.name}/vendor/ZLSL/**.h"
+		"%{prj.name}/vendor/ZLSL/**.h",
+		"%{prj.name}/vendor/PhysX-4.1/physx/include/**.h"
 	}
 
 	defines
@@ -81,13 +83,14 @@ project "Zorlock"
 		"%{IncludeDir.DX11}",
 		"%{IncludeDir.ZLSL}",
 		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.PhysX}"
 
 	}
 	
---	libdirs 
---	{ 
---		"%{prj.name}/vendor/assimp/lib"
---	}
+	libdirs 
+	{ 
+		"%{prj.name}/vendor/PhysX-4.1/physx/bin"
+	}
 
 	links 
 	{ 
@@ -98,7 +101,11 @@ project "Zorlock"
 		"opengl32.lib",
 		"d3d11.lib",
 		"d3dcompiler.lib",
-		"dxguid.lib"
+		"dxguid.lib",
+		"PhysXCooking_static_64.lib",
+		"PhysXFoundation_static_64.lib",
+		"PhysXCommon_static_64.lib",
+		"PhysX_static_64.lib"
 	}
 	
 	filter "system:windows"
@@ -149,7 +156,7 @@ project "Sandbox"
 		"Zorlock/src",
 		"Zorlock/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.ZLSL}",
+		"%{IncludeDir.ZLSL}"
 	}
 
 	links

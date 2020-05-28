@@ -1,2 +1,4 @@
 C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\Zorlock\vendor\GLFW\bin\Debug-windows-x86_64\GLFW\GLFW.pdb
 C:\Users\Landon\Documents\VisualStudioProjects\ZorlockEngineShane\ZorlockDX11\Zorlock\Zorlock\vendor\GLFW\bin-int\Debug-windows-x86_64\GLFW\GLFW.pdb
+Z:\Dev\Zorlock PhysX\Zorlock\Zorlock\vendor\GLFW\bin\Debug-windows-x86_64\GLFW\GLFW.pdb
+Z:\Dev\Zorlock PhysX\Zorlock\Zorlock\vendor\GLFW\bin-int\Debug-windows-x86_64\GLFW\GLFW.pdb
