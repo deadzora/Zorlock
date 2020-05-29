@@ -3,8 +3,10 @@
 
 
 namespace Zorlock {
-
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) : m_Rotation(0)
+	OrthographicCamera::OrthographicCamera(std::string name, Ref<Transform> parent) : Camera(name, parent), m_Rotation(0)
+	{
+	}
+	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top, std::string name, Ref<Transform> parent) : Camera(name,parent), m_Rotation(0)
 	{
 		ZL_PROFILE_FUNCTION();
 

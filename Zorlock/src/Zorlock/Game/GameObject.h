@@ -10,6 +10,8 @@ namespace Zorlock {
 	public:
 		GameObject();
 		GameObject(std::string name);
+		GameObject(Ref<Transform> parent);
+		GameObject(std::string name, Ref<Transform> parent);
 
 		template <class T>
 		Ref<T> GetComponent()

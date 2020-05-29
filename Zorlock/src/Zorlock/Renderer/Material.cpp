@@ -87,6 +87,7 @@ namespace Zorlock
 			m_Shader->SetMat4("u_Transform", transform);
 		}
 	}
+
 	void Material::ApplyMainTexture()
 	{
 		if (sharedTexture != nullptr)
@@ -102,6 +103,12 @@ namespace Zorlock
 			}
 		}
 	}
+
+	void Material::ApplyLights()
+	{
+
+	}
+
 	bool Material::Process()
 	{
 

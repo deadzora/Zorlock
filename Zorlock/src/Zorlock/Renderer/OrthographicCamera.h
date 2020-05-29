@@ -7,7 +7,8 @@ namespace Zorlock {
 	class OrthographicCamera : public Camera
 	{
 	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
+		OrthographicCamera(std::string name = "OrthodCamera", Ref<Transform> parent = nullptr);
+		OrthographicCamera(float left, float right, float bottom, float top, std::string name = "OrthoCamera", Ref<Transform> parent = nullptr);
 
 		void SetProjection(float left, float right, float bottom, float top);
 		ZL_DEPRECATED("No need to get position on camera anymore, handled by inhereted transform")

@@ -30,6 +30,7 @@ namespace Zorlock {
 		void ApplyViewMatrix();
 		void ApplyTransform(MATRIX4 transform);
 		void ApplyMainTexture();
+		void ApplyLights();
 
 		std::string name;
 		COLOR4 materialColor;

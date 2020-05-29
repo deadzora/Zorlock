@@ -7,9 +7,9 @@ namespace Zorlock {
 	class Camera : public GameObject
 	{
 	public:
-		Camera();
-		Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ);
-		Camera(MATRIX4 view, MATRIX4 proj);
+		Camera(std::string name = "Camera", Ref<Transform> parent = nullptr);
+		Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ,std::string name = "Camera", Ref<Transform> parent = nullptr);
+		Camera(MATRIX4 view, MATRIX4 proj, std::string name = "Camera", Ref<Transform> parent = nullptr);
 		void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
 		const MATRIX4 GetProjectionMatrix() const { return projectionMatrix; }
 		const MATRIX4 GetViewMatrix() const { return viewMatrix; }

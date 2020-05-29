@@ -117,10 +117,7 @@ namespace Zorlock {
 			return r << g | b << a;
 
 		}
-		static ColorRGBA WHITE()
-		{
-			return ColorRGBA().White();
-		}
+
 
 		ColorRGBA White()
 		{
@@ -166,6 +163,46 @@ namespace Zorlock {
 			this->w = 1.0f;
 			return *this;
 		};
+
+		ColorRGBA Half()
+		{
+			this->x = 0.5f;
+			this->y = 0.5f;
+			this->z = 0.5f;
+			this->w = 1.0f;
+			return *this;
+		};
+
+
+		ColorRGBA Quarter()
+		{
+			this->x = 0.25f;
+			this->y = 0.25f;
+			this->z = 0.25f;
+			this->w = 1.0f;
+			return *this;
+		};
+		//need to add more colors
+
+		static ColorRGBA WHITE()
+		{
+			return ColorRGBA().White();
+		}
+
+		static ColorRGBA BLUE()
+		{
+			return ColorRGBA().Blue();
+		}
+
+		static ColorRGBA HALF()
+		{
+			return ColorRGBA().Half();
+		}
+
+		static ColorRGBA QUARTER()
+		{
+			return ColorRGBA().Quarter();
+		}
 
 		ColorRGBA operator=(const COLOR4ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2]; w = q[3];  return *this;

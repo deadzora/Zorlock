@@ -1,36 +1,43 @@
 #pragma once
 #include "Zorlock/Game/GameObject.h"
+#include "Zorlock/Core/Math.h"
 #include "Zorlock/Renderer/Color.h"
 
 namespace Zorlock {
 
+	enum class LightType
+	{
+		POINTLIGHT = 0,
+		SPOTLIGHT = 1,
+		DIRECTIONAL = 2
+	};
+
 	struct LightBase
 	{
 	public:
-		LightBase() : lightpos(VECTOR4(0,0,0,1)), lightcolor(VECTOR4(1, 1, 1, 1)), radius(1.0f), strength(0.5f)
-		{};
-		VECTOR4 lightpos;
-		VECTOR4 lightcolor;
+		LightBase();
+
+		LightBase operator=(const LightBase& q);
+
+		Vector4 lightpos;
+		Vector4 lightcolor;
 		float radius;
 		float strength;
-
-		LightBase operator=(const LightBase& q) {
-			lightpos = q.lightpos; lightcolor = q.lightcolor; radius = q.radius; strength = q.strength; return *this;
-		}
-
 	};
 
 	class Light : public GameObject
 	{
 	public:
-		Light();
+		Light(std::string name = "Light", Ref<Transform> parent = nullptr);
 		~Light();
 		void SetRadius(float r);
 		float GetRadius();
 		void SetStrength(float s);
 		float GetStrength();
-		void SetColor(COLOR4 col);
-		COLOR4 GetColor();
+		void SetColor(ColorRGBA col);
+		LightBase GetLightProps();
+		virtual void Update(Timestep ts) override;
+		ColorRGBA GetColor();
 	private:
 		LightBase m_lightProps;
 
@@ -39,3 +46,5 @@ namespace Zorlock {
 
 
 }
+
+#define ZLLIGHT Zorlock::Light

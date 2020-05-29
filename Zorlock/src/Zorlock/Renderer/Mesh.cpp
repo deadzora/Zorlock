@@ -99,6 +99,7 @@ namespace Zorlock
 
 			m_material->GetShader()->Bind();
 			m_material->ApplyMainTexture();
+			
 			Zorlock::Renderer::Submit(m_material->GetShader(), m_VertexArray, drawMatrix);
 
 

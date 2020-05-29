@@ -2,9 +2,10 @@
 #include "Light.h"
 
 
+
 namespace Zorlock {
 
-	Light::Light()
+	Light::Light(std::string name, Ref<Transform> parent) : GameObject(name,parent)
 	{
 
 	}
@@ -33,14 +34,33 @@ namespace Zorlock {
 		return m_lightProps.strength;
 	}
 
-	void Light::SetColor(COLOR4 col)
+	void Light::SetColor(ColorRGBA col)
 	{
 		m_lightProps.lightcolor = col;
 	}
 
-	COLOR4 Light::GetColor()
+	LightBase Light::GetLightProps()
 	{
-		return COLOR4(m_lightProps.lightcolor);
+		return m_lightProps;
 	}
+
+	void Light::Update(Timestep ts)
+	{
+		GameObject::Update(ts);
+		m_lightProps.lightpos =  transform->GetDrawMatrix().multiply(Vector4(transform->position,1));
+	}
+
+	ColorRGBA Light::GetColor()
+	{
+		return ColorRGBA(m_lightProps.lightcolor);
+	}
+
+	LightBase::LightBase() : lightpos(VECTOR4(0, 0, 0, 1)), lightcolor(VECTOR4(1, 1, 1, 1)), radius(1.0f), strength(0.5f)
+	{}
+	LightBase LightBase::operator=(const LightBase& q) {
+		lightpos = q.lightpos; lightcolor = q.lightcolor; radius = q.radius; strength = q.strength; return *this;
+	};
+
+
 
 }

@@ -81,7 +81,7 @@ namespace Zorlock
 		{
 			if (meshRenderer != nullptr)
 			{
-				m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetTransformationMatrix());
+				m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetDrawMatrix());
 			}
 		}
 	}

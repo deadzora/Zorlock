@@ -3,22 +3,24 @@
 
 
 namespace Zorlock {
-	Camera::Camera() : viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
+
+	Camera::Camera(std::string name, Ref<Transform> parent) : GameObject(name, parent), viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
 	{
 
 	}
-	Camera::Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+	Camera::Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ, std::string name, Ref<Transform> parent) : GameObject(name,parent)
 	{
+		name = "Camera";
 		SetProjectionValues(fovDegrees, aspectRatio, nearZ, farZ);
 	}
-	Camera::Camera(MATRIX4 proj, MATRIX4 view) : viewMatrix(view), projectionMatrix(proj)
+	Camera::Camera(MATRIX4 proj, MATRIX4 view, std::string name, Ref<Transform> parent) : GameObject(name, parent), viewMatrix(view), projectionMatrix(proj)
 	{
 		
 	}
 	void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{
 		float fovRadians = RADIANS_FROM_DEGREES(fovDegrees);
-	    projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
+		projectionMatrix = MATRIX4::projectionPerspective(fovRadians, aspectRatio, nearZ, farZ);
 		UpdateViewMatrix();
 	}
 

@@ -21,6 +21,9 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	mainmodel = m_mainScene->CreateGameObject("Model");
 	ZLREF<ZLMESHRENDERER> meshrenderer = mainmodel->CreateComponent<Zorlock::MeshRenderer>();
 	standard->Bind();
+	ZLREF<ZLLIGHT> light = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
+	light->transform->position = VECTOR3(2, 0, -10);
+	light->transform->UpdateTransformationMatrix();
 	//Uncomment a model to view it
 	//meshrenderer->CreateQuad();	
 	//meshrenderer->CreateCylinder(32);
@@ -32,6 +35,7 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	m_meshrenderer = meshrenderer;
 
 	ZLREF<ZLMATERIAL> mat = meshrenderer->GetMaterial(0);
+	mat->SetLight(light->GetLightProps(), 0);
 	mat->sharedTexture = m_Texture;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Awake();
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Start();
@@ -54,7 +58,7 @@ void SceneLayer::OnUpdate(ZLTIME ts)
 	ZLRENDERCOMMAND::Clear();
 
 
-	ZLRENDERER::BeginScene(*mainCam.get());
+	ZLRENDERER::BeginScene();
 	static float rotation = 0.0f;
 	rotation += ts * 50.0f;
 	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation,0));

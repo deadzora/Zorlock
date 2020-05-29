@@ -32,7 +32,7 @@
 
 #include "Zorlock/Game/SceneManager.h"
 #include "Zorlock/Game/GameObject.h"
-
+#include "Zorlock/Renderer/Light.h"
 
 
 //---Utility------------------------------

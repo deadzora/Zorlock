@@ -1,15 +1,16 @@
 #include "ZLpch.h"
 #include "Scene.h"
-#include "GameObject.h"
 #include "Zorlock/Renderer/OrthographicCamera.h"
+#include "Zorlock/Renderer/Environment.h"
+#include "Zorlock/Renderer/Light.h"
 
 namespace Zorlock
 {
-	Scene::Scene() : Object()
+	Scene::Scene() : Object("Scene"), m_environment(Ref<Environment>(new Environment()))
 	{
 	}
 
-	Scene::Scene(std::string name) : Object(name)
+	Scene::Scene(std::string name) : Object(name), m_environment(Ref<Environment>(new Environment()))
 	{
 	}
 
@@ -35,6 +36,7 @@ namespace Zorlock
 
 	void Scene::Update(Timestep ts)
 	{
+		transform->UpdateTransformationMatrix();
 		for (size_t i = 0; i < m_scene_Objects.size(); i++)
 		{
 			m_scene_Objects[i]->Update(ts);
@@ -59,48 +61,48 @@ namespace Zorlock
 		delete this;
 	}
 
-	Ref<Camera> Scene::CreateCamera()
+	Ref<Camera> Scene::CreateCamera(std::string name)
 	{
 		if (m_mainCamera == nullptr)
 		{
-			m_mainCamera = CreateRef<Camera>();
+			m_mainCamera = CreateRef<Camera>(name,this->transform);
 			m_scene_Objects.push_back(m_mainCamera);
 			return m_mainCamera;
 		}
 		else {
-			Ref<Camera> c = CreateRef<Camera>();
+			Ref<Camera> c = CreateRef<Camera>(name, this->transform);
 			m_scene_Objects.push_back(c);
 			return c;
 		}
 	}
 
-	Ref<Camera> Scene::CreateCamera(float fovDegrees, float aspectRatio, float nearZ, float farZ)
+	Ref<Camera> Scene::CreateCamera(float fovDegrees, float aspectRatio, float nearZ, float farZ, std::string name)
 	{
 		if (m_mainCamera == nullptr)
 		{
-			m_mainCamera = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ);
+			m_mainCamera = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ, name, this->transform);
 			m_scene_Objects.push_back(m_mainCamera);
 			return m_mainCamera;
 		}
 		else {
-			Ref<Camera> c = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ);
+			Ref<Camera> c = CreateRef<Camera>(fovDegrees, aspectRatio, nearZ, farZ, name, this->transform);
 			m_scene_Objects.push_back(c);
 			return c;
 		}
 
 	}
 
-	Ref<OrthographicCamera> Scene::CreateCamera2D(float left, float right, float bottom, float top)
+	Ref<OrthographicCamera> Scene::CreateCamera2D(float left, float right, float bottom, float top, std::string name)
 	{
 		if (m_mainCamera == nullptr)
 		{
-			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top);
+			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top, name, this->transform);
 			m_scene_Objects.push_back(c);
 			m_mainCamera = c;
 			return c;
 		}
 		else {
-			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top);
+			Ref<OrthographicCamera> c = CreateRef<OrthographicCamera>(left, right, bottom, top, name, this->transform);
 			m_scene_Objects.push_back(c);
 			return c;
 		}
@@ -117,16 +119,10 @@ namespace Zorlock
 		m_mainCamera = cam;
 	}
 
-	Ref<GameObject> Scene::CreateGameObject()
-	{
-		Ref<GameObject> go = CreateRef<GameObject>();
-		m_scene_Objects.push_back(go);
-		return go;
-	}
 
 	Ref<GameObject> Scene::CreateGameObject(std::string name)
 	{
-		Ref<GameObject> go = CreateRef<GameObject>(name);
+		Ref<GameObject> go = CreateRef<GameObject>(name, this->transform);
 		m_scene_Objects.push_back(go);
 		return go;
 	}
@@ -173,6 +169,28 @@ namespace Zorlock
 				if (single) return;
 			}
 		}
+	}
+
+	Ref<Light> Scene::CreateLight()
+	{
+		Ref<Light> go = CreateRef<Light>(name, this->transform);
+		m_scene_Objects.push_back(go);
+		m_scene_Lights.push_back(go);
+		return go;
+	}
+
+	Ref<Light> Scene::CreateLight(LightType light)
+	{
+		//not implmented other lighttypes for now just create point light
+		Ref<Light> go = CreateRef<Light>(name, this->transform);
+		m_scene_Objects.push_back(go);
+		m_scene_Lights.push_back(go);
+		return go;
+	}
+
+	Ref<Environment> Scene::GetEnvironment()
+	{
+		return m_environment;
 	}
 
 

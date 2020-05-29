@@ -1,7 +1,6 @@
 #pragma once
-
 #include "Zorlock/Renderer/RenderCommand.h"
-#include "Zorlock/Renderer/OrthographicCamera.h"
+#include "Zorlock/Game/SceneManager.h"
 #include "Zorlock/Renderer/Shader.h"
 
 #define ZLRENDERER Zorlock::Renderer
@@ -17,8 +16,10 @@ namespace Zorlock {
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		//Soon use
 		//static void BeginScene(Camera& camera);
-		ZL_DEPRECATED("Rolling out new base Camera class")
+
 		static void BeginScene(Camera& camera);
+		static void BeginScene(Ref<Camera> camera);
+		static void BeginScene(Ref<SceneManager> scenemanager);
 		static void BeginScene();
 		static void EndScene();
 		static void RenderScene();
@@ -30,6 +31,7 @@ namespace Zorlock {
 		{
 			MATRIX4 ViewProjectionMatrix;
 			MATRIX4 ViewMatrix;
+			VECTOR4 Ambient;
 		};
 	public:
 

@@ -213,7 +213,7 @@ namespace Zorlock {
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) {};
 		
 		virtual void SetTextureArray(const std::string& name, void* values, uint32_t count) {};
-
+		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size) {};
 		virtual void PostProcess() {};
 		//Helper function across graphics API
 		virtual void* GetShaderID() const =0;

@@ -301,6 +301,12 @@ namespace Zorlock {
 		UploadUniformMat4(name, value);
 	}
 
+	void OpenGLShader::SetBuffer(const std::string& name, const void* buffer, uint32_t size)
+	{
+		ZL_PROFILE_FUNCTION();
+
+	}
+
 	void* OpenGLShader::GetShaderID() const
 	{
 		return (void*)&m_RendererID;
@@ -414,5 +420,7 @@ namespace Zorlock {
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_TRUE, m.To4x4PtrArray());
 	}
+
+
 
 }
