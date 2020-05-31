@@ -199,6 +199,7 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	cbuffer->varname = cbname;
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
+	printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
 	cbuffer->data = bufferdata;
 	pc_buffer.push_back(cbuffer);
 	return 1;
@@ -398,7 +399,7 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 		std::wstringstream ss;
 		
 		//ss << L" Could not find Pixel Var " << RAZTEXTUREFILEW(cbname) << L"\n";
-		OutputDebugStringW(ss.str().c_str());
+		printf("Could not pixel find %s \n", cbname.c_str());
 		return false;
 	}
 	//printf("Applying %s \n", buffer->varname.c_str());

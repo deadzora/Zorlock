@@ -36,6 +36,8 @@ namespace Zorlock {
 	{	
 		s_SceneData->ViewProjectionMatrix = camera->GetProjectionMatrix();//(camera.GetViewMatrix() * camera.GetProjectionMatrix());
 		s_SceneData->ViewMatrix = camera->GetViewMatrix();
+		s_SceneData->CamPosition = camera->GetCamPosition();
+
 	}
 
 	void Renderer::BeginScene(Ref<SceneManager> scenemanager)
@@ -43,6 +45,7 @@ namespace Zorlock {
 		s_SceneData->ViewProjectionMatrix = scenemanager->GetActiveScene()->MainCamera()->GetProjectionMatrix();
 		s_SceneData->ViewMatrix = scenemanager->GetActiveScene()->MainCamera()->GetViewMatrix();
 		s_SceneData->Ambient = VECTOR4(scenemanager->GetActiveScene()->GetEnvironment()->GetAmbient());
+		s_SceneData->CamPosition = scenemanager->GetActiveScene()->MainCamera()->GetCamPosition();
 	}
 
 	void Renderer::BeginScene()
@@ -50,6 +53,7 @@ namespace Zorlock {
 		s_SceneData->ViewProjectionMatrix = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetProjectionMatrix();
 		s_SceneData->ViewMatrix = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetViewMatrix();
 		s_SceneData->Ambient = VECTOR4(ZLSCENEMANAGER::GetInstance()->GetActiveScene()->GetEnvironment()->GetAmbient());
+		s_SceneData->CamPosition = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->MainCamera()->GetCamPosition();
 	}
 
 	void Renderer::EndScene()
@@ -67,7 +71,8 @@ namespace Zorlock {
 		shader->Bind();
 		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
 		shader->SetMat4("u_Transform", transform);
-		shader->SetFloat4("u_Ambient", s_SceneData->Ambient); //For light calculations		
+		shader->SetFloat4("u_Ambient", s_SceneData->Ambient); //For light calculations	
+		shader->SetFloat4("u_ViewPosition", s_SceneData->CamPosition); //For light calculations	
 		shader->Apply();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

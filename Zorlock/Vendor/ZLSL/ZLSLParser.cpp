@@ -91,7 +91,7 @@ namespace Zorlock {
 				variable.isArray = vd.isarray;
 
 
-				if (variable.vartype == VariableTypes::VAR_NONE)
+				if (variable.vartype == VariableTypes::VAR_NONE || variable.vartype == VariableTypes::LIGHTBASE)
 				{
 					variable.value = vd.vartype;
 				}
@@ -130,7 +130,24 @@ namespace Zorlock {
 						vlayoutVars.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Z_Struct) {
+
 						variable.value = vd.value;
+						variable.size = 0;
+						uint32_t occ = 0;
+						std::string structbody = vd.value;
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::FLOAT]);
+						variable.size += occ * 4;
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC2]);
+						variable.size += occ * (4 * 2);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC3]);
+						variable.size += occ * (4 * 3);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC4]);
+						variable.size += occ * (4 * 4);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::BOOL]);
+						variable.size += occ * (1);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::INT]);
+						variable.size += occ * (4);
+
 						vertexStructs.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Z_Define)
@@ -184,7 +201,24 @@ namespace Zorlock {
 						playoutVars.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Z_Struct) {
+
 						variable.value = vd.value;
+						variable.size = 0;
+						uint32_t occ = 0;
+						std::string structbody = vd.value;
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::FLOAT]);
+						variable.size += occ * 4;
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC2]);
+						variable.size += occ * (4 * 2);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC3]);
+						variable.size += occ * (4 * 3);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::VEC4]);
+						variable.size += occ * (4 * 4);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::BOOL]);
+						variable.size += occ * (1);
+						occ = find_occurance(structbody, s_mapGLSLVariables[VariableTypes::INT]);
+						variable.size += occ * (4);
+
 						pixelStructs.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Z_Define)
@@ -1113,6 +1147,7 @@ namespace Zorlock {
 					}
 
 				}
+				
 				declares += "	"+structbody + EOL;
 				declares += "};" + EOL;
 
@@ -1193,11 +1228,11 @@ namespace Zorlock {
 					}
 					
 					declares += "{" + EOL;
-					if (dec[i].vartype!=VariableTypes::VAR_NONE)
+					if (dec[i].vartype!=VariableTypes::VAR_NONE && dec[i].vartype != VariableTypes::LIGHTBASE)
 					{
 						declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
 					}
-					else {
+					else if(dec[i].vartype == VariableTypes::VAR_NONE || dec[i].vartype == VariableTypes::LIGHTBASE) {
 						//probably custom struct declare, use original value.
 						if (dec[i].val_list.size() > 0)
 						{
@@ -1209,6 +1244,9 @@ namespace Zorlock {
 								declares += dec[i].value + " " + dec[i].varname + ";" + EOL;
 							}
 							
+						}
+						else {
+							declares += dec[i].value + " " + dec[i].varname + ";" + EOL;
 						}
 					}
 
@@ -1337,7 +1375,9 @@ namespace Zorlock {
 		s_mapStringVariables["vertex"] = VARVERTEX;
 		s_mapStringVariables["fragment"] = PIXEL;
 		s_mapStringVariables["core"] = CORE;
-		
+		s_mapStringVariables["lightbase"] = LIGHTBASE;
+
+
 		s_mapStringSemantics[""] = SEM_NONE;
 		s_mapStringSemantics["Z_Position"] = POSITION;
 		s_mapStringSemantics["Z_Color"] = SCOLOR;
@@ -1388,6 +1428,7 @@ namespace Zorlock {
 		s_mapGLSLVariables[VARVOID] = "void";
 		s_mapGLSLVariables[VARVERTEX] = "vertex";
 		s_mapGLSLVariables[PIXEL] = "fragment";
+		s_mapGLSLVariables[LIGHTBASE] = "lightbase";
 
 		s_mapGLSLCommands[Uniform] = "uniform";
 		s_mapGLSLCommands[Attribute] = "attribute";
@@ -1446,6 +1487,7 @@ namespace Zorlock {
 		s_mapHLSLVariables[SAMPLER2D] = "Texture2D";
 		s_mapHLSLVariables[SAMPLERCUBE] = "TextureCube";
 		s_mapHLSLVariables[VARVOID] = "void";
+		s_mapHLSLVariables[LIGHTBASE] = "lightbase";
 
 		s_mapHLSLCommands[Uniform] = "";
 		s_mapHLSLCommands[Attribute] = "";

@@ -34,6 +34,7 @@ namespace Zorlock {
 		void RemoveGameObject(Ref<GameObject> gameobject, bool single = true);
 		Ref<Light> CreateLight();
 		Ref<Light> CreateLight(LightType light);
+		std::vector<Ref<Light>>* GetLights();
 		Ref<Environment> GetEnvironment();
 	protected:
 		Ref<Camera> m_mainCamera;

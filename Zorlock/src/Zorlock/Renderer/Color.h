@@ -204,6 +204,11 @@ namespace Zorlock {
 			return ColorRGBA().Quarter();
 		}
 
+		static ColorRGBA BLACK()
+		{
+			return ColorRGBA().Black();
+		}
+
 		ColorRGBA operator=(const COLOR4ARRAY q) {
 			x = q[0]; y = q[1]; z = q[2]; w = q[3];  return *this;
 		}

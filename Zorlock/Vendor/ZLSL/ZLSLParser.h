@@ -150,7 +150,8 @@ namespace Zorlock
 			VARVOID,
 			VARVERTEX,
 			PIXEL,
-			CORE
+			CORE,
+			LIGHTBASE
 			
 		};
 
@@ -182,6 +183,7 @@ namespace Zorlock
 			std::string value;
 			std::string arithmetic;
 			uint32_t index;
+			uint32_t size;
 			bool isArray;
 			bool issemantic;
 			size_t count;
@@ -385,6 +387,7 @@ namespace Zorlock
 		~ZLSLParser();
 	private:
 		variable_decl_definition vd;
+		variable_decl_definition sd;
 		function_definition fd;
 		syntax_definition fbd;
 		functionbodyfunc_definition fbf;
@@ -471,6 +474,19 @@ namespace Zorlock
 				start = end + f.size();
 			}
 			return buffer.str();
+		}
+
+
+		static uint32_t find_occurance(std::string base_string, std::string to_find_occurrences_of)
+		{
+			uint32_t occurrences = 0;
+			std::string::size_type start = 0;
+
+			while ((start = base_string.find(to_find_occurrences_of, start)) != std::string::npos) {
+				++occurrences;
+				start += to_find_occurrences_of.length(); // see the note
+			}
+			return occurrences;
 		}
 
 

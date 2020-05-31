@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "Camera.h"
-
+#include "Light.h"
+#include "Material.h"
 
 namespace Zorlock {
 
@@ -57,8 +58,19 @@ namespace Zorlock {
 
 	}
 
+	VECTOR4 Camera::GetCamPosition()
+	{
+		return VECTOR4(transform->GetDrawMatrix() * transform->position,1.0f);
+	}
+
 	Camera::~Camera()
 	{
+	}
+
+	void  Camera::Update(Timestep ts)
+	{
+		GameObject::Update(ts);
+		UpdateViewMatrix();
 	}
 
 	void Camera::UpdateViewMatrix()
@@ -68,5 +80,6 @@ namespace Zorlock {
 		this->transform->UpdateDirectionVectors();
 
 	}
+
 }
 

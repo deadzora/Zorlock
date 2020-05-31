@@ -38,7 +38,27 @@ namespace Zorlock {
 	{
 		m_lightProps.lightcolor = col;
 	}
+	/*
+	void Light::SetSpecular(float s)
+	{
+		m_lightProps.specular = s;
+	}
 
+	float Light::GetSpecular()
+	{
+		return m_lightProps.specular;
+	}
+
+	void Light::SetShininess(float s)
+	{
+		m_lightProps.shininess = s;
+	}
+
+	float Light::GetShininess()
+	{
+		return m_lightProps.shininess;
+	}
+	*/
 	LightBase Light::GetLightProps()
 	{
 		return m_lightProps;
@@ -47,7 +67,10 @@ namespace Zorlock {
 	void Light::Update(Timestep ts)
 	{
 		GameObject::Update(ts);
-		m_lightProps.lightpos =  transform->GetDrawMatrix().multiply(Vector4(transform->position,1));
+		m_lightProps.lightpos = transform->GetDrawMatrix() * Vector4(transform->position,1);
+
+
+
 	}
 
 	ColorRGBA Light::GetColor()
@@ -55,11 +78,20 @@ namespace Zorlock {
 		return ColorRGBA(m_lightProps.lightcolor);
 	}
 
-	LightBase::LightBase() : lightpos(VECTOR4(0, 0, 0, 1)), lightcolor(VECTOR4(1, 1, 1, 1)), radius(1.0f), strength(0.5f)
+	LightBase::LightBase() : lightpos(VECTOR4(0, 0, 0, 1)), lightcolor(VECTOR4(1, 1, 1, 1)), radius(5.0f), strength(1.5f)
 	{}
 	LightBase LightBase::operator=(const LightBase& q) {
 		lightpos = q.lightpos; lightcolor = q.lightcolor; radius = q.radius; strength = q.strength; return *this;
-	};
+	}
+	bool LightBase::operator==(const LightBase& q)
+	{
+		if (lightpos == q.lightpos && lightcolor == q.lightcolor && radius == q.radius && strength == q.strength)
+		{
+			return true;
+		}
+		return false;
+	}
+	;
 
 
 

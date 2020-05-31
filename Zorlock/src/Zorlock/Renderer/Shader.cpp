@@ -49,7 +49,13 @@ namespace Zorlock {
 				s.Name = parser->vertexUniforms[i].varname;
 				s.Slot = (uint32_t)i;//parser->vertexUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
-				s.Size = ShaderDataTypeSize(s.Type);
+				if (s.Type != ShaderDataType::None)
+				{
+					s.Size = ShaderDataTypeSize(s.Type);
+				}
+				else {
+					s.Size = parser->vertexUniforms[i].size;
+				}
 				m_VUniformVars.push_back(s);
 				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{
@@ -81,19 +87,25 @@ namespace Zorlock {
 			{
 				ShaderVariable s;
 				s.Name = parser->pixelUniforms[i].varname;
-				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
+				if (parser->pixelUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{
-					s.Slot = (vertexuniforms+ pixeluniforms);
+					s.Slot = (vertexuniforms+pixeluniforms);
 				}
 				else {
 					s.Slot = (uint32_t)i;
 				}
 				//parser->pixelUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->pixelUniforms[i].vartype);
-				s.Size = ShaderDataTypeSize(s.Type);
+				if (s.Type != ShaderDataType::None)
+				{
+					s.Size = ShaderDataTypeSize(s.Type);
+				}
+				else {
+					s.Size = parser->pixelUniforms[i].size;
+				}
 				s.isArray = parser->pixelUniforms[i].isArray;
 				m_FUniformVars.push_back(s);
-				if (parser->vertexUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
+				if (parser->pixelUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{
 					pixeluniforms++;
 				}
@@ -241,6 +253,7 @@ namespace Zorlock {
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
 		ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
+		shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
 		ismapped = true;
 
 		
@@ -316,6 +329,7 @@ namespace Zorlock {
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
 			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
+			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
 			shaderLibrary.ismapped = true;
 		}
 		if (m_shaderLibrary == nullptr)

@@ -1,6 +1,7 @@
 #include "ZLpch.h"
 #include "Material.h"
-
+#include "RendererAPI.h"
+#include "Zorlock/Game/SceneManager.h"
 
 namespace Zorlock
 {
@@ -106,7 +107,72 @@ namespace Zorlock
 
 	void Material::ApplyLights()
 	{
+		std::vector<Ref<Light>> * lights = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->GetLights();
 
+		for (size_t i = 0; i < lights->size(); i++)
+		{
+			m_lights[i] = lights->at(i)->GetLightProps();
+			if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+			{
+				if (m_Shader != nullptr)
+				{
+					m_Shader->SetFloat4("lights[" + std::to_string(i) + "].lightpos", m_lights[i].lightpos);
+					m_Shader->SetFloat4("lights[" + std::to_string(i) + "].lightcolor", m_lights[i].lightcolor);
+					m_Shader->SetFloat("lights[" + std::to_string(i) + "].radius", m_lights[i].radius);
+					m_Shader->SetFloat("lights[" + std::to_string(i) + "].strength", m_lights[i].strength);
+					//m_Shader->SetFloat("lights[" + std::to_string(i) + "].specular", m_lights[i].specular);
+					//m_Shader->SetFloat("lights[" + std::to_string(i) + "].shininess", m_lights[i].shininess);
+
+				}
+			}
+			if (i >= ZMAXLIGHTS - 1)
+			{
+				break;
+			}
+		}
+		if (m_Shader != nullptr)
+		{
+			if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+			{
+				m_Shader->SetBuffer("lights", m_lights.data(), sizeof(LightBase) * ZMAXLIGHTS, ZMAXLIGHTS);
+			}
+		}
+	}
+
+	void Material::ApplySurface()
+	{
+		if (m_Shader != nullptr)
+		{ 
+			if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+			{
+				m_Shader->SetFloat("u_SurfaceProperties.specular", m_surfaceProps.specular);
+				m_Shader->SetFloat("u_SurfaceProperties.shininess", m_surfaceProps.shininess);
+			}
+			else if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+			{
+				m_Shader->SetBuffer("u_SurfaceProperties", &m_surfaceProps, sizeof(MatSurfaceProperties), 1);
+			}
+		}
+	}
+
+	void Material::SetShininess(float s)
+	{
+		m_surfaceProps.shininess = s;
+	}
+
+	float Material::GetShininess()
+	{
+		return m_surfaceProps.shininess;
+	}
+
+	void Material::SetSpecular(float s)
+	{
+		m_surfaceProps.specular = s;
+	}
+
+	float Material::GetSpecular()
+	{
+		return m_surfaceProps.specular;
 	}
 
 	bool Material::Process()

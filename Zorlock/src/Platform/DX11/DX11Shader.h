@@ -39,6 +39,7 @@ namespace Zorlock {
 		virtual void SetFloat4(const std::string& name, const VECTOR4& value) override;
 		//virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) override;
+		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count) override;
 		virtual void PostProcess() override;
 		virtual void* GetShaderID() const override;
 		virtual const std::string GetName() const override { return m_Name; }
@@ -53,6 +54,7 @@ namespace Zorlock {
 		void UploadUniformFloat4(const std::string& name, const VECTOR4& value);
 		void UploadUniformMat3(const std::string& name, const MATRIX3& matrix);
 		void UploadUniformMat4(const std::string& name, const MATRIX4& matrix);
+		void UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count);
 		DX11Raz::RazShader* GetShader()
 		{
 			return m_RendererID;

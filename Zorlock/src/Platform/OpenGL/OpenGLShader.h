@@ -2,6 +2,7 @@
 
 #include "Zorlock/Renderer/Shader.h"
 #include <glm/glm.hpp>
+#include <map>
 
 // TODO: REMOVE!
 typedef unsigned int GLenum;
@@ -29,9 +30,9 @@ namespace Zorlock {
 		virtual void SetFloat3(const std::string& name, const VECTOR3& value) override;
 		//virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
 		virtual void SetFloat4(const std::string& name, const VECTOR4& value) override;
-		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
+		//virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) override;
-		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size) override;
+		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count) override;
 		virtual void* GetShaderID() const override;
 		void PostProcess() override;
 		virtual const std::string GetName() const override { return m_Name; }
@@ -51,11 +52,12 @@ namespace Zorlock {
 		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 		void UploadUniformMat3(const std::string& name, const MATRIX3& matrix);
 		void UploadUniformMat4(const std::string& name, const MATRIX4& matrix);
-
+		void UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count);
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+		std::map<std::string, unsigned int> buffers;
 	private:
 		uint32_t m_RendererID;
 		std::string m_Name;

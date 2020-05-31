@@ -5,7 +5,7 @@ namespace Zorlock {
 
 
 
-	Environment::Environment() : m_ambient(ColorRGBA::HALF())
+	Environment::Environment() : m_ambient(ColorRGBA::BLACK())
 	{
 
 	}

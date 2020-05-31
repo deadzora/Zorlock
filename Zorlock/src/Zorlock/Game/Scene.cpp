@@ -37,6 +37,12 @@ namespace Zorlock
 	void Scene::Update(Timestep ts)
 	{
 		transform->UpdateTransformationMatrix();
+
+		for (size_t i = 0; i < m_scene_Lights.size(); i++)
+		{
+			m_scene_Lights[i]->Update(ts);
+		}
+
 		for (size_t i = 0; i < m_scene_Objects.size(); i++)
 		{
 			m_scene_Objects[i]->Update(ts);
@@ -174,7 +180,7 @@ namespace Zorlock
 	Ref<Light> Scene::CreateLight()
 	{
 		Ref<Light> go = CreateRef<Light>(name, this->transform);
-		m_scene_Objects.push_back(go);
+		//m_scene_Objects.push_back(go);
 		m_scene_Lights.push_back(go);
 		return go;
 	}
@@ -183,9 +189,14 @@ namespace Zorlock
 	{
 		//not implmented other lighttypes for now just create point light
 		Ref<Light> go = CreateRef<Light>(name, this->transform);
-		m_scene_Objects.push_back(go);
+		//m_scene_Objects.push_back(go);
 		m_scene_Lights.push_back(go);
 		return go;
+	}
+
+	std::vector<Ref<Light>>* Scene::GetLights()
+	{
+		return &m_scene_Lights;
 	}
 
 	Ref<Environment> Scene::GetEnvironment()

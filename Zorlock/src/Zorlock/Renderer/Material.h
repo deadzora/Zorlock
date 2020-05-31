@@ -12,6 +12,14 @@ namespace Zorlock {
 
 	struct LightBase;
 
+	struct MatSurfaceProperties
+	{
+		MatSurfaceProperties() : specular(0.5), shininess(16)
+		{}
+		float specular;
+		float shininess;
+	};
+
 	class Material {
 	public:
 		Material();
@@ -31,7 +39,11 @@ namespace Zorlock {
 		void ApplyTransform(MATRIX4 transform);
 		void ApplyMainTexture();
 		void ApplyLights();
-
+		void ApplySurface();
+		void SetShininess(float s);
+		float GetShininess();
+		void SetSpecular(float s);
+		float GetSpecular();
 		std::string name;
 		COLOR4 materialColor;
 		Ref<Texture2D> sharedTexture;
@@ -41,6 +53,7 @@ namespace Zorlock {
 		Ref<Shader> m_Shader;
 		std::vector <Ref<Texture2D>> m_textures;
 		std::vector <LightBase> m_lights;
+		MatSurfaceProperties m_surfaceProps;
 	};
 
 	class MaterialLibrary

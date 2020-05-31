@@ -17,12 +17,12 @@ void main()
 
 	v_TexCoord = a_TexCoord;
 	v_Normal = vec4(a_Normal,1.0);
-	vec4 worldN = u_Transform*v_Normal;
-	v_Normal = normalize(worldN);
+	v_Normal = u_Transform*v_Normal;
+	v_Normal = normalize(v_Normal);
 	v_Color = a_Color;
 	v_Position = a_Position;
 	v_Position = u_ViewProjection*v_Position;	
-	v_World = u_Transform*v_Position;	
+	v_World = u_Transform*a_Position;	
 	gl_Position=v_Position;
 }
 

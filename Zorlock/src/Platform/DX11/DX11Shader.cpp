@@ -156,6 +156,11 @@ namespace Zorlock
 
 	}
 
+	void DX11Shader::SetBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count)
+	{
+		UploadUniformBuffer(name, buffer, size, count);
+	}
+
 	void DX11Shader::PostProcess()
 	{
 
@@ -214,6 +219,22 @@ namespace Zorlock
 				{
 					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
 					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, new UINT(1), sizeof(UINT));
+					break;
+				}
+				case ShaderDataType::LightBase:
+				{
+					printf("Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					std::vector<LightBase> list;
+					list.resize(16, LightBase());
+					m_RendererID->CreateVertexCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, &list, sizeof(LightBase)*16);
+					break;
+				}
+				case ShaderDataType::None:
+				{
+					printf("Custom Var: Shader var: %s slot %u \n", m_VUniformVars[i].Name.c_str(), m_VUniformVars[i].Slot);
+					char* buffer = new char[m_VUniformVars[i].Size];
+					m_RendererID->CreatePixelCB(m_VUniformVars[i].Name, m_VUniformVars[i].Slot, buffer, m_VUniformVars[i].Size);
+					delete buffer;
 					break;
 				}
 				}
@@ -282,7 +303,22 @@ namespace Zorlock
 					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, new UINT(1), sizeof(UINT));
 					break;
 				}
-
+				case ShaderDataType::LightBase:
+				{
+					printf("LIGHTBASE: Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					std::vector<LightBase> list;
+					list.resize(16, LightBase());
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, list.data(), sizeof(LightBase)*16);
+					break;
+				}
+				case ShaderDataType::None:
+				{
+					printf("Custom Var: Shader var: %s slot %u \n", m_FUniformVars[i].Name.c_str(), m_FUniformVars[i].Slot);
+					char * buffer = new char[m_FUniformVars[i].Size];
+					m_RendererID->CreatePixelCB(m_FUniformVars[i].Name, m_FUniformVars[i].Slot, buffer, m_FUniformVars[i].Size);
+					delete buffer;
+					break;
+				}
 				}
 
 			}
@@ -497,6 +533,31 @@ namespace Zorlock
 			{
 
 				m_RendererID->UpdatePixelCB(m.To4x4PtrArray(), name);
+				m_RendererID->ApplyPixelCB(name);
+				break;
+			}
+		}
+	}
+
+	void DX11Shader::UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count)
+	{
+		void* b = const_cast<void*>(buffer);
+		for (size_t i = 0; i < m_VUniformVars.size(); i++)
+		{
+			if (m_VUniformVars[i].Name.compare(name) == 0)
+			{
+				
+				m_RendererID->UpdateVertexCB(b, name);
+				m_RendererID->ApplyVertexCB(name);
+				break;
+			}
+		}
+		for (size_t i = 0; i < m_FUniformVars.size(); i++)
+		{
+			if (m_FUniformVars[i].Name.compare(name) == 0)
+			{
+
+				m_RendererID->UpdatePixelCB(b, name);
 				m_RendererID->ApplyPixelCB(name);
 				break;
 			}

@@ -341,7 +341,12 @@ namespace Zorlock {
 		Vector4 operator=(const Vector4& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
+		bool operator==(const Vector4& q) {
+			if(x == q.x && y == q.y && z == q.z && w == q.w)
+				return true;
 
+			return false;
+		}
 		Vector3 ToVector3()
 		{
 			return Vector3(x, y, z);

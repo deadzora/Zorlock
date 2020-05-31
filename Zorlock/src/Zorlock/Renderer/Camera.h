@@ -1,7 +1,9 @@
 #pragma once
 #include "Zorlock/Game/GameObject.h"
+#include <queue>
 
 namespace Zorlock {
+
 
 
 	class Camera : public GameObject
@@ -19,11 +21,14 @@ namespace Zorlock {
 			//return MATRIX4::IDENTITY();
 		}
 		void SetLookAtPos(VECTOR3 lookAtPos);
+		virtual VECTOR4 GetCamPosition();
+		virtual void Update(Timestep ts) override;
 		virtual void UpdateViewMatrix();
+
 		~Camera();
 
 	protected:
-		
+
 		MATRIX4 viewMatrix;
 		MATRIX4 projectionMatrix;
 

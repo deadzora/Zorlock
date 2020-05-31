@@ -29,12 +29,12 @@ PS_INPUT main(VS_INPUT input)
 
 	output.v_TexCoord = input.a_TexCoord;
 	output.v_Normal = float4(input.a_Normal,1.0);
-	float4 worldN = mul(u_Transform,output.v_Normal);
-	output.v_Normal = normalize(worldN);
+	output.v_Normal = mul(u_Transform,output.v_Normal);
+	output.v_Normal = normalize(output.v_Normal);
 	output.v_Color = input.a_Color;
 	output.v_Position = input.a_Position;
 	output.v_Position = mul(u_ViewProjection,output.v_Position);	
-	output.v_World = mul(u_Transform,output.v_Position);	
+	output.v_World = mul(u_Transform,input.a_Position);	
 	return output;
 
 }

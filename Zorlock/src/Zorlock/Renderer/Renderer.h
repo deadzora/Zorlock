@@ -32,6 +32,7 @@ namespace Zorlock {
 			MATRIX4 ViewProjectionMatrix;
 			MATRIX4 ViewMatrix;
 			VECTOR4 Ambient;
+			VECTOR4 CamPosition;
 		};
 	public:
 

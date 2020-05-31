@@ -4,7 +4,8 @@
 
 #include "Zorlock/Core/Math.h"
 //Need to Phase out GLM from base classes
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include "Light.h"
 #include "ZLSLParser.h"
 
 namespace Zorlock {
@@ -12,24 +13,25 @@ namespace Zorlock {
 
 	enum class ShaderDataType
 	{
-		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool, Sampler2D
+		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool, Sampler2D,LightBase
 	};
 
 	static uint32_t ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{
-		case ShaderDataType::Float:    return 4;
-		case ShaderDataType::Float2:   return 4 * 2;
-		case ShaderDataType::Float3:   return 4 * 3;
-		case ShaderDataType::Float4:   return 4 * 4;
-		case ShaderDataType::Mat3:     return 4 * 3 * 3;
-		case ShaderDataType::Mat4:     return 4 * 4 * 4;
-		case ShaderDataType::Int:      return 4;
-		case ShaderDataType::Int2:     return 4 * 2;
-		case ShaderDataType::Int3:     return 4 * 3;
-		case ShaderDataType::Int4:     return 4 * 4;
-		case ShaderDataType::Bool:     return 1;
+		case ShaderDataType::Float:		return 4;
+		case ShaderDataType::Float2:	return 4 * 2;
+		case ShaderDataType::Float3:	return 4 * 3;
+		case ShaderDataType::Float4:	return 4 * 4;
+		case ShaderDataType::Mat3:		return 4 * 3 * 3;
+		case ShaderDataType::Mat4:		return 4 * 4 * 4;
+		case ShaderDataType::Int:		return 4;
+		case ShaderDataType::Int2:		return 4 * 2;
+		case ShaderDataType::Int3:		return 4 * 3;
+		case ShaderDataType::Int4:		return 4 * 4;
+		case ShaderDataType::Bool:		return 1;
+		case ShaderDataType::LightBase:	return sizeof(LightBase);
 		}
 
 		//ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
@@ -68,6 +70,7 @@ namespace Zorlock {
 			case ShaderDataType::Int3:    return 3;
 			case ShaderDataType::Int4:    return 4;
 			case ShaderDataType::Bool:    return 1;
+			case ShaderDataType::LightBase:	return sizeof(LightBase);
 			}
 
 			ZL_CORE_ASSERT(false, "Unknown ShaderDataType!");
@@ -208,12 +211,12 @@ namespace Zorlock {
 		virtual void SetFloat4(const std::string& name, const VECTOR4& value) {};
 		
 		//ZL_DEPRECATED("No longer using glm in base classes")
-		virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
+		//virtual void SetMat4(const std::string& name, const glm::mat4& value) {}; //making them non abstract so there's no need to override
 		
 		virtual void SetMat4(const std::string& name, const MATRIX4& value) {};
 		
 		virtual void SetTextureArray(const std::string& name, void* values, uint32_t count) {};
-		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size) {};
+		virtual void SetBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count) {};
 		virtual void PostProcess() {};
 		//Helper function across graphics API
 		virtual void* GetShaderID() const =0;

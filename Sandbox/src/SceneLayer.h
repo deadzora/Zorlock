@@ -34,6 +34,11 @@ private:
 	ZLREF<Zorlock::MeshRenderer> m_meshrenderer;
 	COLOR4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 	ZLREF<ZLTEXTURE2D> m_CheckerboardTexture;
+
+	ZLREF<ZLLIGHT> lightA;
+	ZLREF<ZLLIGHT> lightB;
+	ZLREF<ZLLIGHT> lightC;
+
 	Zorlock::OrthographicCameraController m_CameraController;
 
 };

@@ -287,22 +287,23 @@ namespace Zorlock {
 
 		UploadUniformFloat4(name, value);
 	}
-	
+	/*
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
 		ZL_PROFILE_FUNCTION();
 
 		UploadUniformMat4(name, value);
 	}
-	
+	*/
 	void OpenGLShader::SetMat4(const std::string& name, const MATRIX4& value)
 	{
 		ZL_PROFILE_FUNCTION();
 		UploadUniformMat4(name, value);
 	}
 
-	void OpenGLShader::SetBuffer(const std::string& name, const void* buffer, uint32_t size)
+	void OpenGLShader::SetBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count)
 	{
+		UploadUniformBuffer(name, buffer, size, count);
 		ZL_PROFILE_FUNCTION();
 
 	}
@@ -419,6 +420,26 @@ namespace Zorlock {
 
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_TRUE, m.To4x4PtrArray());
+	}
+
+	void OpenGLShader::UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count)
+	{
+
+
+
+
+
+		/*
+		GLint location = glGetUniformBlockIndex(m_RendererID, name.c_str());
+		glUniformBlockBinding(m_RendererID, location, 2);
+		unsigned int uboBlock;
+		glGenBuffers(1, &uboBlock);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
+		glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW); // allocate memory
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, 2, uboBlock, 0, size);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, size, buffer);
+		*/
 	}
 
 
