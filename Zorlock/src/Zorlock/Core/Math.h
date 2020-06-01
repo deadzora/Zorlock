@@ -619,6 +619,8 @@ namespace Zorlock {
 		}
 	};
 
+	struct Matrix;
+
 	struct Quaternion
 	{
 		float x, y, z, w;
@@ -630,6 +632,10 @@ namespace Zorlock {
 		Quaternion(float w, const Vector3& v) : x(v.x), y(v.y), z(v.z) ,w(w) {
 		}
 		Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {
+		}
+		Quaternion(Matrix& m)
+		{
+			fromRotationMatrix(m);
 		}
 		Quaternion operator=(const Quaternion& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
@@ -777,7 +783,7 @@ namespace Zorlock {
 			return pitchYawRoll;
 		}
 
-
+		void fromRotationMatrix(const Matrix& mata);
 
 	};
 
@@ -818,7 +824,7 @@ namespace Zorlock {
 
 		MATRIX3ARRAY& ToArray()
 		{
-			MATRIX3ARRAY mat3;
+			static MATRIX3ARRAY mat3;
 			mat3[0][0] = i.x; mat3[0][1] = i.y; mat3[0][2] = i.z;
 			mat3[1][0] = j.x; mat3[1][1] = j.y; mat3[1][2] = j.z;
 			mat3[2][0] = k.x; mat3[2][1] = k.y; mat3[2][2] = k.z;
@@ -988,6 +994,17 @@ namespace Zorlock {
 
 			return prod;
 		}
+
+		void inverse()
+		{
+			i = -Vector3(i);
+			j = -Vector3(j);
+			k = -Vector3(k);
+
+		}
+
+		void QDUDecomposition(Matrix& matQ, Vector3& vecD, Vector3& vecU) const;
+
 
 	};
 
@@ -1698,6 +1715,21 @@ namespace Zorlock {
 			l.x = 0; l.y = 0; l.z = 0; l.w = 1;
 		}
 
+		Vector3 getTranslation() const { return Vector3(i.w, j.w,k.w); }
+		Vector3 getScale() const { return Vector3(i.x, j.y, k.z); }
+
+		void decomposition(Vector3& position, Quaternion& rotation, Vector3& scale) const
+		{
+			Matrix m3x3 = get3x3();
+
+			Matrix matQ;
+			Vector3 vecU;
+			m3x3.QDUDecomposition(matQ, scale, vecU);
+
+			rotation = Quaternion(matQ);
+			position = Vector3(i.w, j.w, k.w);
+		}
+
 		Matrix4 inverse() const
 		{
 			float m00 = i.x, m01 = i.y, m02 = i.z, m03 = i.w;
@@ -1929,6 +1961,11 @@ namespace Zorlock {
 		static float DegreesFromRadians(float r)
 		{
 			return r * 180.0f / 3.141592653589793238463f;
+		}
+
+		static float invSqrt(float val)
+		{
+			return 1.0f / sqrt(val);
 		}
 
 		static float RadiansFromDegrees(float d)

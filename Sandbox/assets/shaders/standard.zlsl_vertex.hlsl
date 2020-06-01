@@ -1,4 +1,5 @@
 //version 330 core
+#define MAX_BONES 100
 cbuffer c_u_ViewProjection_buffer : register(b0)
 {
 float4x4 u_ViewProjection;
@@ -7,6 +8,10 @@ cbuffer c_u_Transform_buffer : register(b1)
 {
 float4x4 u_Transform;
 };
+cbuffer c_u_Bones_buffer : register(b2)
+{
+float4x4 u_Bones;
+};
 //type 
 struct VS_INPUT
 {
@@ -14,6 +19,8 @@ struct VS_INPUT
 	float3 a_Normal : NORMAL;
 	float3 a_Color : COLOR;
 	float2 a_TexCoord : TEXCOORD;
+	float4 a_BoneIDs : BLENDINDICES;
+	float4 a_Weights : BLENDWEIGHT;
 };
 struct PS_INPUT
 {

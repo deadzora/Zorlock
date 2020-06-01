@@ -12,19 +12,19 @@ struct surfaceproperties
 	float specular;
 	float shininess;
 };
-cbuffer c_lights_buffer : register(b2)
+cbuffer c_lights_buffer : register(b3)
 {
 lightbase lights[NUM_LIGHTS];
 };
-cbuffer c_u_SurfaceProperties_buffer : register(b3)
+cbuffer c_u_SurfaceProperties_buffer : register(b4)
 {
 surfaceproperties u_SurfaceProperties;
 };
-cbuffer c_u_Ambient_buffer : register(b4)
+cbuffer c_u_Ambient_buffer : register(b5)
 {
 float4 u_Ambient;
 };
-cbuffer c_u_ViewPosition_buffer : register(b5)
+cbuffer c_u_ViewPosition_buffer : register(b6)
 {
 float4 u_ViewPosition;
 };

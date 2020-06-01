@@ -4,16 +4,16 @@
 #include "Zorlock/Components/MeshRenderer.h"
 #include "Zorlock/Renderer/RendererAPI.h"
 #include "Zorlock/Renderer/Skeleton.h"
-
+#include "Zorlock/Renderer/Bone.h"
 namespace Zorlock
 {
 	ZModel::~ZModel()
 	{
 	}
-	ZModel::ZModel()
+	ZModel::ZModel() : m_skeleton(nullptr), loadscale(1.0f)
 	{
 	}
-	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments) : loadscale(1.0f)
+	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments) : loadscale(1.0f), m_skeleton(nullptr)
 	{
 		meshRenderer = renderer;
 		switch (primitive)
@@ -49,7 +49,7 @@ namespace Zorlock
 		}
 		}
 	}
-	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f)
+	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f), m_skeleton(nullptr)
 	{
 		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
 
@@ -58,7 +58,7 @@ namespace Zorlock
 
 		if (pScene != NULL)
 		{
-			this->ProcessNode(pScene->mRootNode, pScene, MATRIX4::IDENTITY());
+			this->ProcessNode(pScene->mRootNode, pScene, MATRIX4::TRS(Vector3(0,0,0),Quaternion::EulerAngles(Vector3(0,0,0)),Vector3(1,1,1)));
 		}
 
 	}
@@ -74,7 +74,8 @@ namespace Zorlock
 
 		if (pScene != NULL)
 		{
-			this->ProcessNode(pScene->mRootNode, pScene, MATRIX4::IDENTITY());
+			renderer->parent->transform->UpdateTransformationMatrix();
+			this->ProcessNode(pScene->mRootNode, pScene, renderer->parent->transform->GetTransformationMatrix());
 		}
 
 	}
@@ -711,29 +712,80 @@ namespace Zorlock
 		return nullptr;
 	}
 
-	void ZModel::ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix)
+	Ref<Bone> ZModel::AddBone(std::string name, Ref<Transform> parent)
 	{
+		if (m_skeleton != nullptr)
+		{
+			return m_skeleton->AddBone(name,parent);
+		}
+		return nullptr;
+	}
+
+	Ref<Bone> ZModel::GetBone(uint32_t i)
+	{
+		if (m_skeleton != nullptr)
+		{
+			return m_skeleton->GetBone(i);
+		}
+		return nullptr;
+	}
+
+	Ref<Bone> ZModel::GetBone(std::string name)
+	{
+		if (m_skeleton != nullptr)
+		{
+			return m_skeleton->GetBone(name);
+		}
+		return nullptr;
+	}
+
+	void ZModel::ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent)
+	{
+
 		MATRIX4 nodeMatrix = MATRIX4(
 			(float)node->mTransformation.a1, (float)node->mTransformation.a2, (float)node->mTransformation.a3, (float)node->mTransformation.a4,
 			(float)node->mTransformation.b1, (float)node->mTransformation.b2, (float)node->mTransformation.b3, (float)node->mTransformation.b4,
 			(float)node->mTransformation.c1, (float)node->mTransformation.c2, (float)node->mTransformation.c3, (float)node->mTransformation.c4,
 			(float)node->mTransformation.d1, (float)node->mTransformation.d2, (float)node->mTransformation.d3, (float)node->mTransformation.d4
 			);
-		MATRIX4 nodeTransformMatrix = nodeMatrix * parentTransformMatrix;
+		MATRIX4 nodeTransformMatrix = parentTransformMatrix * nodeMatrix;
+		Vector3 pos;
+		Quaternion rot;
+		Vector3 scale;
+		nodeTransformMatrix.decomposition(pos, rot, scale);
+		Ref<Bone> bone = nullptr;
+		if (parent == nullptr)
+		{
+			bone = AddBone(node->mName.data, m_skeleton->transform);
+			bone->transform->position = pos;
+			bone->transform->rotation = rot;
+			bone->transform->scale = scale;
+			bone->transform->UpdateTransformationMatrix();
+		}
+		else {
+			bone = AddBone(node->mName.data, parent->transform);
+			bone->transform->position = pos;
+			bone->transform->rotation = rot;
+			bone->transform->scale = scale;
+			bone->transform->UpdateTransformationMatrix();
+		}
+
+
+		for (UINT i = 0; i < node->mNumChildren; i++)
+		{
+			printf("Parsing Node %s! \n",node->mName.C_Str());
+			this->ProcessNode(node->mChildren[i], scene, nodeTransformMatrix,bone);
+			
+		}
 
 		for (UINT i = 0; i < node->mNumMeshes; i++)
 		{
 			printf("Parsing Mesh! \n");
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			this->ProcessMesh(mesh, scene, nodeTransformMatrix);
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, nodeTransformMatrix);
+
 		}
 
-		for (UINT i = 0; i < node->mNumChildren; i++)
-		{
-			printf("Parsing Node %s! \n",node->mName.C_Str());
-			this->ProcessNode(node->mChildren[i], scene, nodeTransformMatrix);
-			
-		}
 	}
 
 	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& transformMatrix)
@@ -763,9 +815,10 @@ namespace Zorlock
 			vertex.normal.y = (float)mesh->mNormals[i].y;
 			vertex.normal.z = (float)mesh->mNormals[i].z;
 
-			if (mesh->HasBones())
+			if (mesh->HasBones() && m_skeleton!=nullptr)
 			{
-				//vertex.boneids.x = mesh->mBones[i]->mName
+
+
 			}
 
 			if (mesh->mTextureCoords[0])
@@ -816,13 +869,6 @@ namespace Zorlock
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
 		varray->SetIndexBuffer(ibuffer);
-
-		quadmesh->hasbones = mesh->HasBones();
-		if (quadmesh->hasbones)
-		{
-			//LOAD BONES
-
-		}
 
 		return quadmesh;
 	}

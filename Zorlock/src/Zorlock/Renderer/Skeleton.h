@@ -10,9 +10,10 @@ namespace Zorlock {
 	{
 	public:
 		Skeleton(std::string name = "Skeleton", Ref<Transform> parent = nullptr);
-		void AddBone(std::string name = "Skeleton", Ref<Transform> parent = nullptr);
+		Ref<Bone> AddBone(std::string name = "Skeleton", Ref<Transform> parent = nullptr);
 		Ref<Bone> GetBone(uint32_t i);
 		Ref<Bone> GetBone(std::string name);
+		int BoneID(std::string name);
 		~Skeleton();
 	protected:
 		std::vector<Ref<Bone>> m_bones;

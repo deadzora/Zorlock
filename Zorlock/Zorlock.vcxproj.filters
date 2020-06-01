@@ -234,6 +234,9 @@
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h">
       <Filter>src\Zorlock\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Bone.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
@@ -280,6 +283,9 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Shader.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Skeleton.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Texture.h">
@@ -2799,8 +2805,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Renderer\Skeleton.h" />
-    <ClInclude Include="src\Zorlock\Renderer\Bone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2908,6 +2912,9 @@
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp">
       <Filter>src\Zorlock\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Bone.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
@@ -2954,6 +2961,9 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Shader.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Skeleton.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Texture.cpp">
@@ -3010,8 +3020,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Renderer\Skeleton.cpp" />
-    <ClCompile Include="src\Zorlock\Renderer\Bone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

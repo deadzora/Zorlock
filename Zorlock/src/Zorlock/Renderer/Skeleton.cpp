@@ -10,12 +10,13 @@ namespace Zorlock
 		m_bone_id[""] = -1;
 	}
 
-	void Skeleton::AddBone(std::string name, Ref<Transform> parent)
+	Ref<Bone> Skeleton::AddBone(std::string name, Ref<Transform> parent)
 	{
 		Ref<Bone> mbone = CreateRef<Bone>(name, parent);
 		m_bones.push_back(mbone);
 		m_bones[m_bones.size() - 1]->SetBoneID((uint32_t)(m_bones.size() - 1));
 		m_bone_id[name] = (int)m_bones.size() - 1;
+		return mbone;
 	}
 
 	Ref<Bone> Skeleton::GetBone(uint32_t i)
@@ -31,6 +32,11 @@ namespace Zorlock
 		if(m_bone_id[name]==-1)
 			return nullptr;
 		return m_bones[m_bone_id[name]];
+	}
+
+	int Skeleton::BoneID(std::string name)
+	{
+		return m_bone_id[name];
 	}
 
 	Skeleton::~Skeleton()

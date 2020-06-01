@@ -11,6 +11,7 @@ namespace Zorlock
 {
 	class MeshRenderer;
 	class Skeleton;
+	class Bone;
 
 	enum class AssimpTextureStorageType
 	{
@@ -55,6 +56,9 @@ namespace Zorlock
 		void AddMesh(Ref<Mesh> mesh);
 		void RemoveMesh(Ref<Mesh> mesh);
 		Ref<Mesh> GetMesh(uint32_t index);
+		Ref<Bone> AddBone(std::string name = "Bone", Ref<Transform> parent = nullptr);
+		Ref<Bone> GetBone(uint32_t i);
+		Ref<Bone> GetBone(std::string name);
 		std::string name;
 	protected:
 		float loadscale;
@@ -64,7 +68,7 @@ namespace Zorlock
 
 
 
-		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix);
+		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent = nullptr);
 		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& transformMatrix);
 		void LoadMaterialTextures(Ref<Material> material, aiMaterial* pMaterial, aiTextureType textype, const aiScene* pscene);
 		AssimpTextureStorageType DetermineTextureStorageType(const aiScene* pscene, aiMaterial* pmaterial, unsigned int index, aiTextureType textype);
