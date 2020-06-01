@@ -1,15 +1,18 @@
 // Standard Shader
 type vertex
 version 330 core
+define MAX_BONES 100
 
 layout(location = 0) in vec4 a_Position as Z_Position;
 layout(location = 1) in vec3 a_Normal as Z_Normal;
 layout(location = 2) in vec3 a_Color as Z_Color;
 layout(location = 3) in vec2 a_TexCoord as Z_Texcoord;
+layout(location = 4) in vec4 a_BoneIDs as Z_Blendindices;
+layout(location = 5) in vec4 a_Weights as Z_Blendweight;
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_Transform;
-
+uniform mat4 u_Bones[MAX_BONES];
 
 out vec4 v_Position as Z_Position;
 out vec4 v_Normal as Z_Normal;

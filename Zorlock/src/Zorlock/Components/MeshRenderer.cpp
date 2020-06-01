@@ -112,9 +112,9 @@ namespace Zorlock
 		return true;
 	}
 
-	bool MeshRenderer::AddModel(const std::string& name, const std::string& filename)
+	bool MeshRenderer::AddModel(const std::string& name, const std::string& filename, float scale)
 	{
-		Ref<ZModel> model = Ref<ZModel>(new ZModel("model", filename, Ref<MeshRenderer>(this)));
+		Ref<ZModel> model = Ref<ZModel>(new ZModel("model", filename, Ref<MeshRenderer>(this), scale));
 		m_models.push_back(model);
 		return true;
 

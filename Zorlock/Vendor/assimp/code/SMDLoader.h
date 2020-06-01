@@ -1,3 +1,4 @@
+#include "..\..\..\src\Zorlock\Renderer\Bone.h"
 /*
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
@@ -112,7 +113,7 @@ struct Bone
     {
     }
 
-    //! Destructor
+	//! Destructor
     ~Bone()
     {
     }

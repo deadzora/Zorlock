@@ -64,16 +64,20 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	//meshrenderer->CreateCone(32);
 	//meshrenderer->CreateSphere(32);
 	//meshrenderer->CreateCube();
-	//meshrenderer->AddModel("woman","assets/models/Woman_OBJ.obj");
-	meshrenderer->AddModel("spaceship", "assets/models/MK6_OBJ.obj");
+	//meshrenderer->AddModel("woman","assets/models/MK6_OBJ.obj",0.01f);
+	meshrenderer->AddModel("spaceship", "assets/models/AnimeBoy.DAE",0.05f);
 	m_meshrenderer = meshrenderer;
 	mainmodel->transform->position.z = 10.0f;
-
+	mainmodel->transform->position.y = 5.0f;
 	///////MATERIAL SETTINGS
-	ZLREF<ZLMATERIAL> mat = meshrenderer->GetMaterial(0);
-	mat->sharedTexture = m_Texture;
-	mat->SetShininess(32);
-	mat->SetSpecular(0.1f);
+	std::vector<ZLREF<ZLMATERIAL>>& mats = meshrenderer->GetMaterials();
+	for (size_t i = 0; i < mats.size(); i++)
+	{
+		mats[i]->sharedTexture = m_Texture;
+		mats[i]->SetShininess(32);
+		mats[i]->SetSpecular(0.1f);
+	}
+
 	///////SEND AWAKE METHOD TO CHILDREN
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Awake();
 	
@@ -99,7 +103,7 @@ void SceneLayer::OnUpdate(ZLTIME ts)
 
 	static float rotation = 0.0f;
 	rotation += ts * 50.0f;
-	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 0));
+	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 180));
 
 	
 	

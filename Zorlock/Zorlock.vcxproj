@@ -191,6 +191,7 @@
     <ClInclude Include="src\Zorlock\Game\SceneManager.h" />
     <ClInclude Include="src\Zorlock\Game\Transform.h" />
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Bone.h" />
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
     <ClInclude Include="src\Zorlock\Renderer\Color.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="src\Zorlock\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Zorlock\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Zorlock\Renderer\Shader.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Skeleton.h" />
     <ClInclude Include="src\Zorlock\Renderer\Texture.h" />
     <ClInclude Include="src\Zorlock\Renderer\UniformBuffer.h" />
     <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
@@ -1085,6 +1087,7 @@
     <ClCompile Include="src\Zorlock\Game\Transform.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Bone.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Color.cpp" />
@@ -1101,6 +1104,7 @@
     <ClCompile Include="src\Zorlock\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Skeleton.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Texture.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\VertexArray.cpp" />
     <ClCompile Include="vendor\DX11\src\DDSTextureLoader.cpp" />
@@ -1141,4 +1145,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

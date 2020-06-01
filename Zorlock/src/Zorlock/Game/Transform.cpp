@@ -6,13 +6,31 @@
 namespace Zorlock
 {
 
-	Transform::Transform() : position(VECTOR3(0,0,0)), rotation(QUATERNION::EulerAngles(VECTOR3(0,0,0))), scale(VECTOR3(1,1,1)), transformation(MATRIX4::IDENTITY()), draw_transformation(MATRIX4::IDENTITY())
+	Transform::Transform() : position(VECTOR3(0,0,0)), rotation(QUATERNION::EulerAngles(VECTOR3(0,0,0))), scale(VECTOR3(1,1,1)), transformation(MATRIX4::IDENTITY()), draw_transformation(MATRIX4::IDENTITY()), parent(nullptr)
 	{
 		UpdateTransformationMatrix();
 	}
 	Transform::~Transform()
 	{
 	}
+	void Transform::AddChild(ZLREF<Transform> child)
+	{
+		children.push_back(child);
+	}
+
+	void Transform::RemoveChild(ZLREF<Transform> child)
+	{
+		for (size_t i = 0; i < children.size(); i++)
+		{
+			if (children[i] == child)
+			{
+				children.erase(children.begin() + i);
+				children.shrink_to_fit();
+				return;
+			}
+		}
+	}
+
 	VECTOR3 Transform::GetPosition()
 	{
 		return VECTOR3();

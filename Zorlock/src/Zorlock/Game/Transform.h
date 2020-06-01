@@ -14,11 +14,12 @@ namespace Zorlock {
 		
 		ZLREF<Transform> parent;
 		ZLREF<GameObject> gameObject;
-		std::vector<ZLREF<Transform>> children;
+		std::vector<Ref<Transform>> children;
 		VECTOR3 position;
 		QUATERNION rotation;
 		VECTOR3 scale;
-		
+		void AddChild(ZLREF<Transform> child);
+		void RemoveChild(ZLREF<Transform> child);
 		virtual VECTOR3 GetPosition();
 		virtual void SetPosition(const VECTOR3& pos);
 		virtual void SetPosition(float x, float y, float z);

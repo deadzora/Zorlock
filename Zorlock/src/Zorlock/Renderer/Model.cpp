@@ -3,6 +3,7 @@
 #include "Zorlock/Renderer/Renderer.h"
 #include "Zorlock/Components/MeshRenderer.h"
 #include "Zorlock/Renderer/RendererAPI.h"
+#include "Zorlock/Renderer/Skeleton.h"
 
 namespace Zorlock
 {
@@ -12,7 +13,7 @@ namespace Zorlock
 	ZModel::ZModel()
 	{
 	}
-	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments)
+	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments) : loadscale(1.0f)
 	{
 		meshRenderer = renderer;
 		switch (primitive)
@@ -48,7 +49,7 @@ namespace Zorlock
 		}
 		}
 	}
-	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name)
+	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f)
 	{
 		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
 
@@ -61,13 +62,15 @@ namespace Zorlock
 		}
 
 	}
-	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer) : name(name)
+	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer, float scale) : name(name), loadscale(scale)
 	{
 		meshRenderer = renderer;
 		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
 
 		Assimp::Importer importer;
 		const aiScene* pScene = importer.ReadFile(modelfile, flags); // | aiProcess_ConvertToLeftHanded
+
+		m_skeleton = CreateRef<Skeleton>("Skeleton", renderer->parent->transform);
 
 		if (pScene != NULL)
 		{
@@ -727,9 +730,9 @@ namespace Zorlock
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
-			printf("Parsing Node! \n");
+			printf("Parsing Node %s! \n",node->mName.C_Str());
 			this->ProcessNode(node->mChildren[i], scene, nodeTransformMatrix);
-
+			
 		}
 	}
 
@@ -738,35 +741,20 @@ namespace Zorlock
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		UINT nv = 0;
+		Ref<Mesh> quadmesh = CreateMesh();
+		if (mesh->HasBones())
+		{
+			quadmesh->hasbones = true;
+			printf("Mesh has %u bones ", mesh->mNumBones);
+		}
 
-		//float* verts = new float[12 * mesh->mNumVertices];
 		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
-			/*
-			//position
-			verts[(i * 12)]	 =	(float)mesh->mVertices[i].x*0.01;
-			verts[(i * 12) + 1] = (float)mesh->mVertices[i].y * 0.01;
-			verts[(i * 12) + 2] = (float)mesh->mVertices[i].z * 0.01;
-			verts[(i * 12) + 3] = 1.0f;
-			//normal
-			verts[(i * 12) + 4] = (float)mesh->mNormals[i].x;
-			verts[(i * 12) + 5] = (float)mesh->mNormals[i].y;
-			verts[(i * 12) + 6] = (float)mesh->mNormals[i].z;
-			//color
-			verts[(i * 12) + 7] = 1.0f;
-			verts[(i * 12) + 8] = 1.0f;
-			verts[(i * 12) + 9] = 1.0f;
-			//uv
-			verts[(i * 12) + 10] = (float)mesh->mTextureCoords[0][i].x;
-			verts[(i * 12) + 11] = (float)mesh->mTextureCoords[0][i].y;
-			
-			/*
-			*/
-			Vertex vertex;
 
-			vertex.position.x = (float)mesh->mVertices[i].x * 0.01;
-			vertex.position.y = (float)mesh->mVertices[i].y * 0.01;
-			vertex.position.z = (float)mesh->mVertices[i].z * 0.01;
+			Vertex vertex;
+			vertex.position.x = (float)mesh->mVertices[i].x * loadscale;
+			vertex.position.y = (float)mesh->mVertices[i].y * loadscale;
+			vertex.position.z = (float)mesh->mVertices[i].z * loadscale;
 			vertex.position.w = 1.0f;
 			vertex.color.x = 1.0f;
 			vertex.color.y = 1.0f;
@@ -774,6 +762,11 @@ namespace Zorlock
 			vertex.normal.x = (float)mesh->mNormals[i].x;
 			vertex.normal.y = (float)mesh->mNormals[i].y;
 			vertex.normal.z = (float)mesh->mNormals[i].z;
+
+			if (mesh->HasBones())
+			{
+				//vertex.boneids.x = mesh->mBones[i]->mName
+			}
 
 			if (mesh->mTextureCoords[0])
 			{
@@ -811,7 +804,7 @@ namespace Zorlock
 
 		}
 		zmaterial->GetShader()->Bind();
-		Ref<Mesh> quadmesh = CreateMesh();
+		
 		quadmesh->SetMaterial(zmaterial);
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
@@ -823,6 +816,13 @@ namespace Zorlock
 		varray->AddVertexBuffer(vbuffer);
 		Ref<IndexBuffer> ibuffer = quadmesh->CreateIndexBuffer(indices.data(), (uint32_t)indices.size());
 		varray->SetIndexBuffer(ibuffer);
+
+		quadmesh->hasbones = mesh->HasBones();
+		if (quadmesh->hasbones)
+		{
+			//LOAD BONES
+
+		}
 
 		return quadmesh;
 	}

@@ -16,17 +16,25 @@ namespace Zorlock
 		transform->gameObject = Ref<GameObject>(this);
 	}
 
-	GameObject::GameObject(Ref<Transform> parent) : Object()
+	GameObject::GameObject(Ref<Transform> parent) : Object("GameObject")
 	{
 		transform->gameObject = Ref<GameObject>(this);
-		transform->parent = parent;
-		name = "GameObject";
+		if (parent != nullptr)
+		{
+			transform->parent = parent;
+			parent->AddChild(transform);
+		}
+
 	}
 
 	GameObject::GameObject(std::string name, Ref<Transform> parent) : Object(name)
 	{
 		transform->gameObject = Ref<GameObject>(this);
-		transform->parent = parent;
+		if (parent != nullptr)
+		{
+			transform->parent = parent;
+			parent->AddChild(transform);
+		}
 	}
 
 	GameObject::~GameObject()

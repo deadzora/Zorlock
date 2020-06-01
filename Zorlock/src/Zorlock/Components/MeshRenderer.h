@@ -25,7 +25,7 @@ namespace Zorlock {
 		bool CreateSphere(uint32_t segments);
 		bool CreateCylinder(uint32_t segments);
 		bool CreateCone(uint32_t segments);
-		bool AddModel(const std::string& name, const std::string& filename);
+		bool AddModel(const std::string& name, const std::string& filename, const float scale = 1.0f);
 		Ref<ZModel> GetModel(uint32_t index);
 		Ref<Mesh> GetMesh(uint32_t index, uint32_t indexb);
 		void RemoveModel(std::string name);

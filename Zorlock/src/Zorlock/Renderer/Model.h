@@ -10,6 +10,7 @@
 namespace Zorlock
 {
 	class MeshRenderer;
+	class Skeleton;
 
 	enum class AssimpTextureStorageType
 	{
@@ -40,7 +41,7 @@ namespace Zorlock
 		ZModel();
 		ZModel(ZorlockPrimitiveType primitive,Ref<MeshRenderer> renderer, uint32_t segments = 12);
 		ZModel(const std::string& name,const std::string& modelfile);
-		ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer);
+		ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer, float scale = 1.0f);
 		virtual void Update(Timestep ts);
 		virtual void Draw();
 		virtual void Destroy();
@@ -56,8 +57,13 @@ namespace Zorlock
 		Ref<Mesh> GetMesh(uint32_t index);
 		std::string name;
 	protected:
+		float loadscale;
 		Ref<MeshRenderer> meshRenderer;
 		std::vector<Ref<Mesh>> m_meshes;
+		Ref<Skeleton> m_skeleton;
+
+
+
 		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix);
 		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& transformMatrix);
 		void LoadMaterialTextures(Ref<Material> material, aiMaterial* pMaterial, aiTextureType textype, const aiScene* pscene);

@@ -26,6 +26,7 @@ IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
 IncludeDir["ZLSL"] = "Zorlock/vendor/ZLSL"
 IncludeDir["Assimp"] = "Zorlock/vendor/assimp/include"
+IncludeDir["Cal3D"] = "Zorlock/vendor/cal3d"
 
 group "Dependencies"
 	include "Zorlock/vendor/GLFW"

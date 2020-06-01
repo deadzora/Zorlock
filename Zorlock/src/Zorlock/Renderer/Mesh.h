@@ -28,7 +28,9 @@ namespace Zorlock {
 		void Draw();
 		void Destroy();
 		uint32_t vcount;
+		bool hasbones;
 	protected:
+		
 		MATRIX4 drawMatrix;
 		MATRIX4 transformMatrix;
 		

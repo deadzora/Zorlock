@@ -6,6 +6,7 @@
 #define VECTOR2 Zorlock::Vector2
 #define VECTOR3 Zorlock::Vector3
 #define VECTOR4 Zorlock::Vector4
+#define IVECTOR4 Zorlock::IVector4
 #define LINE Zorlock::Line
 #define PLANE Zorlock::Plane
 #define MATRIX3 Zorlock::Matrix
@@ -270,13 +271,82 @@ namespace Zorlock {
 		}
 	};
 
+	struct IVector4
+	{
+	public:
+		int x, y, z, w;
+		IVector4() : x(0), y(0), z(0), w(0)
+		{};
+		IVector4(int x, int y, int z, int w) : x(x), y(y), z(z), w(w)
+		{};
+		static IVector4 Zero()
+		{
+			return IVector4(0, 0, 0, 0);
+		}
+		static IVector4 NEGATIVE()
+		{
+			return IVector4(-1, -1, -1, -1);
+		}
+		IVector4 operator-()const {
+			return IVector4(-x, -y, -z, -w);
+		}
+		IVector4 operator*(int scale)const {
+			return IVector4(x * scale, y * scale, z * scale, w * scale);
+		}
+		IVector4 operator*(const IVector4& q)const {
+			return IVector4(x * q.x, y * q.y, z * q.z, w * q.w);
+		}
+		IVector4 operator/(float scale)const {
+			return IVector4(x / scale, y / scale, z / scale, w / scale);
+		}
+		IVector4 operator/(const IVector4& q)const {
+			return IVector4(x / q.x, y / q.y, z / q.z, w / q.w);
+		}
+		IVector4 operator+(const IVector4& q)const {
+			return IVector4(x + q.x, y + q.y, z + q.z, w + q.w);
+		}
+		IVector4 operator-(const IVector4& q)const {
+			return IVector4(x - q.x, y - q.y, z - q.z, w - q.z);
+		}
+		IVector4 operator*=(float scale) {
+			x *= scale; y *= scale; z *= scale; w *= scale; return *this;
+		}
+		IVector4 operator*=(const IVector4& q) {
+			x *= q.x; y *= q.y; z *= q.z; w *= q.w; return *this;
+		}
+		IVector4 operator/=(float scale) {
+			x /= scale; y /= scale; z /= scale; w /= scale; return *this;
+		}
+		IVector4 operator/=(const IVector4& q) {
+			x /= q.x; y /= q.y; z /= q.z; w /= q.w; return *this;
+		}
+		IVector4 operator+=(const IVector4& q) {
+			x += q.x; y += q.y; z += q.z; w += q.w; return *this;
+		}
+		IVector4 operator-=(const IVector4& q) {
+			x -= q.x; y -= q.y; z -= q.z; w -= q.w; return *this;
+		}
+
+		IVector4 operator=(const IVector4& q) {
+			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
+		}
+		bool operator==(const IVector4& q) {
+			if (x == q.x && y == q.y && z == q.z && w == q.w)
+				return true;
+
+			return false;
+		}
+	};
+
 	struct Vector4
 	{
 	public:
 		float x,y,z,w;
 
-		Vector4() = default;
-		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(0)
+		Vector4() : x(0), y(0), z(0), w(1)
+		{};
+
+		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w)
 		{
 
 		}
@@ -418,6 +488,9 @@ namespace Zorlock {
 		Vector3 normal;
 		Vector3 color;
 		Vector2 uvw;
+		Vector4 boneids;
+		Vector4 weights;
+
 		Vertex operator=(const Vertex& q) {
 			position = Vector4(q.position); normal = Vector3(q.normal); color = Vector3(q.color); uvw = Vector2(q.uvw); return *this;
 		}

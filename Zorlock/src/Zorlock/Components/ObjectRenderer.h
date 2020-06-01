@@ -22,6 +22,7 @@ namespace Zorlock {
 		virtual void RemoveMaterial(Ref<Material> material);
 		Ref<Material> GetMaterial(size_t index);
 		Ref<Material> GetMaterial(std::string matname);
+		std::vector<Ref<Material>>& GetMaterials();
 
 
 

@@ -109,4 +109,8 @@ namespace Zorlock
 		}
 		return nullptr;
 	}
+	std::vector<Ref<Material>>& ObjectRenderer::GetMaterials()
+	{
+		return m_materials;
+	}
 }
