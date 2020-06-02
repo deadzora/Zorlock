@@ -37,14 +37,17 @@ namespace Zorlock
 
 	Matrix4* Skeleton::GetBoneMatrices()
 	{
-		std::vector<Matrix4> mats;
-		for (size_t i = 0; i < m_transforms.size(); i++)
+		static std::vector<Matrix4> mats;
+		mats.clear();
+		for (size_t i = 0; i < m_bones.size(); i++)
 		{
-			mats.push_back(Matrix4(m_transforms[i]->GetDrawMatrix()));
+			mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset()).transpose());
 
 		}
 		return mats.data();
 	}
+
+
 
 	int Skeleton::BoneID(std::string name)
 	{
@@ -54,6 +57,17 @@ namespace Zorlock
 	size_t Skeleton::GetBonesSize()
 	{
 		return m_bones.size();
+	}
+
+	void Skeleton::SetGlobalInverse(Matrix4 mat)
+	{
+		m_globalInverse = mat;
+	}
+
+	Matrix4& Skeleton::GetGlobalInverse()
+	{
+		
+		return m_globalInverse;
 	}
 
 

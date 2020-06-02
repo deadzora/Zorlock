@@ -56,10 +56,20 @@ namespace Zorlock
 		Assimp::Importer importer;
 		const aiScene* pScene = importer.ReadFile(modelfile, flags);
 
+		m_skeleton = CreateRef<Skeleton>("Skeleton", nullptr);
+
 		if (pScene != NULL)
 		{
-			this->ProcessNode(pScene->mRootNode, pScene, MATRIX4::TRS(Vector3(0,0,0),Quaternion::EulerAngles(Vector3(0,0,0)),Vector3(1,1,1)));
+			MATRIX4 rootMatrix = MATRIX4(
+				(float)pScene->mRootNode->mTransformation.a1, (float)pScene->mRootNode->mTransformation.a2, (float)pScene->mRootNode->mTransformation.a3, (float)pScene->mRootNode->mTransformation.a4,
+				(float)pScene->mRootNode->mTransformation.b1, (float)pScene->mRootNode->mTransformation.b2, (float)pScene->mRootNode->mTransformation.b3, (float)pScene->mRootNode->mTransformation.b4,
+				(float)pScene->mRootNode->mTransformation.c1, (float)pScene->mRootNode->mTransformation.c2, (float)pScene->mRootNode->mTransformation.c3, (float)pScene->mRootNode->mTransformation.c4,
+				(float)pScene->mRootNode->mTransformation.d1, (float)pScene->mRootNode->mTransformation.d2, (float)pScene->mRootNode->mTransformation.d3, (float)pScene->mRootNode->mTransformation.d4
+			);			
+			
+			this->ProcessNode(pScene->mRootNode, pScene, rootMatrix);
 			this->ProcessMeshes(pScene->mRootNode, pScene);
+			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
 		}
 
 	}
@@ -75,9 +85,17 @@ namespace Zorlock
 
 		if (pScene != NULL)
 		{
+			MATRIX4 rootMatrix = MATRIX4(
+				(float)pScene->mRootNode->mTransformation.a1, (float)pScene->mRootNode->mTransformation.a2, (float)pScene->mRootNode->mTransformation.a3, (float)pScene->mRootNode->mTransformation.a4,
+				(float)pScene->mRootNode->mTransformation.b1, (float)pScene->mRootNode->mTransformation.b2, (float)pScene->mRootNode->mTransformation.b3, (float)pScene->mRootNode->mTransformation.b4,
+				(float)pScene->mRootNode->mTransformation.c1, (float)pScene->mRootNode->mTransformation.c2, (float)pScene->mRootNode->mTransformation.c3, (float)pScene->mRootNode->mTransformation.c4,
+				(float)pScene->mRootNode->mTransformation.d1, (float)pScene->mRootNode->mTransformation.d2, (float)pScene->mRootNode->mTransformation.d3, (float)pScene->mRootNode->mTransformation.d4
+			);
+			
 			renderer->parent->transform->UpdateTransformationMatrix();
-			this->ProcessNode(pScene->mRootNode, pScene, renderer->parent->transform->GetTransformationMatrix());
+			this->ProcessNode(pScene->mRootNode, pScene, rootMatrix);
 			this->ProcessMeshes(pScene->mRootNode, pScene);
+			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
 		}
 
 	}
@@ -110,10 +128,10 @@ namespace Zorlock
 				case RendererAPI::API::OpenGL:
 				{
 					Matrix4* matx = m_skeleton->GetBoneMatrices();
+					mat->GetShader()->Bind();
 					for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
 					{
-						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", *matx);
-						matx++;
+						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);
 					}
 				}
 				}
@@ -773,12 +791,12 @@ namespace Zorlock
 
 	void ZModel::ProcessMeshes(aiNode* node, const aiScene* scene)
 	{
-
+		MATRIX4 mat = m_skeleton->GetBone(node->mName.data)->GetBaseMat();
 		for (UINT i = 0; i < node->mNumMeshes; i++)
 		{
 			printf("Parsing Mesh! \n");
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene);
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, mat);
 		}
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
@@ -805,7 +823,7 @@ namespace Zorlock
 
 	void ZModel::ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent)
 	{
-
+		
 		MATRIX4 nodeMatrix = MATRIX4(
 			(float)node->mTransformation.a1, (float)node->mTransformation.a2, (float)node->mTransformation.a3, (float)node->mTransformation.a4,
 			(float)node->mTransformation.b1, (float)node->mTransformation.b2, (float)node->mTransformation.b3, (float)node->mTransformation.b4,
@@ -813,17 +831,28 @@ namespace Zorlock
 			(float)node->mTransformation.d1, (float)node->mTransformation.d2, (float)node->mTransformation.d3, (float)node->mTransformation.d4
 			);
 		MATRIX4 nodeTransformMatrix = parentTransformMatrix * nodeMatrix;
-		Vector3 pos;
-		Quaternion rot;
-		Vector3 scale;
-		nodeTransformMatrix.decomposition(pos, rot, scale);
 		Ref<Bone> bone = nullptr;
 		if (parent == nullptr)
 		{
 			bone = AddBone(node->mName.data, m_skeleton->transform);
-			bone->transform->position = nodeTransformMatrix.getTranslation();//pos;
-			bone->transform->rotation = Quaternion::EulerAngles(Vector3(0, 0, 0)); //rot;
-			bone->transform->scale = nodeTransformMatrix.getScale(); //scale;
+			bone->SetBaseMat(nodeTransformMatrix);
+		}
+		else {
+			bone = AddBone(node->mName.data, parent->transform);
+			bone->SetBaseMat(nodeTransformMatrix);
+		}
+		/*
+				
+		Vector3 pos;
+		Quaternion rot;
+		Vector3 scale;
+		nodeMatrix.decomposition(pos, rot, scale);
+		if (parent == nullptr)
+		{
+			bone = AddBone(node->mName.data, m_skeleton->transform);
+			bone->transform->position = pos;
+			bone->transform->rotation = rot;
+			bone->transform->scale = scale;
 			bone->transform->UpdateTransformationMatrix();
 
 
@@ -831,12 +860,12 @@ namespace Zorlock
 		else {
 			bone = AddBone(node->mName.data, parent->transform);
 			//printf(" Bone pos: x %f y %f z %f \n", scale.x, scale.y, scale.z);
-			bone->transform->position = nodeTransformMatrix.getTranslation();//pos;
-			bone->transform->rotation = Quaternion::EulerAngles(Vector3(0, 0, 0)); //rot;
-			bone->transform->scale = nodeTransformMatrix.getScale(); //scale;
+			bone->transform->position = pos;
+			bone->transform->rotation = rot;
+			bone->transform->scale = scale;
 			bone->transform->UpdateTransformationMatrix();
 		}
-
+		*/
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
@@ -849,7 +878,7 @@ namespace Zorlock
 
 	}
 
-	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& nodetransform)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
@@ -860,11 +889,16 @@ namespace Zorlock
 		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
 
+			
+
 			Vertex vertex;
 			vertex.position.x = (float)mesh->mVertices[i].x * loadscale;
 			vertex.position.y = (float)mesh->mVertices[i].y * loadscale;
 			vertex.position.z = (float)mesh->mVertices[i].z * loadscale;
 			vertex.position.w = 1.0f;
+
+			vertex.position = nodetransform * vertex.position;
+
 			vertex.color.x = 1.0f;
 			vertex.color.y = 1.0f;
 			vertex.color.z = 1.0f;
@@ -872,7 +906,7 @@ namespace Zorlock
 			vertex.normal.y = (float)mesh->mNormals[i].y;
 			vertex.normal.z = (float)mesh->mNormals[i].z;
 
-
+			vertex.normal = nodetransform * vertex.normal;
 
 			if (mesh->mTextureCoords[0])
 			{
@@ -907,16 +941,35 @@ namespace Zorlock
 				for (size_t b = 0; b < mesh->mNumBones; b++)
 				{
 					Ref<Bone> bone = m_skeleton->GetBone(mesh->mBones[b]->mName.data);
+					MATRIX4 nodeMatrix = MATRIX4(
+						(float)mesh->mBones[b]->mOffsetMatrix.a1, (float)mesh->mBones[b]->mOffsetMatrix.a2, (float)mesh->mBones[b]->mOffsetMatrix.a3, (float)mesh->mBones[b]->mOffsetMatrix.a4,
+						(float)mesh->mBones[b]->mOffsetMatrix.b1, (float)mesh->mBones[b]->mOffsetMatrix.b2, (float)mesh->mBones[b]->mOffsetMatrix.b3, (float)mesh->mBones[b]->mOffsetMatrix.b4,
+						(float)mesh->mBones[b]->mOffsetMatrix.c1, (float)mesh->mBones[b]->mOffsetMatrix.c2, (float)mesh->mBones[b]->mOffsetMatrix.c3, (float)mesh->mBones[b]->mOffsetMatrix.c4,
+						(float)mesh->mBones[b]->mOffsetMatrix.d1, (float)mesh->mBones[b]->mOffsetMatrix.d2, (float)mesh->mBones[b]->mOffsetMatrix.d3, (float)mesh->mBones[b]->mOffsetMatrix.d4
+					);
+
+					bone->SetOffset(nodeMatrix);
+					/*
+					Vector3 pos;
+					Quaternion rot;
+					Vector3 scale;
+					nodeMatrix.decomposition(pos, rot, scale);
+					printf(" Bone ID: %u %s pos: x %f y %f z %f \n",bone->GetBoneID(), mesh->mBones[b]->mName.C_Str(), pos.x, pos.y, pos.z);
+					bone->transform->position = pos;
+					bone->transform->rotation = rot;
+					bone->transform->scale = scale;
+					bone->transform->UpdateTransformationMatrix();
+					*/
 					for (size_t w = 0; w < mesh->mBones[b]->mNumWeights; w++)
 					{
 						bone->SetBoneWeight(quadmesh->GetMeshID(), mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId);
-						if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.x != -1)
+						if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.x != 0.0f)
 						{
-							if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.y != -1)
+							if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.y != 0.0f)
 							{
-								if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.z != -1)
+								if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.z != 0.0f)
 								{
-									if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.w != -1)
+									if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.w != 0.0f)
 									{
 
 									}

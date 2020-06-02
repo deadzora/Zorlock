@@ -18,13 +18,6 @@ out vec4 v_World;
 
 void main()
 {
-    vec4 newVertex;
-	vec4 newNormal;
-	
-	mat4 BoneTransform = u_Bones[int(a_BoneIDs.x)] * a_Weights.x;
-    BoneTransform += u_Bones[int(a_BoneIDs.y)] * a_Weights.y;
-    BoneTransform += u_Bones[int(a_BoneIDs.z)] * a_Weights.z;
-    BoneTransform += u_Bones[int(a_BoneIDs.w)] * a_Weights.w;
 
 	v_TexCoord = a_TexCoord;
 	v_Normal = vec4(a_Normal,1.0);
@@ -32,8 +25,42 @@ void main()
 	v_Normal = normalize(v_Normal);
 	v_Color = a_Color;
 	v_Position = a_Position;
-	//v_Position = Z_Mul(BoneTransform,v_Position);
-	v_Position = u_Transform*v_Position;
+	
+	mat4 wpos = mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	mat4 BoneTransform = mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	bool hasweight = false;
+	if(a_Weights.x > 0.0)
+	{
+		BoneTransform = u_Bones[int(a_BoneIDs.x)];
+		wpos += BoneTransform * a_Weights.x;
+		hasweight = true;
+	}	
+	if(a_Weights.y > 0.0)
+	{
+		BoneTransform = u_Bones[int(a_BoneIDs.y)];
+		wpos += BoneTransform * a_Weights.y;
+		hasweight = true;
+	}
+	if(a_Weights.z > 0.0)
+	{
+		BoneTransform = u_Bones[int(a_BoneIDs.z)];
+		wpos += BoneTransform * a_Weights.z;
+		hasweight = true;
+	}
+	if(a_Weights.w > 0.0)
+	{
+		float finalWeight = 1.0f - ( a_Weights.x + a_Weights.y + a_Weights.z );
+		BoneTransform = u_Bones[int(a_BoneIDs.w)];
+		wpos += BoneTransform * finalWeight;
+		hasweight = true;
+	}
+	
+	if(hasweight==true)
+	{	
+		v_Position = wpos*v_Position;	
+	} else {	
+		v_Position = u_Transform*v_Position;
+	}	
 	v_Position = u_ViewProjection*v_Position;		
 	v_World = u_Transform*a_Position;	
 	gl_Position=v_Position;

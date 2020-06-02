@@ -71,7 +71,7 @@ namespace Zorlock
 		void ProcessMeshes(aiNode* node, const aiScene* scene);
 		void NodeChild(aiNode* node, const aiScene* scene);
 		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent = nullptr);
-		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& nodetransform = MATRIX4::IDENTITY());
 		void LoadMaterialTextures(Ref<Material> material, aiMaterial* pMaterial, aiTextureType textype, const aiScene* pscene);
 		AssimpTextureStorageType DetermineTextureStorageType(const aiScene* pscene, aiMaterial* pmaterial, unsigned int index, aiTextureType textype);
 		int GetTextureIndex(aiString* pStr);

@@ -29,6 +29,26 @@ namespace Zorlock
 		weights.push_back(bw);
 	}
 
+	void Bone::SetOffset(Matrix4 mat)
+	{
+		offsetmat = mat;
+	}
+
+	Matrix4& Bone::GetOffset()
+	{
+		return offsetmat;
+	}
+
+	void Bone::SetBaseMat(Matrix4 mat)
+	{
+		basemat = mat;
+	}
+
+	Matrix4& Bone::GetBaseMat()
+	{
+		return basemat;
+	}
+
 	BoneWeight& Bone::GetBoneWeight(uint32_t i)
 	{
 		if (i > weights.size() - 1)

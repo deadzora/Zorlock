@@ -34,25 +34,25 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 
 	///////LIGHTA
 	lightA = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightA->transform->position = VECTOR3(10, 0, 10);
+	lightA->transform->position = VECTOR3(50, 0, 10);
 	lightA->SetColor(COLOR4(0, 1, 0, 1));
 	lightA->SetStrength(1.15);
-	lightA->SetRadius(50);
+	lightA->SetRadius(1000);
 
 
 	///////LIGHTB
 	lightB = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightB->transform->position = VECTOR3(-10, 0, 10);
+	lightB->transform->position = VECTOR3(-50, 0, 10);
 	lightB->SetColor(COLOR4(1, 0, 0, 1));
 	lightB->SetStrength(0.65);
-	lightB->SetRadius(60);
+	lightB->SetRadius(1000);
 
 	///////LIGHTC
 	lightC = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightC->transform->position = VECTOR3(0, 0, 5);
+	lightC->transform->position = VECTOR3(0, -50, 5);
 	lightC->SetColor(COLOR4(0, 0, 1, 1));
-	lightC->SetStrength(0.75);
-	lightC->SetRadius(60);
+	lightC->SetStrength(3.75);
+	lightC->SetRadius(1000);
 
 	//////MAIN GAME OBJECT
 	mainmodel = m_mainScene->CreateGameObject("Model");
@@ -65,8 +65,8 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	//meshrenderer->CreateCone(32);
 	//meshrenderer->CreateSphere(32);
 	//meshrenderer->CreateCube();
-	//meshrenderer->AddModel("woman","assets/models/MK6_OBJ.obj",0.01f);
-	meshrenderer->AddModel("spaceship", "assets/models/AnimeBoy.DAE",1.0f);
+	//meshrenderer->AddModel("Spaceship","assets/models/MK6_OBJ.obj",0.1f);
+	meshrenderer->AddModel("Player", "assets/models/AnimeBoy.DAE",1.0f);
 	m_meshrenderer = meshrenderer;
 	mainmodel->transform->position.z = 10.0f;
 	mainmodel->transform->position.y = 5.0f;

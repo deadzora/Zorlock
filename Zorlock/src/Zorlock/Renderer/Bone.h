@@ -29,11 +29,17 @@ namespace Zorlock {
 		void SetBoneID(uint32_t id);
 		void SetBoneWeight(uint32_t submesh, float weight, uint32_t vertexid);
 		void SetBoneWeight(BoneWeight bw);
+		void SetOffset(Matrix4 mat);
+		Matrix4& GetOffset();
+		void SetBaseMat(Matrix4 mat);
+		Matrix4& GetBaseMat();
 		BoneWeight& GetBoneWeight(uint32_t i);
 		BoneWeight& GetBoneWeight(uint32_t sm, uint32_t vid);
 		BoneWeight& operator[](int i);
 		~Bone();
 	protected:
+		Matrix4 offsetmat;
+		Matrix4 basemat;
 		uint32_t m_numweights;
 		uint32_t m_bone_id;
 		std::vector<BoneWeight> weights;
