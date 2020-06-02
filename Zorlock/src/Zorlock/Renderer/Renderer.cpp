@@ -69,7 +69,7 @@ namespace Zorlock {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const MATRIX4& transform)
 	{
 		shader->Bind();
-		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix * transform);
+		shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix * s_SceneData->ViewMatrix);// *transform);
 		shader->SetMat4("u_Transform", transform);
 		shader->SetFloat4("u_Ambient", s_SceneData->Ambient); //For light calculations	
 		shader->SetFloat4("u_ViewPosition", s_SceneData->CamPosition); //For light calculations	

@@ -29,7 +29,8 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	ZLREF<ZLCAMERA> camera = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateCamera(FOV, AspectRatio, nearZ, farZ);
 	mainCam = camera;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->SetMainCamera(mainCam);
-	mainCam->transform->position.z = -10.0f;
+	mainCam->transform->position.z = -300.0f;
+	mainCam->transform->position.y = -100.0f;
 
 	///////LIGHTA
 	lightA = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
@@ -65,7 +66,7 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	//meshrenderer->CreateSphere(32);
 	//meshrenderer->CreateCube();
 	//meshrenderer->AddModel("woman","assets/models/MK6_OBJ.obj",0.01f);
-	meshrenderer->AddModel("spaceship", "assets/models/AnimeBoy.DAE",0.05f);
+	meshrenderer->AddModel("spaceship", "assets/models/AnimeBoy.DAE",1.0f);
 	m_meshrenderer = meshrenderer;
 	mainmodel->transform->position.z = 10.0f;
 	mainmodel->transform->position.y = 5.0f;

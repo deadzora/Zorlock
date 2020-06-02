@@ -424,22 +424,21 @@ namespace Zorlock {
 
 	void OpenGLShader::UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count)
 	{
+		//get the index location and size of the block
+		GLuint block_index = glGetUniformBlockIndex(m_RendererID, name.c_str());
+		GLint block_size = size * count;
+		glGetActiveUniformBlockiv(m_RendererID, block_index, GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
 
-
-
-
-
-		/*
-		GLint location = glGetUniformBlockIndex(m_RendererID, name.c_str());
-		glUniformBlockBinding(m_RendererID, location, 2);
-		unsigned int uboBlock;
-		glGenBuffers(1, &uboBlock);
-		glBindBuffer(GL_UNIFORM_BUFFER, uboBlock);
-		glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW); // allocate memory
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		glBindBufferRange(GL_UNIFORM_BUFFER, 2, uboBlock, 0, size);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, size, buffer);
-		*/
+		//create temporary buffer on CPU side to hold the data
+		GLubyte* block_buffer = (GLubyte*)malloc(size*count);
+		//fill temporary buffer
+		memcpy(block_buffer, buffer, size * count);
+		//create OpenGL buffer and bind it to the uniform block
+		GLuint buffer_handle;
+		glGenBuffers(1, &buffer_handle);
+		glBindBuffer(GL_UNIFORM_BUFFER, buffer_handle);
+		glBufferData(GL_UNIFORM_BUFFER, block_size, block_buffer, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, block_index, buffer_handle);
 	}
 
 

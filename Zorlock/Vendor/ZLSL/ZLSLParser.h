@@ -123,7 +123,8 @@ namespace Zorlock
 			Z_Constructor,
 			Z_Mul,
 			Z_Define,
-			Z_Struct
+			Z_Struct,
+			Pragma_RowMajor
 			
 
 		};

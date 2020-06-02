@@ -39,6 +39,7 @@ namespace Zorlock {
 		void ApplyTransform(MATRIX4 transform);
 		void ApplyMainTexture();
 		void ApplyLights();
+		void ApplyBuffer(std::string name, void* buffer, uint32_t size, uint32_t count = 1);
 		void ApplySurface();
 		void SetShininess(float s);
 		float GetShininess();

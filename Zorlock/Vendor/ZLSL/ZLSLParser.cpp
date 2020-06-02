@@ -150,6 +150,10 @@ namespace Zorlock {
 
 						vertexStructs.push_back(variable);
 					}
+					else if (variable.command == VarCommandValue::Pragma_RowMajor)
+					{
+						vertexdefines.push_back(variable);
+					}
 					else if (variable.command == VarCommandValue::Z_Define)
 					{
 						variable.value = vd.value;
@@ -224,6 +228,10 @@ namespace Zorlock {
 					else if (variable.command == VarCommandValue::Z_Define)
 					{
 						variable.value = vd.value;
+						pixeldefines.push_back(variable);
+					}
+					else if (variable.command == VarCommandValue::Pragma_RowMajor)
+					{
 						pixeldefines.push_back(variable);
 					}
 					else if (variable.command == VarCommandValue::Version)
@@ -1158,6 +1166,11 @@ namespace Zorlock {
 				declares += s_mapHLSLCommands[dec[i].command] + " " + dec[i].varname + " " + dec[i].value +  EOL;
 				break;
 			}
+			case VarCommandValue::Pragma_RowMajor:
+			{
+				declares += s_mapHLSLCommands[dec[i].command] + "( " + dec[i].varname + " )" + EOL;
+				break;
+			}
 			case VarCommandValue::Type:
 			{
 				declares += "//type " + s_mapHLSLVariables[dec[i].vartype] + EOL;
@@ -1230,7 +1243,21 @@ namespace Zorlock {
 					declares += "{" + EOL;
 					if (dec[i].vartype!=VariableTypes::VAR_NONE && dec[i].vartype != VariableTypes::LIGHTBASE)
 					{
-						declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+						//declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+						if (dec[i].val_list.size() > 0)
+						{
+							if (dec[i].isArray)
+							{
+								declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + dec[i].val_list[0] + "];" + EOL;
+							}
+							else {
+								declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+							}
+
+						}
+						else {
+							declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+						}
 					}
 					else if(dec[i].vartype == VariableTypes::VAR_NONE || dec[i].vartype == VariableTypes::LIGHTBASE) {
 						//probably custom struct declare, use original value.
@@ -1352,6 +1379,7 @@ namespace Zorlock {
 		s_mapStringCommands["define"] = Z_Define;
 		s_mapStringCommands["struct"] = Z_Struct;
 		s_mapStringCommands["for"] = For;
+		s_mapStringCommands["pragma_matrix"] = Pragma_RowMajor;
 
 		s_mapStringVariables[""] = VAR_NONE;
 		s_mapStringVariables["float"] = FLOAT;
@@ -1438,7 +1466,7 @@ namespace Zorlock {
 		s_mapGLSLCommands[Varying] = "varying";
 		s_mapGLSLCommands[Z_Define] = "#define";
 		s_mapGLSLCommands[Z_Struct] = "struct";
-
+		s_mapGLSLCommands[Pragma_RowMajor] = "";
 		//globals
 		s_mapGLSLCommands[Z_Position] = "gl_Position";
 		s_mapGLSLCommands[Z_PointSize] = "gl_PointSize";
@@ -1483,7 +1511,7 @@ namespace Zorlock {
 		s_mapHLSLVariables[IVEC4] = "int4";
 		s_mapHLSLVariables[MAT2] = "float2x2";
 		s_mapHLSLVariables[MAT3] = "float3x3";
-		s_mapHLSLVariables[MAT4] = "float4x4";
+		s_mapHLSLVariables[MAT4] = "row_major float4x4";
 		s_mapHLSLVariables[SAMPLER2D] = "Texture2D";
 		s_mapHLSLVariables[SAMPLERCUBE] = "TextureCube";
 		s_mapHLSLVariables[VARVOID] = "void";
@@ -1497,6 +1525,7 @@ namespace Zorlock {
 		s_mapHLSLCommands[Varying] = "";
 		s_mapHLSLCommands[Z_Define] = "#define";
 		s_mapHLSLCommands[Z_Struct] = "struct";
+		s_mapHLSLCommands[Pragma_RowMajor] = "#pragma pack_matrix";
 		//globals
 		s_mapHLSLCommands[Z_Position] = "SV_POSITION";
 		s_mapHLSLCommands[Z_PointSize] = "PSIZE";
@@ -1698,6 +1727,14 @@ namespace Zorlock {
 			
 			break;
 		}
+		case Pragma_RowMajor:
+		{
+			if (!token_is_then_assign(token_t::e_symbol, fd.command))
+				return false;
+			if (!token_is_then_assign(token_t::e_symbol, fd.varname))
+				return false;
+			break;
+		}
 		case Z_Define:
 		{
 			if (!token_is_then_assign(token_t::e_symbol, fd.command))
@@ -1810,8 +1847,6 @@ namespace Zorlock {
 				return false;
 			if (!token_is_then_assign(token_t::e_symbol, fd.vartype))
 				return false;
-
-
 			break;
 		}
 		case Version:

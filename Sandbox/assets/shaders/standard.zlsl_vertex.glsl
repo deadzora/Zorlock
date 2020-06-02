@@ -1,5 +1,5 @@
 #version 330 core
-#define MAX_BONES 100
+#define MAX_BONES 200
 //type vertex
 layout(location = 0) in vec4 a_Position;
 layout(location = 1) in vec3 a_Normal;
@@ -18,6 +18,13 @@ out vec4 v_World;
 
 void main()
 {
+    vec4 newVertex;
+	vec4 newNormal;
+	
+	mat4 BoneTransform = u_Bones[int(a_BoneIDs.x)] * a_Weights.x;
+    BoneTransform += u_Bones[int(a_BoneIDs.y)] * a_Weights.y;
+    BoneTransform += u_Bones[int(a_BoneIDs.z)] * a_Weights.z;
+    BoneTransform += u_Bones[int(a_BoneIDs.w)] * a_Weights.w;
 
 	v_TexCoord = a_TexCoord;
 	v_Normal = vec4(a_Normal,1.0);
@@ -25,7 +32,9 @@ void main()
 	v_Normal = normalize(v_Normal);
 	v_Color = a_Color;
 	v_Position = a_Position;
-	v_Position = u_ViewProjection*v_Position;	
+	//v_Position = Z_Mul(BoneTransform,v_Position);
+	v_Position = u_Transform*v_Position;
+	v_Position = u_ViewProjection*v_Position;		
 	v_World = u_Transform*a_Position;	
 	gl_Position=v_Position;
 }

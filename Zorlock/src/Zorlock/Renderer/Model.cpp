@@ -51,7 +51,7 @@ namespace Zorlock
 	}
 	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f), m_skeleton(nullptr)
 	{
-		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
+		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate : aiProcess_Triangulate | aiProcess_ConvertToLeftHanded;
 
 		Assimp::Importer importer;
 		const aiScene* pScene = importer.ReadFile(modelfile, flags);
@@ -59,13 +59,14 @@ namespace Zorlock
 		if (pScene != NULL)
 		{
 			this->ProcessNode(pScene->mRootNode, pScene, MATRIX4::TRS(Vector3(0,0,0),Quaternion::EulerAngles(Vector3(0,0,0)),Vector3(1,1,1)));
+			this->ProcessMeshes(pScene->mRootNode, pScene);
 		}
 
 	}
 	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer, float scale) : name(name), loadscale(scale)
 	{
 		meshRenderer = renderer;
-		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate | aiProcess_PreTransformVertices : aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_ConvertToLeftHanded;
+		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate : aiProcess_Triangulate | aiProcess_ConvertToLeftHanded;
 
 		Assimp::Importer importer;
 		const aiScene* pScene = importer.ReadFile(modelfile, flags); // | aiProcess_ConvertToLeftHanded
@@ -76,6 +77,7 @@ namespace Zorlock
 		{
 			renderer->parent->transform->UpdateTransformationMatrix();
 			this->ProcessNode(pScene->mRootNode, pScene, renderer->parent->transform->GetTransformationMatrix());
+			this->ProcessMeshes(pScene->mRootNode, pScene);
 		}
 
 	}
@@ -94,7 +96,30 @@ namespace Zorlock
 	{
 		for (size_t i = 0; i < m_meshes.size(); i++)
 		{
-			m_meshes[i]->Draw();
+			Ref<Material> mat = m_meshes[i]->GetMaterial();
+			if (mat != nullptr)
+			{
+				mat->GetShader()->Bind();
+				switch(RendererAPI::GetAPI())
+				{ 
+				case RendererAPI::API::DX11:
+				{
+					mat->ApplyBuffer("u_Bones", m_skeleton->GetBoneMatrices(), sizeof(Matrix4), m_skeleton->GetBonesSize());
+					break;
+				}
+				case RendererAPI::API::OpenGL:
+				{
+					Matrix4* matx = m_skeleton->GetBoneMatrices();
+					for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
+					{
+						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", *matx);
+						matx++;
+					}
+				}
+				}
+				
+				m_meshes[i]->Draw();
+			}
 		}
 	}
 
@@ -677,6 +702,7 @@ namespace Zorlock
 		{
 			printf("Created Mesh \n");
 			m_meshes.push_back(mesh);
+			mesh->SetMeshID(m_meshes.size() - 1);
 			return mesh;
 		}
 		return nullptr;
@@ -687,6 +713,7 @@ namespace Zorlock
 		if (mesh != nullptr)
 		{
 			m_meshes.push_back(mesh);
+			mesh->SetMeshID(m_meshes.size() - 1);
 		}
 	}
 
@@ -739,6 +766,43 @@ namespace Zorlock
 		return nullptr;
 	}
 
+	size_t ZModel::GetSkeletonSize()
+	{
+		return m_skeleton->GetBonesSize();
+	}
+
+	void ZModel::ProcessMeshes(aiNode* node, const aiScene* scene)
+	{
+
+		for (UINT i = 0; i < node->mNumMeshes; i++)
+		{
+			printf("Parsing Mesh! \n");
+			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene);
+		}
+
+		for (UINT i = 0; i < node->mNumChildren; i++)
+		{
+			this->NodeChild(node->mChildren[i], scene);
+		}
+
+	}
+
+	void ZModel::NodeChild(aiNode* node, const aiScene* scene)
+	{
+		for (UINT i = 0; i < node->mNumMeshes; i++)
+		{
+			printf("Parsing Mesh! \n");
+			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene);
+		}
+
+		for (UINT i = 0; i < node->mNumChildren; i++)
+		{
+			this->NodeChild(node->mChildren[i], scene);
+		}
+	}
+
 	void ZModel::ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent)
 	{
 
@@ -757,48 +821,41 @@ namespace Zorlock
 		if (parent == nullptr)
 		{
 			bone = AddBone(node->mName.data, m_skeleton->transform);
-			bone->transform->position = pos;
-			bone->transform->rotation = rot;
-			bone->transform->scale = scale;
+			bone->transform->position = nodeTransformMatrix.getTranslation();//pos;
+			bone->transform->rotation = Quaternion::EulerAngles(Vector3(0, 0, 0)); //rot;
+			bone->transform->scale = nodeTransformMatrix.getScale(); //scale;
 			bone->transform->UpdateTransformationMatrix();
+
+
 		}
 		else {
 			bone = AddBone(node->mName.data, parent->transform);
-			bone->transform->position = pos;
-			bone->transform->rotation = rot;
-			bone->transform->scale = scale;
+			//printf(" Bone pos: x %f y %f z %f \n", scale.x, scale.y, scale.z);
+			bone->transform->position = nodeTransformMatrix.getTranslation();//pos;
+			bone->transform->rotation = Quaternion::EulerAngles(Vector3(0, 0, 0)); //rot;
+			bone->transform->scale = nodeTransformMatrix.getScale(); //scale;
 			bone->transform->UpdateTransformationMatrix();
 		}
 
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
-			printf("Parsing Node %s! \n",node->mName.C_Str());
+			//printf("Parsing Node %s! \n",node->mName.C_Str());
 			this->ProcessNode(node->mChildren[i], scene, nodeTransformMatrix,bone);
 			
 		}
 
-		for (UINT i = 0; i < node->mNumMeshes; i++)
-		{
-			printf("Parsing Mesh! \n");
-			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, nodeTransformMatrix);
 
-		}
 
 	}
 
-	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& transformMatrix)
+	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		UINT nv = 0;
 		Ref<Mesh> quadmesh = CreateMesh();
-		if (mesh->HasBones())
-		{
-			quadmesh->hasbones = true;
-			printf("Mesh has %u bones ", mesh->mNumBones);
-		}
+
 
 		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -815,17 +872,14 @@ namespace Zorlock
 			vertex.normal.y = (float)mesh->mNormals[i].y;
 			vertex.normal.z = (float)mesh->mNormals[i].z;
 
-			if (mesh->HasBones() && m_skeleton!=nullptr)
-			{
 
-
-			}
 
 			if (mesh->mTextureCoords[0])
 			{
 				vertex.uvw.x = (float)mesh->mTextureCoords[0][i].x;
 				vertex.uvw.y = (float)mesh->mTextureCoords[0][i].y;
 			}
+
 
 			vertices.push_back(vertex);
 			/*
@@ -844,6 +898,59 @@ namespace Zorlock
 			}
 		}
 
+		if (mesh->HasBones())
+		{
+			quadmesh->hasbones = true;
+			//printf("Mesh has %u bones ", mesh->mNumBones);
+			if (mesh->HasBones() && m_skeleton != nullptr)
+			{
+				for (size_t b = 0; b < mesh->mNumBones; b++)
+				{
+					Ref<Bone> bone = m_skeleton->GetBone(mesh->mBones[b]->mName.data);
+					for (size_t w = 0; w < mesh->mBones[b]->mNumWeights; w++)
+					{
+						bone->SetBoneWeight(quadmesh->GetMeshID(), mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId);
+						if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.x != -1)
+						{
+							if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.y != -1)
+							{
+								if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.z != -1)
+								{
+									if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.w != -1)
+									{
+
+									}
+									else {
+										//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+										vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.w = bone->GetBoneID();
+										vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.w = mesh->mBones[b]->mWeights[w].mWeight;
+									}
+								}
+								else {
+									//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+									vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.z = bone->GetBoneID();
+									vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.z = mesh->mBones[b]->mWeights[w].mWeight;
+								}
+							}
+							else {
+								//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+								vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.y = bone->GetBoneID();
+								vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.y = mesh->mBones[b]->mWeights[w].mWeight;
+							}
+
+						}
+						else {
+							//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+							vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.x = bone->GetBoneID();
+							vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.x = mesh->mBones[b]->mWeights[w].mWeight;
+						}
+					}
+
+				}
+
+			}
+
+		}
 
 		aiString mname;
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];

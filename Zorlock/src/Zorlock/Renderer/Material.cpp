@@ -139,8 +139,26 @@ namespace Zorlock
 		}
 	}
 
+	void Material::ApplyBuffer(std::string name, void* buffer, uint32_t size, uint32_t count)
+	{
+		if (m_Shader != nullptr)
+		{
+			if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+			{
+				//m_Shader->SetBuffer(name, buffer, size, count);
+				m_Shader->SetFloat("u_SurfaceProperties.specular", m_surfaceProps.specular);
+				m_Shader->SetFloat("u_SurfaceProperties.shininess", m_surfaceProps.shininess);
+			}
+			else if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
+			{
+				m_Shader->SetBuffer(name, buffer, size, count);
+			}
+		}
+	}
+
 	void Material::ApplySurface()
 	{
+
 		if (m_Shader != nullptr)
 		{ 
 			if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)

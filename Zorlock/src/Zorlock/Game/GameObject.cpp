@@ -74,11 +74,16 @@ namespace Zorlock
 		{
 			components[i]->Update(ts);
 		}
-
 		for (size_t i = 0; i < transform->children.size(); i++)
 		{
-
+			transform->children[i]->UpdateTransformationMatrix();
+			if (transform->children[i]->gameObject != nullptr)
+			{
+				
+				transform->children[i]->gameObject->Update(ts);
+			}
 		}
+
 
 
 	}

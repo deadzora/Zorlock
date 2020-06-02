@@ -1,7 +1,7 @@
 //version 330 core
 cbuffer c_u_ViewProjection_buffer : register(b0)
 {
-float4x4 u_ViewProjection;
+row_major float4x4 u_ViewProjection;
 };
 //type 
 struct VS_INPUT

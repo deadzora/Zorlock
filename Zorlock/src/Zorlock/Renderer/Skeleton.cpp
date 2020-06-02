@@ -14,6 +14,7 @@ namespace Zorlock
 	{
 		Ref<Bone> mbone = CreateRef<Bone>(name, parent);
 		m_bones.push_back(mbone);
+		m_transforms.push_back(mbone->transform);
 		m_bones[m_bones.size() - 1]->SetBoneID((uint32_t)(m_bones.size() - 1));
 		m_bone_id[name] = (int)m_bones.size() - 1;
 		return mbone;
@@ -34,10 +35,28 @@ namespace Zorlock
 		return m_bones[m_bone_id[name]];
 	}
 
+	Matrix4* Skeleton::GetBoneMatrices()
+	{
+		std::vector<Matrix4> mats;
+		for (size_t i = 0; i < m_transforms.size(); i++)
+		{
+			mats.push_back(Matrix4(m_transforms[i]->GetDrawMatrix()));
+
+		}
+		return mats.data();
+	}
+
 	int Skeleton::BoneID(std::string name)
 	{
 		return m_bone_id[name];
 	}
+
+	size_t Skeleton::GetBonesSize()
+	{
+		return m_bones.size();
+	}
+
+
 
 	Skeleton::~Skeleton()
 	{

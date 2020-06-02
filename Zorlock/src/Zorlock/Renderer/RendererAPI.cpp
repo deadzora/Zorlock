@@ -5,7 +5,7 @@
 #include "Platform/DX11/DX11RendererAPI.h"
 namespace Zorlock {
 
-	RendererAPI::API RendererAPI::s_API = RendererAPI::API::DX11;
+	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
 
 

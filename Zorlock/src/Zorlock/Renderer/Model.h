@@ -59,6 +59,7 @@ namespace Zorlock
 		Ref<Bone> AddBone(std::string name = "Bone", Ref<Transform> parent = nullptr);
 		Ref<Bone> GetBone(uint32_t i);
 		Ref<Bone> GetBone(std::string name);
+		size_t GetSkeletonSize();
 		std::string name;
 	protected:
 		float loadscale;
@@ -67,9 +68,10 @@ namespace Zorlock
 		Ref<Skeleton> m_skeleton;
 
 
-
+		void ProcessMeshes(aiNode* node, const aiScene* scene);
+		void NodeChild(aiNode* node, const aiScene* scene);
 		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent = nullptr);
-		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& transformMatrix);
+		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 		void LoadMaterialTextures(Ref<Material> material, aiMaterial* pMaterial, aiTextureType textype, const aiScene* pscene);
 		AssimpTextureStorageType DetermineTextureStorageType(const aiScene* pscene, aiMaterial* pmaterial, unsigned int index, aiTextureType textype);
 		int GetTextureIndex(aiString* pStr);

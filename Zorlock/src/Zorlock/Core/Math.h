@@ -494,15 +494,15 @@ namespace Zorlock {
 		Vertex operator=(const Vertex& q) {
 			position = Vector4(q.position); normal = Vector3(q.normal); color = Vector3(q.color); uvw = Vector2(q.uvw); return *this;
 		}
-		Vertex() : position(VECTOR4(0,0,0,1)), normal(VECTOR3(0,0,0)), color(VECTOR3(1,1,1)), uvw(VECTOR2(0,0)) {};
-		Vertex(float x, float y, float z) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1)), uvw(VECTOR2(0, 0))
+		Vertex() : position(VECTOR4(0,0,0,1)), normal(VECTOR3(0,0,0)), color(VECTOR3(1,1,1)), uvw(VECTOR2(0,0)), boneids(VECTOR4::Zero()), weights(VECTOR4::Zero()) {};
+		Vertex(float x, float y, float z) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1)), uvw(VECTOR2(0, 0)), boneids(VECTOR4::Zero()), weights(VECTOR4::Zero())
 		{
 			this->position.x = x;
 			this->position.y = y;
 			this->position.z = z;
 			this->position.w = 1.0f;
 		};
-		Vertex(float x, float y, float z, float u, float v) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1))
+		Vertex(float x, float y, float z, float u, float v) : normal(VECTOR3(0, 0, 0)), color(VECTOR3(1, 1, 1)), boneids(VECTOR4::Zero()), weights(VECTOR4::Zero())
 		{
 			this->position.x = x;
 			this->position.y = y;
@@ -511,7 +511,7 @@ namespace Zorlock {
 			this->uvw.x = u;
 			this->uvw.y = v;
 		};
-		Vertex(float x, float y, float z, float nx, float ny, float nz, float u, float v) : color(VECTOR3(1, 1, 1))
+		Vertex(float x, float y, float z, float nx, float ny, float nz, float u, float v) : color(VECTOR3(1, 1, 1)), boneids(VECTOR4::Zero()), weights(VECTOR4::Zero())
 		{
 			this->position.x = x;
 			this->position.y = y;
@@ -523,7 +523,7 @@ namespace Zorlock {
 			this->uvw.x = u;
 			this->uvw.y = v;
 		};
-		Vertex(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float u, float v)
+		Vertex(float x, float y, float z, float nx, float ny, float nz, float r, float g, float b, float u, float v) : boneids(VECTOR4::Zero()), weights(VECTOR4::Zero())
 		{
 			this->position.x = x;
 			this->position.y = y;
@@ -538,7 +538,7 @@ namespace Zorlock {
 			this->color.y = b;
 			this->color.z = g;
 		};
-		Vertex(float x, float y, float z, float w, float nx, float ny, float nz, float r, float g, float b, float u, float v)
+		Vertex(float x, float y, float z, float w, float nx, float ny, float nz, float r, float g, float b, float u, float v) : boneids(VECTOR4::Zero()), weights(VECTOR4::Zero())
 		{
 			this->position.x = x;
 			this->position.y = y;

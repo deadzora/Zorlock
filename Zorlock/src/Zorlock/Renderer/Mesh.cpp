@@ -5,7 +5,7 @@
 
 namespace Zorlock
 {
-	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0), hasbones(false)
+	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0), hasbones(false), m_meshID(0)
 	{
 	}
 	Ref<VertexArray> Mesh::CreateVertexArray()
@@ -76,6 +76,11 @@ namespace Zorlock
 		m_material=material;
 	}
 
+	Ref<Material> Mesh::GetMaterial()
+	{
+		return m_material;
+	}
+
 	void Mesh::SetLayout(const BufferLayout& layout)
 	{
 		m_VertexBuffer->SetLayout(layout);
@@ -97,7 +102,7 @@ namespace Zorlock
 	void Mesh::Draw()
 	{
 
-			m_material->GetShader()->Bind();
+			
 			m_material->ApplyMainTexture();
 			m_material->ApplyLights();
 			m_material->ApplySurface();
@@ -111,5 +116,13 @@ namespace Zorlock
 		//m_VertexArray->Release();
 		//m_VertexBuffer->Release();
 		//m_IndexBuffer->Release();
+	}
+	void Mesh::SetMeshID(uint32_t i)
+	{
+		m_meshID = i;
+	}
+	uint32_t Mesh::GetMeshID()
+	{
+		return m_meshID;
 	}
 }
