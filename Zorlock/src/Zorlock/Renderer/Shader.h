@@ -126,6 +126,7 @@ namespace Zorlock {
 		ShaderDataType Type;
 		uint32_t Size;
 		uint32_t Slot;
+		uint32_t Count;
 		size_t Offset;
 		bool Normalized;
 		bool isArray;

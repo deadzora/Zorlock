@@ -920,6 +920,89 @@ namespace Zorlock {
 		return "";
 	}
 
+	std::string ZLSLParser::GetDeclareValue(std::string& varname)
+	{
+		for (size_t i = 0; i < vertexdefines.size(); i++)
+		{
+			if (vertexdefines[i].varname.compare(varname) == 0)
+			{
+
+				return vertexdefines[i].value;
+			}
+		}
+		for (size_t i = 0; i < vertexVars.size(); i++)
+		{
+			if (vertexVars[i].varname.compare(varname) == 0)
+			{
+
+				return vertexVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < vlayoutVars.size(); i++)
+		{
+			if (vlayoutVars[i].varname.compare(varname) == 0)
+			{
+
+				return vlayoutVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < voutVars.size(); i++)
+		{
+			if (voutVars[i].varname.compare(varname) == 0)
+			{
+				return voutVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < vertexUniforms.size(); i++)
+		{
+			if (vertexUniforms[i].varname.compare(varname) == 0)
+			{
+				return vertexUniforms[i].value;
+			}
+		}
+		for (size_t i = 0; i < pixeldefines.size(); i++)
+		{
+			if (pixeldefines[i].varname.compare(varname) == 0)
+			{
+
+				return pixeldefines[i].value;
+			}
+		}
+		for (size_t i = 0; i < pixelVars.size(); i++)
+		{
+			if (pixelVars[i].varname.compare(varname) == 0)
+			{
+				return pixelVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < playoutVars.size(); i++)
+		{
+			if (playoutVars[i].varname.compare(varname) == 0)
+			{
+
+				return playoutVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < pinVars.size(); i++)
+		{
+			if (pinVars[i].varname.compare(varname) == 0)
+			{
+
+				return pinVars[i].value;
+			}
+		}
+		for (size_t i = 0; i < pixelUniforms.size(); i++)
+		{
+			if (pixelUniforms[i].varname.compare(varname) == 0)
+			{
+				return pixelUniforms[i].value;
+			}
+		}
+
+		if (ZLSLDEBUG == true) printf("Could not find variable name \n");
+		return "";
+	}
+
 	uint32_t ZLSLParser::GetSamplerIndex(std::string varname)
 	{
 		uint32_t index = 0;
@@ -1064,12 +1147,13 @@ namespace Zorlock {
 
 					if (dec[i].isArray)
 					{
-						if (dec[i].index > 0)
+						if (dec[i].val_list.size() > 0)
 						{
-							declares += "uniform " + s_mapGLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "]" + ";" + EOL;
+							declares += "uniform " + s_mapGLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + dec[i].val_list[0] + "]" + ";" + EOL;
+							
 						}
 						else {
-							declares += "uniform " + s_mapGLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + dec[i].val_list[0] + "]" + ";" + EOL;
+							declares += "uniform " + s_mapGLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "]" + ";" + EOL;
 						}
 					}
 					else {
@@ -1084,10 +1168,9 @@ namespace Zorlock {
 						if (dec[i].val_list.size() > 0)
 						{
 							declares += "uniform " + dec[i].value + " " + dec[i].varname + "[" + dec[i].val_list[0] + "]" + ";" + EOL;
-							
 						}
 						else {
-							declares += "uniform " + dec[i].value + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "]" + ";" + EOL;
+							declares += "uniform " + dec[i].value + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "]" + ";" + EOL;						
 						}
 					}
 					else {
@@ -1256,7 +1339,14 @@ namespace Zorlock {
 
 						}
 						else {
-							declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+							if (dec[i].isArray)
+							{
+								declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "];" + EOL;
+							}
+							else {
+								declares += s_mapHLSLVariables[dec[i].vartype] + " " + dec[i].varname + ";" + EOL;
+							}
+							
 						}
 					}
 					else if(dec[i].vartype == VariableTypes::VAR_NONE || dec[i].vartype == VariableTypes::LIGHTBASE) {
@@ -1273,7 +1363,15 @@ namespace Zorlock {
 							
 						}
 						else {
-							declares += dec[i].value + " " + dec[i].varname + ";" + EOL;
+							if (dec[i].isArray)
+							{
+								declares += dec[i].value + " " + dec[i].varname + "[" + std::to_string(dec[i].index) + "];" + EOL;
+								
+							}
+							else {
+								declares += dec[i].value + " " + dec[i].varname + ";" + EOL;
+							}
+							
 						}
 					}
 
@@ -1766,13 +1864,15 @@ namespace Zorlock {
 				{
 					fd.isarray = true;
 					fd.arrayvals.push_back(current_token().value);
-					printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.arrayvals[0].c_str());
+					fd.arrayvals.push_back(parser->GetDeclareValue(fd.arrayvals[0]));
+					if (ZLSLDEBUG == true) printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.arrayvals[0].c_str());
 					next_token();
 				}
 				else {
-					fd.isarray = true;
+					fd.isarray = true;					
+					//should try to pack definition value
 					fd.arrayvals.push_back(current_token().value);
-					printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.arrayvals[0].c_str());
+					if (ZLSLDEBUG == true) printf("ARRAY FOUND: %s count %s \n", fd.varname.c_str(), fd.arrayvals[0].c_str());
 					next_token();
 				}
 

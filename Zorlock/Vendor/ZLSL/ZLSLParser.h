@@ -376,6 +376,7 @@ namespace Zorlock
 		std::string ReturnHLSLFunctionBody(ZLSLFunctions func, bool isvert);
 		std::string IsDeclaredVar(std::string& varname);
 		std::string GetDeclareType(std::string& varname);
+		std::string GetDeclareValue(std::string& varname);
 		uint32_t GetSamplerIndex(std::string varname);
 		void MapFunctions();
 		void MapVariables();

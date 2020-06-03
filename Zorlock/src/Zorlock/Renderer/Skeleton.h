@@ -14,7 +14,7 @@ namespace Zorlock {
 		Ref<Bone> GetBone(uint32_t i);
 		Ref<Bone> GetBone(std::string name);
 		Matrix4* GetBoneMatrices();
-		
+		float* GetBoneMatricesArray();
 		int BoneID(std::string name);
 		size_t GetBonesSize();
 		void SetGlobalInverse(Matrix4 mat);

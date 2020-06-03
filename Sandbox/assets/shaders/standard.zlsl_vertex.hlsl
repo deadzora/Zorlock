@@ -20,7 +20,7 @@ struct VS_INPUT
 	float3 a_Normal : NORMAL;
 	float3 a_Color : COLOR;
 	float2 a_TexCoord : TEXCOORD;
-	float4 a_BoneIDs : BLENDINDICES;
+	float4 a_BoneIDs : BINORMAL;
 	float4 a_Weights : BLENDWEIGHT;
 };
 struct PS_INPUT
@@ -37,48 +37,47 @@ PS_INPUT main(VS_INPUT input)
 
 	output.v_TexCoord = input.a_TexCoord;
 	output.v_Normal = float4(input.a_Normal,1.0);
-	output.v_Normal = mul(u_Transform,output.v_Normal);
-	output.v_Normal = normalize(output.v_Normal);
+
 	output.v_Color = input.a_Color;
 	output.v_Position = input.a_Position;
-	
-	row_major float4x4 wpos = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	row_major float4x4 BoneTransform = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	bool hasweight = false;
+	row_major float4x4 wpos = u_Transform;
+	bool hasweight = false;	
 	if(input.a_Weights.x > 0.0)
 	{
-		BoneTransform = u_Bones[int(input.a_BoneIDs.x)];
-		wpos += BoneTransform * input.a_Weights.x;
+		row_major float4x4 BoneTransform = u_Bones[int(input.a_BoneIDs.x)];
+		wpos += mul(input.a_Weights.x,BoneTransform);
 		hasweight = true;
 	}	
 	if(input.a_Weights.y > 0.0)
 	{
-		BoneTransform = u_Bones[int(input.a_BoneIDs.y)];
-		wpos += BoneTransform * input.a_Weights.y;
+		row_major float4x4 BoneTransform = u_Bones[int(input.a_BoneIDs.y)];
+		wpos += mul(input.a_Weights.y,BoneTransform);
 		hasweight = true;
 	}
 	if(input.a_Weights.z > 0.0)
 	{
-		BoneTransform = u_Bones[int(input.a_BoneIDs.z)];
-		wpos += BoneTransform * input.a_Weights.z;
+		row_major float4x4 BoneTransform = u_Bones[int(input.a_BoneIDs.z)];
+		wpos += mul(input.a_Weights.z,BoneTransform);
 		hasweight = true;
 	}
 	if(input.a_Weights.w > 0.0)
 	{
-		float finalWeight = 1.0f - ( input.a_Weights.x + input.a_Weights.y + input.a_Weights.z );
-		BoneTransform = u_Bones[int(input.a_BoneIDs.w)];
-		wpos += BoneTransform * finalWeight;
+		row_major float4x4 BoneTransform = u_Bones[int(input.a_BoneIDs.w)];
+		wpos += mul(input.a_Weights.w,BoneTransform);
+		hasweight = true;
+	}	
+	if(hasweight==true)
+	{
+		float finalWeight = 1.0 - ( input.a_Weights.x + input.a_Weights.y + input.a_Weights.z + input.a_Weights.w );
+		wpos += (u_Transform * finalWeight);
 		hasweight = true;
 	}
 	
-	if(hasweight==true)
-	{	
-		output.v_Position = mul(wpos,output.v_Position);	
-	} else {	
-		output.v_Position = mul(u_Transform,output.v_Position);
-	}	
-	output.v_Position = mul(u_ViewProjection,output.v_Position);		
-	output.v_World = mul(u_Transform,input.a_Position);	
+	output.v_Position = mul(wpos,output.v_Position);	
+	output.v_Normal = mul(wpos,output.v_Normal);
+	output.v_Normal = normalize(output.v_Normal);
+	output.v_World = mul(wpos,input.a_Position);
+	output.v_Position = mul(u_ViewProjection,output.v_Position);				
 	return output;
 
 }

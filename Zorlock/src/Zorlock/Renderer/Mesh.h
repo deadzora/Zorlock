@@ -8,6 +8,7 @@ namespace Zorlock {
 	{
 	public:
 		Mesh();
+		Mesh(std::string name);
 		~Mesh() {};
 		Ref<VertexArray> CreateVertexArray();
 		Ref<VertexBuffer> CreateVertexBuffer(float* vertices, uint32_t size);
@@ -32,6 +33,7 @@ namespace Zorlock {
 		uint32_t GetMeshID();
 
 		uint32_t vcount;
+		std::string name;
 		bool hasbones;
 	protected:
 		

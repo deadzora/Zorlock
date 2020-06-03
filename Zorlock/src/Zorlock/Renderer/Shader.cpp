@@ -49,6 +49,18 @@ namespace Zorlock {
 				s.Name = parser->vertexUniforms[i].varname;
 				s.Slot = (uint32_t)i;//parser->vertexUniforms[i].index;
 				s.Type = ShaderLibrary::GetInstance()->GetMappedValue(parser->vertexUniforms[i].vartype);
+				s.isArray = parser->vertexUniforms[i].isArray;
+				if (s.isArray)
+				{
+					if (parser->vertexUniforms[i].val_list.size() > 1)
+					{
+						
+						s.Count = std::stoi(parser->vertexUniforms[i].val_list[1]);
+					}
+					else {
+						s.Count = parser->vertexUniforms[i].index;
+					}
+				}
 				if (s.Type != ShaderDataType::None)
 				{
 					s.Size = ShaderDataTypeSize(s.Type);
@@ -104,6 +116,16 @@ namespace Zorlock {
 					s.Size = parser->pixelUniforms[i].size;
 				}
 				s.isArray = parser->pixelUniforms[i].isArray;
+				if (s.isArray)
+				{
+					if (parser->pixelUniforms[i].val_list.size() > 1)
+					{
+						s.Count = std::stoi(parser->pixelUniforms[i].val_list[1]);
+					}
+					else {
+						s.Count = parser->pixelUniforms[i].index;
+					}
+				}
 				m_FUniformVars.push_back(s);
 				if (parser->pixelUniforms[i].vartype != Zorlock::ZLSLParser::SAMPLER2D)
 				{

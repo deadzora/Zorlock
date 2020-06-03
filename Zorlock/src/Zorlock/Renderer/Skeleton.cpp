@@ -41,10 +41,28 @@ namespace Zorlock
 		mats.clear();
 		for (size_t i = 0; i < m_bones.size(); i++)
 		{
-			mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset()).transpose());
+			mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset()));
 
 		}
 		return mats.data();
+	}
+
+	float* Skeleton::GetBoneMatricesArray()
+	{
+		static std::vector<float> matsf;
+		matsf.clear();
+		for (size_t i = 0; i < m_bones.size(); i++)
+		{
+			Matrix4 m = Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset());
+			float* f = m.To4x4PtrArray();
+			for (size_t i = 0; i < 16; i++)
+			{
+				matsf.push_back(*f);
+				++f;
+			}
+			
+		}
+		return matsf.data();
 	}
 
 

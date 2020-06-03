@@ -29,30 +29,30 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	ZLREF<ZLCAMERA> camera = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateCamera(FOV, AspectRatio, nearZ, farZ);
 	mainCam = camera;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->SetMainCamera(mainCam);
-	mainCam->transform->position.z = -300.0f;
-	mainCam->transform->position.y = -100.0f;
+	mainCam->transform->position.z = -10.0f;
+	mainCam->transform->position.y = -0.0f;
 
 	///////LIGHTA
 	lightA = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightA->transform->position = VECTOR3(50, 0, 10);
+	lightA->transform->position = VECTOR3(5, 10, 10);
 	lightA->SetColor(COLOR4(0, 1, 0, 1));
 	lightA->SetStrength(1.15);
-	lightA->SetRadius(1000);
+	lightA->SetRadius(100);
 
 
 	///////LIGHTB
 	lightB = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightB->transform->position = VECTOR3(-50, 0, 10);
+	lightB->transform->position = VECTOR3(-5, 10, 10);
 	lightB->SetColor(COLOR4(1, 0, 0, 1));
-	lightB->SetStrength(0.65);
-	lightB->SetRadius(1000);
+	lightB->SetStrength(1.65);
+	lightB->SetRadius(100);
 
 	///////LIGHTC
 	lightC = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightC->transform->position = VECTOR3(0, -50, 5);
+	lightC->transform->position = VECTOR3(0, 5,5);
 	lightC->SetColor(COLOR4(0, 0, 1, 1));
 	lightC->SetStrength(3.75);
-	lightC->SetRadius(1000);
+	lightC->SetRadius(100);
 
 	//////MAIN GAME OBJECT
 	mainmodel = m_mainScene->CreateGameObject("Model");
@@ -69,7 +69,8 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	meshrenderer->AddModel("Player", "assets/models/AnimeBoy.DAE",1.0f);
 	m_meshrenderer = meshrenderer;
 	mainmodel->transform->position.z = 10.0f;
-	mainmodel->transform->position.y = 5.0f;
+	mainmodel->transform->position.y = 10.0f;
+	mainmodel->transform->scale = VECTOR3(0.1f, 0.1f, 0.1f);
 	///////MATERIAL SETTINGS
 	std::vector<ZLREF<ZLMATERIAL>>& mats = meshrenderer->GetMaterials();
 	for (size_t i = 0; i < mats.size(); i++)

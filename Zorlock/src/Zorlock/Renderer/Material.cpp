@@ -146,8 +146,8 @@ namespace Zorlock
 			if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
 			{
 				//m_Shader->SetBuffer(name, buffer, size, count);
-				m_Shader->SetFloat("u_SurfaceProperties.specular", m_surfaceProps.specular);
-				m_Shader->SetFloat("u_SurfaceProperties.shininess", m_surfaceProps.shininess);
+				//m_Shader->SetFloat("u_SurfaceProperties.specular", m_surfaceProps.specular);
+				//m_Shader->SetFloat("u_SurfaceProperties.shininess", m_surfaceProps.shininess);
 			}
 			else if (RendererAPI::GetAPI() == RendererAPI::API::DX11)
 			{

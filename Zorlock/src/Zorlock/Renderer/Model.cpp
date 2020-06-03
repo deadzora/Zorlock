@@ -122,17 +122,17 @@ namespace Zorlock
 				{ 
 				case RendererAPI::API::DX11:
 				{
-					mat->ApplyBuffer("u_Bones", m_skeleton->GetBoneMatrices(), sizeof(Matrix4), m_skeleton->GetBonesSize());
+					mat->GetShader()->SetBuffer("u_Bones", m_skeleton->GetBoneMatrices(), sizeof(Matrix4) * m_skeleton->GetBonesSize(), m_skeleton->GetBonesSize());
 					break;
 				}
 				case RendererAPI::API::OpenGL:
 				{
 					Matrix4* matx = m_skeleton->GetBoneMatrices();
-					mat->GetShader()->Bind();
 					for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
 					{
-						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);
+						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);						
 					}
+					break;
 				}
 				}
 				
@@ -713,9 +713,9 @@ namespace Zorlock
 
 	}
 
-	Ref<Mesh> ZModel::CreateMesh()
+	Ref<Mesh> ZModel::CreateMesh(std::string name)
 	{		
-		Ref<Mesh> mesh = Ref<Mesh>(new Mesh());
+		Ref<Mesh> mesh = Ref<Mesh>(new Mesh(name));
 		if (mesh != nullptr)
 		{
 			printf("Created Mesh \n");
@@ -791,33 +791,36 @@ namespace Zorlock
 
 	void ZModel::ProcessMeshes(aiNode* node, const aiScene* scene)
 	{
+		uint32_t meshoffset = 0;
+		//printf("Parsing Mesh: %s \n", node->mName.C_Str());
 		MATRIX4 mat = m_skeleton->GetBone(node->mName.data)->GetBaseMat();
 		for (UINT i = 0; i < node->mNumMeshes; i++)
 		{
-			printf("Parsing Mesh! \n");
+			
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, mat);
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, meshoffset, mat);
 		}
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
-			this->NodeChild(node->mChildren[i], scene);
+			this->NodeChild(node->mChildren[i], meshoffset, scene);
 		}
 
 	}
 
-	void ZModel::NodeChild(aiNode* node, const aiScene* scene)
+	void ZModel::NodeChild(aiNode* node, uint32_t& meshoffset, const aiScene* scene)
 	{
+		//printf("Parsing Mesh: %s \n", node->mName.C_Str());
 		for (UINT i = 0; i < node->mNumMeshes; i++)
 		{
-			printf("Parsing Mesh! \n");
+			
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene);
+			Ref<Mesh> zmesh = this->ProcessMesh(mesh, scene, meshoffset);
 		}
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
-			this->NodeChild(node->mChildren[i], scene);
+			this->NodeChild(node->mChildren[i], meshoffset, scene);
 		}
 	}
 
@@ -878,13 +881,13 @@ namespace Zorlock
 
 	}
 
-	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& nodetransform)
+	Ref<Mesh> ZModel::ProcessMesh(aiMesh* mesh, const aiScene* scene, uint32_t& meshoffset, const MATRIX4& nodetransform)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		UINT nv = 0;
-		Ref<Mesh> quadmesh = CreateMesh();
-
+		Ref<Mesh> quadmesh = CreateMesh(mesh->mName.C_Str());
+		
 
 		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -921,7 +924,7 @@ namespace Zorlock
 
 			nv++;
 		}
-
+		
 		for (UINT i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
@@ -949,6 +952,7 @@ namespace Zorlock
 					);
 
 					bone->SetOffset(nodeMatrix);
+					//printf("Submesh: %u %s Bone ID: %u %s  \n", quadmesh->GetMeshID(),quadmesh->name.c_str(), bone->GetBoneID(), mesh->mBones[b]->mName.C_Str());
 					/*
 					Vector3 pos;
 					Quaternion rot;
@@ -963,37 +967,37 @@ namespace Zorlock
 					for (size_t w = 0; w < mesh->mBones[b]->mNumWeights; w++)
 					{
 						bone->SetBoneWeight(quadmesh->GetMeshID(), mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId);
-						if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.x != 0.0f)
+						if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.x > 0.0f)
 						{
-							if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.y != 0.0f)
+							if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.y > 0.0f)
 							{
-								if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.z != 0.0f)
+								if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.z > 0.0f)
 								{
-									if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.w != 0.0f)
+									if (vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.w > 0.0f)
 									{
 
 									}
 									else {
-										//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+										//printf("WeightW: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
 										vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.w = bone->GetBoneID();
 										vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.w = mesh->mBones[b]->mWeights[w].mWeight;
 									}
 								}
 								else {
-									//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+									//printf("WeightZ: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
 									vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.z = bone->GetBoneID();
 									vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.z = mesh->mBones[b]->mWeights[w].mWeight;
 								}
 							}
 							else {
-								//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+								//printf("WeightY: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
 								vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.y = bone->GetBoneID();
 								vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.y = mesh->mBones[b]->mWeights[w].mWeight;
 							}
 
 						}
 						else {
-							//printf("Weight: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
+							//printf("WeighXt: %f Vertex ID: %u BoneID: %s %u \n", mesh->mBones[b]->mWeights[w].mWeight, mesh->mBones[b]->mWeights[w].mVertexId, mesh->mBones[b]->mName.data, bone->GetBoneID());
 							vertices[mesh->mBones[b]->mWeights[w].mVertexId].boneids.x = bone->GetBoneID();
 							vertices[mesh->mBones[b]->mWeights[w].mVertexId].weights.x = mesh->mBones[b]->mWeights[w].mWeight;
 						}
@@ -1004,7 +1008,7 @@ namespace Zorlock
 			}
 
 		}
-
+		meshoffset += nv;
 		aiString mname;
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		mname = material->mProperties[AI_MATKEY_NAME]->mData;

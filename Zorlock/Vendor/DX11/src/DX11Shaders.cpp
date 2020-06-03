@@ -171,6 +171,7 @@ UINT DX11Raz::RazShader::CreateVertexCB(std::string cbname, UINT slot, void* buf
 	cbuffer->varname = cbname;
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
+	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
 	cbuffer->data = bufferdata;
 	vc_buffer.push_back(cbuffer);
 	return 1;
@@ -199,7 +200,7 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	cbuffer->varname = cbname;
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
-	printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
+	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
 	cbuffer->data = bufferdata;
 	pc_buffer.push_back(cbuffer);
 	return 1;
@@ -351,7 +352,7 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 
 	if (buffer==0)
 	{
-		OutputDebugStringW(L"Vertex ConstantBuffer Buffer Pointer was Null");
+		printf("Vertex ConstantBuffer: %s Pointer was Null",cbname);
 		return false;
 	}
 
@@ -396,10 +397,8 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 
 	if (buffer == 0)
 	{
-		std::wstringstream ss;
-		
-		//ss << L" Could not find Pixel Var " << RAZTEXTUREFILEW(cbname) << L"\n";
-		printf("Could not pixel find %s \n", cbname.c_str());
+
+		printf("Pixel ConstantBuffer: %s Pointer was Null", cbname);
 		return false;
 	}
 	//printf("Applying %s \n", buffer->varname.c_str());

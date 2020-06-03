@@ -8,7 +8,7 @@ layout(location = 0) in vec4 a_Position as Z_Position;
 layout(location = 1) in vec3 a_Normal as Z_Normal;
 layout(location = 2) in vec3 a_Color as Z_Color;
 layout(location = 3) in vec2 a_TexCoord as Z_Texcoord;
-layout(location = 4) in vec4 a_BoneIDs as Z_Blendindices;
+layout(location = 4) in vec4 a_BoneIDs as Z_Binormal;
 layout(location = 5) in vec4 a_Weights as Z_Blendweight;
 
 uniform mat4 u_ViewProjection;
@@ -26,48 +26,47 @@ function void main()
 
 	v_TexCoord = a_TexCoord;
 	v_Normal = vec4(a_Normal,1.0);
-	v_Normal = Z_Mul(u_Transform, v_Normal);
-	v_Normal = normalize(v_Normal);
+
 	v_Color = a_Color;
 	v_Position = a_Position;
-	
-	mat4 wpos = mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-	mat4 BoneTransform = mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-	bool hasweight = false;
+	mat4 wpos = u_Transform;
+	bool hasweight = false;	
 	if(a_Weights.x > 0.0)
 	{
-		BoneTransform = u_Bones[int(a_BoneIDs.x)];
-		wpos += BoneTransform * a_Weights.x;
+		mat4 BoneTransform = u_Bones[int(a_BoneIDs.x)];
+		wpos += Z_Mul(a_Weights.x,BoneTransform);
 		hasweight = true;
 	}	
 	if(a_Weights.y > 0.0)
 	{
-		BoneTransform = u_Bones[int(a_BoneIDs.y)];
-		wpos += BoneTransform * a_Weights.y;
+		mat4 BoneTransform = u_Bones[int(a_BoneIDs.y)];
+		wpos += Z_Mul(a_Weights.y,BoneTransform);
 		hasweight = true;
 	}
 	if(a_Weights.z > 0.0)
 	{
-		BoneTransform = u_Bones[int(a_BoneIDs.z)];
-		wpos += BoneTransform * a_Weights.z;
+		mat4 BoneTransform = u_Bones[int(a_BoneIDs.z)];
+		wpos += Z_Mul(a_Weights.z,BoneTransform);
 		hasweight = true;
 	}
 	if(a_Weights.w > 0.0)
 	{
-		float finalWeight = 1.0f - ( a_Weights.x + a_Weights.y + a_Weights.z );
-		BoneTransform = u_Bones[int(a_BoneIDs.w)];
-		wpos += BoneTransform * finalWeight;
+		mat4 BoneTransform = u_Bones[int(a_BoneIDs.w)];
+		wpos += Z_Mul(a_Weights.w,BoneTransform);
+		hasweight = true;
+	}	
+	if(hasweight==true)
+	{
+		float finalWeight = 1.0 - ( a_Weights.x + a_Weights.y + a_Weights.z + a_Weights.w );
+		wpos += (u_Transform * finalWeight);
 		hasweight = true;
 	}
 	
-	if(hasweight==true)
-	{	
-		v_Position = Z_Mul(wpos, v_Position);	
-	} else {	
-		v_Position = Z_Mul(u_Transform, v_Position);
-	}	
-	v_Position = Z_Mul(u_ViewProjection, v_Position);		
-	v_World = Z_Mul(u_Transform, a_Position);	
+	v_Position = Z_Mul(wpos, v_Position);	
+	v_Normal = Z_Mul(wpos, v_Normal);
+	v_Normal = normalize(v_Normal);
+	v_World = Z_Mul(wpos, a_Position);
+	v_Position = Z_Mul(u_ViewProjection, v_Position);				
 	Z_Return(v_Position);		
 	
 }

@@ -52,7 +52,7 @@ namespace Zorlock
 		void CreateSphere(uint32_t segments);
 		void CreateCylinder(uint32_t segments);
 		void CreateCone(uint32_t segments);
-		Ref<Mesh> CreateMesh();
+		Ref<Mesh> CreateMesh(std::string = "mesh");
 		void AddMesh(Ref<Mesh> mesh);
 		void RemoveMesh(Ref<Mesh> mesh);
 		Ref<Mesh> GetMesh(uint32_t index);
@@ -69,9 +69,9 @@ namespace Zorlock
 
 
 		void ProcessMeshes(aiNode* node, const aiScene* scene);
-		void NodeChild(aiNode* node, const aiScene* scene);
+		void NodeChild(aiNode* node, uint32_t& meshoffset, const aiScene* scene);
 		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent = nullptr);
-		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, const MATRIX4& nodetransform = MATRIX4::IDENTITY());
+		Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, uint32_t& meshoffset, const MATRIX4& nodetransform = MATRIX4::IDENTITY());
 		void LoadMaterialTextures(Ref<Material> material, aiMaterial* pMaterial, aiTextureType textype, const aiScene* pscene);
 		AssimpTextureStorageType DetermineTextureStorageType(const aiScene* pscene, aiMaterial* pmaterial, unsigned int index, aiTextureType textype);
 		int GetTextureIndex(aiString* pStr);

@@ -5,7 +5,10 @@
 
 namespace Zorlock
 {
-	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0), hasbones(false), m_meshID(0)
+	Mesh::Mesh() : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0), hasbones(false), m_meshID(0), name("mesh")
+	{
+	}
+	Mesh::Mesh(std::string name) : drawMatrix(MATRIX4::IDENTITY()), transformMatrix(MATRIX4::IDENTITY()), vcount(0), hasbones(false), m_meshID(0), name(name)
 	{
 	}
 	Ref<VertexArray> Mesh::CreateVertexArray()
