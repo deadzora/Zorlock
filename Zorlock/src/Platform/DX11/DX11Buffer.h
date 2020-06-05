@@ -33,7 +33,7 @@ namespace Zorlock {
 
 	private:
 		
-		DX11Raz::RazVertexBuffer* m_RendererID;
+		Ref<DX11Raz::RazVertexBuffer> m_RendererID;
 		BufferLayout m_Layout;
 	};
 
@@ -49,7 +49,7 @@ namespace Zorlock {
 
 		virtual uint32_t GetCount() const { return m_Count; }
 	private:
-		DX11Raz::RazIndexBuffer* m_RendererID;
+		Ref<DX11Raz::RazIndexBuffer> m_RendererID;
 		UINT m_Count;
 	};
 

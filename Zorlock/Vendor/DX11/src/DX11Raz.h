@@ -1,4 +1,5 @@
 #pragma once
+#include "DX11Defs.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -9,6 +10,8 @@
 
 namespace DX11Raz
 {
+
+
 #define RAZGETEXTENSION(f) f.substr(f.find_last_of(".") + 1)
 #define RAZFILEEXISTS(f) std::filesystem::exists(f)
 
@@ -33,74 +36,74 @@ namespace DX11Raz
 
 	bool RazDX11Initialize();
 	bool RazDX11Release();
-	void RazDX11CreateContext(ZWindow* zhandle);
-	void RazSetCLSColor(DX11DeviceContext* dhandle, float r, float g, float b, float a);
-	void RazCLS(DX11DeviceContext* dhandle);
+	void RazDX11CreateContext(RAZPTR<ZWindow> zhandle);
+	void RazSetCLSColor(RAZPTR<DX11DeviceContext> dhandle, float r, float g, float b, float a);
+	void RazCLS(RAZPTR<DX11DeviceContext> dhandle);
 	void RazSetViewport(UINT width, UINT height);
-	RazVertexBuffer* RazCreateVertexBuffer();
-	void RazDeleteVertexBuffer(RazVertexBuffer* v);
-	RazIndexBuffer * RazCreateIndexBuffer();
-	void RazDeleteIndexBuffer(RazIndexBuffer* i);
-	RazShader* RazCreateShader();
-	void RazDeleteShader(RazShader * shader);
-	void RazSetCurrentShader(RazShader* shader);
-	RazShader* RazGetCurrentShader();
-	void RazSetCurrentContext(DX11DeviceContext* dhandle);
-	DX11DeviceContext* RazGetCurrentContext();
-	void RazSetCurrentVertexBuffer(RazVertexBuffer* vbuffer);
-	RazVertexBuffer* RazGetCurrentVertexBuffer();
-	void RazSetCurrentIndexBuffer(RazIndexBuffer* ibuffer);
-	RazIndexBuffer* RazGetCurrentIndexBuffer();
-	RazTexture* RazGetCurrentTexture();
-	RazTexture* RazCreateTexture(const DX11Color& color, aiTextureType type);
-	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type);
-	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type);
-	RazTexture* RazCreateTexture(const wchar_t* filename, aiTextureType type);
-	RazTexture* RazCreateTexture(std::string filename, aiTextureType type);
-	RazTexture* RazCreateTexture(ID3D11ShaderResourceView* textureView, aiTextureType type);
+	RAZPTR<RazVertexBuffer> RazCreateVertexBuffer();
+	void RazDeleteVertexBuffer(RAZPTR<RazVertexBuffer> v);
+	RAZPTR<RazIndexBuffer> RazCreateIndexBuffer();
+	void RazDeleteIndexBuffer(RAZPTR<RazIndexBuffer> i);
+	RAZPTR<RazShader> RazCreateShader();
+	void RazDeleteShader(RAZPTR<RazShader> shader);
+	void RazSetCurrentShader(RAZPTR<RazShader> shader);
+	RAZPTR<RazShader> RazGetCurrentShader();
+	void RazSetCurrentContext(RAZPTR<DX11DeviceContext> dhandle);
+	RAZPTR<DX11DeviceContext> RazGetCurrentContext();
+	void RazSetCurrentVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer);
+	RAZPTR<RazVertexBuffer> RazGetCurrentVertexBuffer();
+	void RazSetCurrentIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
+	RAZPTR<RazIndexBuffer> RazGetCurrentIndexBuffer();
+	RAZPTR<RazTexture> RazGetCurrentTexture();
 
-	void RazSetCurrentTexture(RazTexture* texture);
-	void RazSetDeleteTexture(RazTexture* texture);
-	void RazSetLayout(RazVertexBuffer* vbuffer, ID3D10Blob* vertexshader);
-	void RazSetLayout(ID3D10Blob* vertexshader);
-	void RazSetLayout(RazVertexBuffer* vbuffer);
+	RAZPTR<RazTexture> RazCreateTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, aiTextureType type);
+	RAZPTR<RazTexture> RazCreateTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, UINT size, aiTextureType type);
+	RAZPTR<RazTexture> RazCreateTexture(const wchar_t* filename, aiTextureType type);
+	RAZPTR<RazTexture> RazCreateTexture(std::string filename, aiTextureType type);
+	RAZPTR<RazTexture> RazCreateTexture(RAZPTR<ID3D11ShaderResourceView> textureView, aiTextureType type);
+
+	void RazSetCurrentTexture(RAZPTR<RazTexture> texture);
+	void RazSetDeleteTexture(RAZPTR<RazTexture> texture);
+	void RazSetLayout(RAZPTR<RazVertexBuffer> vbuffer, RAZPTR<ID3D10Blob> vertexshader);
+	void RazSetLayout(RAZPTR<ID3D10Blob> vertexshader);
+	void RazSetLayout(RAZPTR<RazVertexBuffer> vbuffer);
 	void RazSetLayout();
-	void RazBindIndexBuffer(RazIndexBuffer* ibuffer);
+	void RazBindIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
 	void RazBindIndexBuffer();
-	void RazBindIndices(RazIndexBuffer* ibuffer, UINT* indices, UINT count);
+	void RazBindIndices(RAZPTR<RazIndexBuffer> ibuffer, UINT* indices, UINT count);
 	void RazBindIndices(UINT* indices, UINT count);
 	void RazBindIndices(std::vector<DWORD> indices);
-	void RazBindVertices(RazVertexBuffer* vbuffer, float* verts, UINT size);
-	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT size);
-	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT bytewidth, UINT size);
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, float* verts, UINT size);
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, void* vertices, UINT size);
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, void* vertices, UINT bytewidth, UINT size);
 	void RazBindVertices(float* verts, UINT size);
 	void RazBindVertices(void* vertices, UINT size);
 	void RazBindVertices(UINT size);
 	void RazFlip(bool vsync);
-	void RazApplyVertexShaderConstants(RazShader* shader);
-	void RazApplyPixelShaderConstants(RazShader* shader);
+	void RazApplyVertexShaderConstants(RAZPTR<RazShader> shader);
+	void RazApplyPixelShaderConstants(RAZPTR<RazShader> shader);
 	void RazApplyVertexShaderConstants();
 	void RazApplyPixelShaderConstants();
-	void RazApplyVertexShader(DX11DeviceContext* dhandle,RazShader* shader);
-	void RazApplyPixelShader(DX11DeviceContext* dhandle,RazShader* shader);
-	void RazApplyShader(DX11DeviceContext* dhandle,RazShader* shader);
-	void RazApplyVertexShader(RazShader* shader);
-	void RazApplyPixelShader(RazShader* shader);
-	void RazApplyShader(RazShader* shader);
+	void RazApplyVertexShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader);
+	void RazApplyPixelShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader);
+	void RazApplyShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader);
+	void RazApplyVertexShader(RAZPTR<RazShader> shader);
+	void RazApplyPixelShader(RAZPTR<RazShader> shader);
+	void RazApplyShader(RAZPTR<RazShader> shader);
 	void RazApplyVertexShader();
 	void RazApplyPixelShader();
 	void RazApplyShader();
-	void RazSetBlendState(DX11DeviceContext* dhandle);
+	void RazSetBlendState(RAZPTR<DX11DeviceContext> dhandle);
 	void RazSetBlendState();
-	void RazDrawIndexed(DX11DeviceContext* dhandle,UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
+	void RazDrawIndexed(RAZPTR<DX11DeviceContext> dhandle,UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
 	void RazDrawIndexed(UINT index_count, UINT start_vertex_index, UINT base_vertex_location);
-	void RazApplyShaderTexture(RazShader* shader,std::string name, RazTexture* texture);
-	void RazApplyShaderTexture(std::string name, RazTexture* texture);
-	void RazApplyShaderTexture(RazTexture* texture);
-	void RazApplyShaderTexture(RazTexture* texture, UINT slot);
-	void RazApplyVertexBuffer(RazVertexBuffer* v);
+	void RazApplyShaderTexture(RAZPTR<RazShader> shader,std::string name, RAZPTR<RazTexture> texture);
+	void RazApplyShaderTexture(std::string name, RAZPTR<RazTexture> texture);
+	void RazApplyShaderTexture(RAZPTR<RazTexture> texture);
+	void RazApplyShaderTexture(RAZPTR<RazTexture> texture, UINT slot);
+	void RazApplyVertexBuffer(RAZPTR<RazVertexBuffer> v);
 	void RazApplyVertexBuffer();
-	void RazApplyIndexBuffer(RazIndexBuffer* ibuffer);
+	void RazApplyIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
 	//void RazApplyShaderTextureIndex(RazShader* shader, UINT index, std::string name, RazTexture* texture);
 	//void RazApplyShaderTextureIndex(UINT index, std::string name, RazTexture* texture);
 
@@ -115,87 +118,82 @@ namespace DX11Raz
 		void Release();
 		//bool SetContext(HWND hwnd, RECT rect);
 	public:
-		static DX11GraphicsEngine* Get();
+		static RAZPTR<DX11GraphicsEngine> Get();
 	public:
 		void Cls();
 		void Cls(float r, float g, float b, float a);
 		void Flip(bool vsync = false);
 		void SetViewport(UINT x, UINT y, UINT width, UINT height);
 
-		ID3D11Device* GetDevice();
-		IDXGIFactory* GetFactory();
+		RAZPTR<ID3D11Device> GetDevice();
+		RAZPTR<IDXGIFactory> GetFactory();
 		//get set current shader
-		RazShader* GetCurrentShader();
-		void SetCurrentShader(RazShader * shader);
-		void AddShader(RazShader* shader);
-		void RemoveShader(RazShader* shader);
+		RAZPTR<RazShader> GetCurrentShader();
+		void SetCurrentShader(RAZPTR<RazShader> shader);
+		void AddShader(RAZPTR<RazShader> shader);
+		void RemoveShader(RAZPTR<RazShader> shader);
 
 		//get set current context
-		DX11DeviceContext* GetCurrentDeviceContext();
-		void SetCurrentDeviceContext(DX11DeviceContext* curcontext);
-		void AddDeviceContext(DX11DeviceContext* curcontext);
-		void RemoveDeviceContext(DX11DeviceContext* context);
+		RAZPTR<DX11DeviceContext> GetCurrentDeviceContext();
+		void SetCurrentDeviceContext(RAZPTR<DX11DeviceContext> curcontext);
+		void AddDeviceContext(RAZPTR<DX11DeviceContext> curcontext);
+		void RemoveDeviceContext(RAZPTR<DX11DeviceContext> context);
 		//get set current indexbuffer
-		RazVertexBuffer* GetCurrentVertexBuffer();
-		void SetCurrentVertexBuffer(RazVertexBuffer* vbuffer);
-		void AddVertexBuffer(RazVertexBuffer* vbuffer);
-		void RemoveVertexBuffer(RazVertexBuffer* vbuffer);
+		RAZPTR<RazVertexBuffer> GetCurrentVertexBuffer();
+		void SetCurrentVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer);
+		void AddVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer);
+		void RemoveVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer);
 		
-		RazIndexBuffer* GetCurrentIndexBuffer();
-		void SetCurrentIndexBuffer(RazIndexBuffer* ibuffer);
-		void AddIndexBuffer(RazIndexBuffer* ibuffer);
-		void RemoveIndexBuffer(RazIndexBuffer* ibuffer);
+		RAZPTR<RazIndexBuffer> GetCurrentIndexBuffer();
+		void SetCurrentIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
+		void AddIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
+		void RemoveIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer);
 		//get set current texture
-		RazTexture* GetCurrentTexture();
-		void SetCurrentTexture(RazTexture* texture);
-		void AddTexture(RazTexture* texture);
-		void RemoveTexture(RazTexture* texture);
-		DX11DeviceContext* GetImmediateDeviceContext();
+		RAZPTR<RazTexture> GetCurrentTexture();
+		void SetCurrentTexture(RAZPTR<RazTexture> texture);
+		void AddTexture(RAZPTR<RazTexture> texture);
+		void RemoveTexture(RAZPTR<RazTexture> texture);
+		RAZPTR<DX11DeviceContext> GetImmediateDeviceContext();
 		//ID3D11DeviceContext* GetContext();
-		DX11SwapChain* CreateSwapChain();
-		void AddSwapChain(DX11SwapChain* swapchain);
-		void RemoveSwapChain(DX11SwapChain* swapchain);
+		RAZPTR<DX11SwapChain> CreateSwapChain();
+		void AddSwapChain(RAZPTR<DX11SwapChain> swapchain);
+		void RemoveSwapChain(RAZPTR<DX11SwapChain> swapchain);
 
 #if defined(ZL_DEBUG)
 		//ID3D11Debug* DXEnableDebug(DX11DebugCallback func);
 #endif
 	private:
 		bool intialized;
-		RazShader* currentShader;
-
-		RazVertexBuffer* currentVertexBuffer;
-
-		RazIndexBuffer* currentIndexBuffer;
-
-		RazTexture* currentTexture;
-
-		DX11DeviceContext* current_device_context;
-
-		ID3D11Device* m_d3d_device;
-		IDXGIDevice* m_dxgi_device;
-		IDXGIAdapter* m_dxgi_adapter;
-		IDXGIFactory* m_dxgi_factory;
-		ID3D11InfoQueue* d3dInfoQueue;
+		RAZPTR<RazShader> currentShader;
+		RAZPTR<RazVertexBuffer> currentVertexBuffer;
+		RAZPTR<RazIndexBuffer> currentIndexBuffer;
+		RAZPTR<RazTexture> currentTexture;
+		RAZPTR<DX11DeviceContext> current_device_context;
+		RAZPTR<ID3D11Device> m_d3d_device;
+		RAZPTR<IDXGIDevice> m_dxgi_device;
+		RAZPTR<IDXGIAdapter> m_dxgi_adapter;
+		RAZPTR<IDXGIFactory> m_dxgi_factory;
+		RAZPTR<ID3D11InfoQueue> d3dInfoQueue;
 		D3D_FEATURE_LEVEL feature_level;
 
-		ID3D11DeviceContext* m_imm_context;
+		RAZPTR<ID3D11DeviceContext> m_imm_context;
 		//DX11SwapChain* m_swapchain;
-		ID3D11Debug* m_d3dDebug;
+		RAZPTR<ID3D11Debug> m_d3dDebug;
 		
 #ifdef ZL_DEBUG_DX11
 		DX11DebugCallback DebugCall;
 
 #endif
 		//main context
-		DX11DeviceContext* m_imm_device_context;
+		RAZPTR<DX11DeviceContext> m_imm_device_context;
 
 		//Keep a list of everything created so it can be released
-		std::vector< RazShader*> shaders;
-		std::vector< RazVertexBuffer*> vbuffers;
-		std::vector< RazIndexBuffer*> ibuffers;
-		std::vector< RazTexture*> textures;
-		std::vector< DX11DeviceContext*> contexts;
-		std::vector< DX11SwapChain*> swapchains;
+		std::vector<RAZPTR<RazShader>> shaders;
+		std::vector< RAZPTR<RazVertexBuffer>> vbuffers;
+		std::vector< RAZPTR<RazIndexBuffer>> ibuffers;
+		std::vector< RAZPTR<RazTexture>> textures;
+		std::vector< RAZPTR<DX11DeviceContext>> contexts;
+		std::vector< RAZPTR<DX11SwapChain>> swapchains;
 
 	};
 

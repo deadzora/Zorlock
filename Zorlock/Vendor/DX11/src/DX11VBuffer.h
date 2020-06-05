@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <vector>
 #include "DX11Vertex.h"
+#include "DX11Defs.h"
 
 namespace DX11Raz
 {
@@ -15,7 +16,7 @@ namespace DX11Raz
 	public:
 		RazVertexBuffer();
 		bool SetLayout();
-		bool SetLayout(ID3D10Blob* vertexshader);
+		bool SetLayout(RAZPTR<ID3D10Blob> vertexshader);
 		void Release();	
 		void SetStride(UINT s);
 		void SetIndex(uint32_t index);
@@ -35,8 +36,8 @@ namespace DX11Raz
 		UINT stride;
 		std::vector<RazVertex> vertices;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> vlayout;
-		ID3D11Buffer* m_buffer;
-		ID3D11InputLayout* m_layout;
+		RAZPTR<ID3D11Buffer> m_buffer;
+		RAZPTR<ID3D11InputLayout> m_layout;
 
 
 	};

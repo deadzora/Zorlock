@@ -26,19 +26,19 @@ namespace DX11Raz
 	RazTexture::RazTexture(const DX11Color& color, aiTextureType type)
 	{
 		this->Init1x1ColorTexture(color, type);
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 	}
 
-	RazTexture::RazTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type)
+	RazTexture::RazTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, aiTextureType type)
 	{
 		this->InitColorTexture(colorData, width, height, type);
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 	}
 
-	RazTexture::RazTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	RazTexture::RazTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, UINT size, aiTextureType type)
 	{
 		this->InitColorTextureArray(colorData, width, height, size, type);
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 	}
 
 	
@@ -49,23 +49,27 @@ namespace DX11Raz
 		{
 			if (RAZTEXTUREFILE(filename) == ".dds" || RAZTEXTUREFILE(filename) == ".DDS")
 			{
-				HRESULT hr = DirectX::CreateDDSTextureFromFile(DX11GraphicsEngine::Get()->GetDevice(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext(), filename, nullptr, &textureView);
+				ID3D11ShaderResourceView* textview;
+				HRESULT hr = DirectX::CreateDDSTextureFromFile(DX11GraphicsEngine::Get()->GetDevice().get(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext().get(), filename, nullptr, &textview);
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load DDS Texture \r\n");
-					this->textureView->GetResource(&this->texture);
+					//this->textureView->GetResource(&this->texture);
 					
 				}
+				textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 			}
 			else
 			{
-				HRESULT hr = DirectX::CreateWICTextureFromFile(DX11GraphicsEngine::Get()->GetDevice(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext(), filename, nullptr, &textureView);
+				ID3D11ShaderResourceView* textview;
+				HRESULT hr = DirectX::CreateWICTextureFromFile(DX11GraphicsEngine::Get()->GetDevice().get(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext().get(), filename, nullptr, &textview);
 
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load Texture \r\n");
-					this->textureView->GetResource(&this->texture);
+					//this->textureView->GetResource(&(texture.get()));
 				}
+				textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 			}
 			
 			
@@ -76,7 +80,7 @@ namespace DX11Raz
 			
 		}
 
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 
 
 	}
@@ -87,23 +91,27 @@ namespace DX11Raz
 		{
 			if (RAZGETEXTENSION(filename) == ".dds" || RAZGETEXTENSION(filename) == ".DDS")
 			{
-				HRESULT hr = DirectX::CreateDDSTextureFromFile(DX11GraphicsEngine::Get()->GetDevice(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext(), RAZTEXTUREFILEW(filename), nullptr, &textureView);
+				ID3D11ShaderResourceView* textview;
+				HRESULT hr = DirectX::CreateDDSTextureFromFile(DX11GraphicsEngine::Get()->GetDevice().get(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext().get(), RAZTEXTUREFILEW(filename), nullptr, &textview);
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load DDS Texture \r\n");
 					
-					this->textureView->GetResource(&this->texture);
+					//this->textureView->GetResource(&this->texture);
 				}
+				textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 			}
 			else
 			{
-				HRESULT hr = DirectX::CreateWICTextureFromFile(DX11GraphicsEngine::Get()->GetDevice(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext(), RAZTEXTUREFILEW(filename), nullptr, &textureView);
+				ID3D11ShaderResourceView* textview;
+				HRESULT hr = DirectX::CreateWICTextureFromFile(DX11GraphicsEngine::Get()->GetDevice().get(), DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext().get(), RAZTEXTUREFILEW(filename), nullptr, &textview);
 
 				if (!SUCCEEDED(hr))
 				{
 					OutputDebugString(L"Failed to Load Texture \r\n");
-					this->textureView->GetResource(&this->texture);
+					//this->textureView->GetResource(&this->texture);
 				}
+				textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 			}
 			
 		}
@@ -112,32 +120,36 @@ namespace DX11Raz
 			texture = nullptr;
 		}
 
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 
 
 	}
 
-	RazTexture::RazTexture(ID3D11ShaderResourceView* textureView, aiTextureType type)
+	RazTexture::RazTexture(RAZPTR<ID3D11ShaderResourceView> textureView, aiTextureType type)
 	{
 		this->type = type;
 		this->textureView = textureView;
-		this->textureView->GetResource(&this->texture);
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		ID3D11Resource* text = texture.get();
+		this->textureView->GetResource(&text);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 	}
 
 	RazTexture::RazTexture(const uint8_t* pData, size_t size, aiTextureType type)
 	{
 		this->type = type;
 		//not thread safe, remove context for threading
-		HRESULT hr = DirectX::CreateWICTextureFromMemory(DX11GraphicsEngine::Get()->GetDevice(), nullptr, pData, size, &texture, &textureView);
+		ID3D11ShaderResourceView* textview;
+		ID3D11Resource* text;
+		HRESULT hr = DirectX::CreateWICTextureFromMemory(DX11GraphicsEngine::Get()->GetDevice().get(), nullptr, pData, size, &text, &textview);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Texture \r\n");
-			textureView = 0;
+			textureView = nullptr;
 			texture = nullptr;
 		}
-
-		DX11GraphicsEngine::Get()->AddTexture(this);
+		textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
+		texture = RAZPTR<ID3D11Resource>(text);
+		DX11GraphicsEngine::Get()->AddTexture(RAZPTR<RazTexture>(this));
 	}
 
 	aiTextureType RazTexture::GetType()
@@ -145,39 +157,40 @@ namespace DX11Raz
 		return this->type;
 	}
 
-	ID3D11Resource* RazTexture::GetTexture()
+	RAZPTR<ID3D11Resource> RazTexture::GetTexture()
 	{
 		return this->texture;
 	}
 
-	ID3D11ShaderResourceView* RazTexture::GetTextureView()
+	RAZPTR<ID3D11ShaderResourceView> RazTexture::GetTextureView()
 	{
 		return this->textureView;
 	}
 
 	ID3D11ShaderResourceView** RazTexture::GetTextureAddress()
 	{
-		return &this->textureView;
+		ID3D11ShaderResourceView* text = textureView.get();
+		return &text;
 	}
 
-	void RazTexture::InsertTexture(RazTexture* rtexture, UINT index)
+	void RazTexture::InsertTexture(RAZPTR<RazTexture> rtexture, UINT index)
 	{
 		D3D11_MAPPED_SUBRESOURCE init_data = {};
 		HRESULT hr;
-		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(rtexture->texture, 0, D3D11_MAP_READ, 0, &init_data);
+		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(rtexture->texture.get(), 0, D3D11_MAP_READ, 0, &init_data);
 		if (FAILED(hr))
 		{
 			OutputDebugStringW(L"Could not read Texture Data");
 			return;
 		}
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(rtexture->texture, 0);
-		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(texture, index, D3D11_MAP_WRITE, 0, &init_data);
+		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(rtexture->texture.get(), 0);
+		hr = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Map(texture.get(), index, D3D11_MAP_WRITE, 0, &init_data);
 		if (FAILED(hr))
 		{
 			OutputDebugStringW(L"Could not write Texture Data");
 			return;
 		}
-		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(texture, index);		
+		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext()->Unmap(texture.get(), index);		
 	}
 
 	void RazTexture::Release()
@@ -240,17 +253,17 @@ namespace DX11Raz
 
 	void RazTexture::Init1x1ColorTexture(const DX11Color& color, aiTextureType type)
 	{
-		this->InitColorTexture(&color, 1, 1, type);
+		this->InitColorTexture(RAZPTR<DX11Color>(new DX11Color(color)), 1, 1, type);
 	}
 
-	void RazTexture::InitColorTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type)
+	void RazTexture::InitColorTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, aiTextureType type)
 	{
 		this->type = type;
 		CD3D11_TEXTURE2D_DESC textureDesc(DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 		ID3D11Texture2D* p2DTexture = nullptr;
 		D3D11_SUBRESOURCE_DATA initData = {};
 
-		initData.pSysMem = colorData;
+		initData.pSysMem = colorData.get();
 		initData.SysMemPitch = width * 4;
 		initData.SysMemSlicePitch = width * height * 4;
 		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&textureDesc, &initData, &p2DTexture);
@@ -260,15 +273,17 @@ namespace DX11Raz
 			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture from Color \r\n");
 		}
-		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
+		texture = RAZPTR<ID3D11Resource>(static_cast<ID3D11Texture2D*>(p2DTexture));
 		CD3D11_SHADER_RESOURCE_VIEW_DESC srcDesc(D3D11_SRV_DIMENSION_TEXTURE2D, textureDesc.Format);
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture, &srcDesc, &textureView);
+		ID3D11ShaderResourceView* textview;
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture.get(), &srcDesc, &textview);
 		if (FAILED(hr))
 		{
 			textureView = 0;
 			texture = nullptr;
 			OutputDebugString(L"Failed to Create Shader Resource from Color \r\n");
 		}
+		textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 		Width = width;
 		Height = height;
 		Size = 4;
@@ -277,7 +292,7 @@ namespace DX11Raz
 
 	}
 
-	void RazTexture::InitColorTextureArray(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	void RazTexture::InitColorTextureArray(const RAZPTR<DX11Color> colorData, UINT width, UINT height, UINT size, aiTextureType type)
 	{
 
 		this->type = type;
@@ -290,13 +305,14 @@ namespace DX11Raz
 
 		ID3D11Texture2D* p2DTexture = nullptr;
 		D3D11_SUBRESOURCE_DATA* initData = new D3D11_SUBRESOURCE_DATA[size];
+		DX11Color* col = colorData.get();
 		for (size_t i = 0; i < size; i++)
 		{
 			//32 bits = 4 bytes
-			initData->pSysMem = colorData;
+			initData->pSysMem = col;
 			initData->SysMemPitch = width * 4;
 			initData->SysMemSlicePitch = width * height * 4;
-			colorData++;
+			col++;
 			initData++;
 		}
 		
@@ -308,15 +324,17 @@ namespace DX11Raz
 			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture2d array  from Color \r\n");
 		}
-		texture = static_cast<ID3D11Texture2D*>(p2DTexture);
+		texture = RAZPTR<ID3D11Resource>(static_cast<ID3D11Texture2D*>(p2DTexture));
 		CD3D11_SHADER_RESOURCE_VIEW_DESC srcDesc(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, textureDesc.Format,0,0,0,size);
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture, &srcDesc, &textureView);
+		ID3D11ShaderResourceView* textview;
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateShaderResourceView(texture.get(), &srcDesc, &textview);
 		if (FAILED(hr))
 		{
-			textureView = 0;
+			textureView = nullptr;
 			texture = nullptr;
 			OutputDebugString(L"Failed to Create Texture 2d Array Shader Resource from Color \r\n");
 		}
+		textureView = RAZPTR<ID3D11ShaderResourceView>(textview);
 		Width = width;
 		Height = height;
 		Size = 4;

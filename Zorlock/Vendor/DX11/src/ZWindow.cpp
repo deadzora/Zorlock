@@ -374,12 +374,12 @@ namespace DX11Raz
 		m_is_running = false;
 	}
 
-	DX11DeviceContext* ZWindow::GetDeviceContext()
+	RAZPTR<DX11DeviceContext> ZWindow::GetDeviceContext()
 	{
 		return device_context;
 	}
 
-	void ZWindow::SetDeviceContext(DX11DeviceContext* context)
+	void ZWindow::SetDeviceContext(RAZPTR<DX11DeviceContext> context)
 	{
 		device_context = context;
 	}

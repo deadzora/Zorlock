@@ -90,5 +90,6 @@ namespace Zorlock {
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 //just making code look sexy is all...
-#define ZLREF Zorlock::Ref
+
 }
+#define ZLREF Zorlock::Ref

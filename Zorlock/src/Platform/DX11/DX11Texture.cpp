@@ -9,21 +9,21 @@ namespace Zorlock
 	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
 		ZL_PROFILE_FUNCTION();
-		DX11Raz::DX11Color white = DX11Raz::White;
+		Ref<DX11Raz::DX11Color> white = Ref<DX11Raz::DX11Color>(new DX11Raz::DX11Color(255,255,255));
 
-		m_RendererID = DX11Raz::RazCreateTexture(&white, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
+		m_RendererID = Ref<DX11Raz::RazTexture>(DX11Raz::RazCreateTexture(white, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE));
 	}
 
 	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height, uint32_t color)
 	{
-		DX11Raz::DX11Color newcolor = DX11Raz::DX11Color(color);
-		m_RendererID = DX11Raz::RazCreateTexture(&newcolor, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE);
+		Ref<DX11Raz::DX11Color> newcolor = Ref<DX11Raz::DX11Color>(new DX11Raz::DX11Color(color));
+		m_RendererID = Ref<DX11Raz::RazTexture>(DX11Raz::RazCreateTexture(newcolor, (UINT)width, (UINT)height, aiTextureType::aiTextureType_DIFFUSE));
 	}
 
 	DX11Texture2D::DX11Texture2D(uint32_t width, uint32_t height, uint32_t color, uint32_t size)
 	{
-		DX11Raz::DX11Color newcolor = DX11Raz::DX11Color(color);
-		m_RendererID = DX11Raz::RazCreateTexture(&newcolor, (UINT)width, (UINT)height, (UINT)size, aiTextureType::aiTextureType_DIFFUSE);
+		Ref<DX11Raz::DX11Color> newcolor = Ref<DX11Raz::DX11Color>(new DX11Raz::DX11Color(color));
+		m_RendererID = Ref<DX11Raz::RazTexture>(DX11Raz::RazCreateTexture(newcolor, (UINT)width, (UINT)height, (UINT)size, aiTextureType::aiTextureType_DIFFUSE));
 	}
 
 	DX11Texture2D::DX11Texture2D(const std::string& path) : m_Path(path)
@@ -48,7 +48,7 @@ namespace Zorlock
 	{
 		ZL_PROFILE_FUNCTION();
 		DX11Raz::RazSetCurrentTexture(m_RendererID);
-		DX11Raz::RazShader* rs = nullptr; 
+		RAZPTR<DX11Raz::RazShader> rs = nullptr;
 		rs = DX11Raz::RazGetCurrentShader();
 		if (rs != nullptr)
 		{

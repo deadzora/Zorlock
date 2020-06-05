@@ -16,11 +16,11 @@ namespace DX11Raz
 		bool Release();
 		bool SetViewport(HWND hwnd, UINT width, UINT height);
 
-		ID3D11RenderTargetView* GetRenderTargetView();
+		RAZPTR<ID3D11RenderTargetView> GetRenderTargetView();
 		~DX11SwapChain();
 	private:
-		IDXGISwapChain* m_swapchain;
-		ID3D11RenderTargetView* m_rtv;
+		RAZPTR<IDXGISwapChain> m_swapchain;
+		RAZPTR<ID3D11RenderTargetView> m_rtv;
 		friend class DX11DeviceContext;
 	};
 

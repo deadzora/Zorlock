@@ -24,7 +24,7 @@ namespace Zorlock {
 
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
-		DX11Raz::RazVertexBuffer* GetVertexBuffer()
+		Ref<DX11Raz::RazVertexBuffer> GetVertexBuffer()
 		{
 			return m_RendererID;
 		}
@@ -33,7 +33,7 @@ namespace Zorlock {
 			return dxvertexshader;
 		}
 	private:
-		DX11Raz::RazVertexBuffer* m_RendererID;
+		Ref<DX11Raz::RazVertexBuffer> m_RendererID;
 		UINT m_VertexBufferIndex = 0;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		Ref<IndexBuffer> m_IndexBuffer;

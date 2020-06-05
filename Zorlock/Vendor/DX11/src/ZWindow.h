@@ -1,5 +1,5 @@
 #pragma once
-
+#include "DX11Defs.h"
 #include <Windows.h>
 #include <string>
 #include "Keyboard.h"
@@ -60,8 +60,8 @@ namespace DX11Raz
 		virtual void OnUpdate();
 		virtual void OnCreate();
 		virtual void OnDestroy();
-		DX11DeviceContext* GetDeviceContext();
-		void SetDeviceContext(DX11DeviceContext* context);
+		RAZPTR<DX11DeviceContext> GetDeviceContext();
+		void SetDeviceContext(RAZPTR<DX11DeviceContext> context);
 		Keyboard keyboard;
 		Mouse mouse;
 		LPCWSTR WindowName = L"DXAPP";
@@ -76,7 +76,7 @@ namespace DX11Raz
 		WindowMousePosCallback WMPCallback;
 	private:
 		//we want to keep a copy of the devicecontext on the window
-		DX11DeviceContext * device_context;
+		RAZPTR<DX11DeviceContext> device_context;
 		
 	protected:
 		HWND m_hwnd;

@@ -215,6 +215,7 @@
     <ClInclude Include="src\Zorlock\Renderer\UniformHandler.h" />
     <ClInclude Include="src\Zorlock\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\DX11\src\DDSTextureLoader.h" />
+    <ClInclude Include="Vendor\DX11\src\DX11Defs.h" />
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h" />
     <ClInclude Include="vendor\DX11\src\DX11IBuffer.h" />
     <ClInclude Include="vendor\DX11\src\DX11Raz.h" />
@@ -1147,4 +1148,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

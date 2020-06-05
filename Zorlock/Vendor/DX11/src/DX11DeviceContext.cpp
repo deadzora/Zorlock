@@ -8,7 +8,7 @@
 namespace DX11Raz
 {
 
-	DX11DeviceContext::DX11DeviceContext(ID3D11DeviceContext* device_context) :m_device_context(device_context)
+	DX11DeviceContext::DX11DeviceContext(RAZPTR<ID3D11DeviceContext> device_context) :m_device_context(device_context)
 	{
 
 		m_bs = nullptr;
@@ -19,10 +19,10 @@ namespace DX11Raz
 		m_pRasterState = nullptr;
 	}
 
-	void DX11DeviceContext::Init(ZWindow * zhandle)
+	void DX11DeviceContext::Init(RAZPTR<ZWindow> zhandle)
 	{
 		m_contextContainer = zhandle;
-		m_contextswapchain = new DX11SwapChain();
+		m_contextswapchain = CreateZRef<DX11SwapChain>();
 		m_contextswapchain->init(zhandle->GetHWND(), zhandle->GetWidth(), zhandle->GetHeight());
 		setviewportsize(zhandle->GetWidth(), zhandle->GetHeight());
 		createblendstate();
@@ -46,13 +46,14 @@ namespace DX11Raz
 		dcolor.b = b;
 		dcolor.a = a;
 		FLOAT clear_color[] = { r,g,b,a };
-		m_device_context->ClearRenderTargetView(m_contextswapchain->m_rtv, clear_color);
-		m_device_context->ClearDepthStencilView(m_depth_stencilview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		m_device_context->OMSetRenderTargets(1, &m_contextswapchain->m_rtv, m_depth_stencilview);
-		m_device_context->OMSetDepthStencilState(m_depth_stencilstate, 0);
-		m_device_context->RSSetState(m_pRasterState);
-		m_device_context->PSSetSamplers(0, 1, &m_sampler_state);
-		
+		m_device_context->ClearRenderTargetView(m_contextswapchain->m_rtv.get(), clear_color);
+		m_device_context->ClearDepthStencilView(m_depth_stencilview.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		ID3D11RenderTargetView* rtv = m_contextswapchain->m_rtv.get();
+		m_device_context->OMSetRenderTargets(1, &rtv, m_depth_stencilview.get());
+		m_device_context->OMSetDepthStencilState(m_depth_stencilstate.get(), 0);
+		m_device_context->RSSetState(m_pRasterState.get());
+		ID3D11SamplerState* samplerst = m_sampler_state.get();
+		m_device_context->PSSetSamplers(0, 1, &samplerst);
 		//create depth stencil state
 		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
@@ -108,12 +109,14 @@ namespace DX11Raz
 		rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
 		blendDesc.RenderTarget[0] = rtbd;
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBlendState(&blendDesc, &m_bs);
+		ID3D11BlendState* bs;
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBlendState(&blendDesc, &bs);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Blend State\r\n");
 			return false;
 		}
+		m_bs = RAZPTR<ID3D11BlendState>(bs);
 		setblendstate();
 		return true;
 	}
@@ -121,7 +124,7 @@ namespace DX11Raz
 	void DX11DeviceContext::setblendstate()
 	{
 
-			m_device_context->OMSetBlendState(m_bs, NULL, 0xFFFFFFFF);
+			m_device_context->OMSetBlendState(m_bs.get(), NULL, 0xFFFFFFFF);
 		
 
 	}
@@ -133,15 +136,15 @@ namespace DX11Raz
 		depthstencildesc.DepthEnable = true;
 		depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 		depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
-
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &m_depth_stencilstate);
+		ID3D11DepthStencilState* depthsten;
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilState(&depthstencildesc, &depthsten);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Stencil State\r\n");
 			ZL_CORE_INFO("Failed to Create Depth Stencil State");
 			return false;
 		}
-
+		m_depth_stencilstate = RAZPTR<ID3D11DepthStencilState>(depthsten);
 
 		return true;
 	}
@@ -157,14 +160,15 @@ namespace DX11Raz
 		sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampler_desc.MinLOD = 0;
 		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateSamplerState(&sampler_desc, &m_sampler_state);
+		ID3D11SamplerState* samplestate;
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateSamplerState(&sampler_desc, &samplestate);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Sampler State\r\n");
 			ZL_CORE_INFO("Failed to Create Sampler State");
 			return false;
 		}
-
+		m_sampler_state = RAZPTR<ID3D11SamplerState>(samplestate);
 		return true;
 	}
 
@@ -186,28 +190,28 @@ namespace DX11Raz
 		depthstencildesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		depthstencildesc.CPUAccessFlags = 0;
 		depthstencildesc.MiscFlags = 0;
-
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&depthstencildesc, NULL, &m_depth_stecil_buffer);
+		ID3D11Texture2D* tex;
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateTexture2D(&depthstencildesc, NULL, &tex);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Surface\r\n");
 			ZL_CORE_INFO("Failed to Create Depth Surface");
 			return false;
 		}
-		
+		m_depth_stecil_buffer = RAZPTR<ID3D11Texture2D>(tex);
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthdetencilviewdesc;
 		ZeroMemory(&depthdetencilviewdesc, sizeof(depthdetencilviewdesc));
 		depthdetencilviewdesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 		depthdetencilviewdesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		
-		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer, &depthdetencilviewdesc, &m_depth_stencilview);
+		ID3D11DepthStencilView* stenview;
+		hr = DX11GraphicsEngine::Get()->GetDevice()->CreateDepthStencilView(m_depth_stecil_buffer.get(), &depthdetencilviewdesc, &stenview);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Depth Stencil View\r\n");
 			ZL_CORE_INFO("Failed to Depth Stencil View");
 			return false;
 		}
-
+		m_depth_stencilview = RAZPTR<ID3D11DepthStencilView>(stenview);
 
 		return true;
 	}
@@ -223,36 +227,36 @@ namespace DX11Raz
 			FALSE /* ScissorEnable */,
 			TRUE /* MultisampleEnable */,
 			TRUE /* AntialiasedLineEnable */);
-
-		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateRasterizerState(&rasterDesc, &m_pRasterState);
+		ID3D11RasterizerState* rasterstate;
+		HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateRasterizerState(&rasterDesc, &rasterstate);
 		if (FAILED(hr))
 		{
 			OutputDebugString(L"Failed to Create Rasterizer \r\n");
 			ZL_CORE_INFO("Failed to Create Rasterizer");
 			return false;
 		}
+		m_pRasterState = RAZPTR<ID3D11RasterizerState>(rasterstate);
 	}
 
-	void DX11DeviceContext::setvertexshader(RazShader* vertex_shader)
+	void DX11DeviceContext::setvertexshader(RAZPTR<RazShader> vertex_shader)
 	{
-		m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0);
+		m_device_context->VSSetShader(vertex_shader->m_vs.get(), nullptr, 0);
 	}
 
-	void DX11DeviceContext::setpixelshader(RazShader* pixel_shader)
+	void DX11DeviceContext::setpixelshader(RAZPTR<RazShader> pixel_shader)
 	{
-		m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0);
+		m_device_context->PSSetShader(pixel_shader->m_ps.get(), nullptr, 0);
 	}
 
-	void DX11DeviceContext::setvertexbuffer(RazVertexBuffer* vertex_buffer)
-	{
-		
-		
+	void DX11DeviceContext::setvertexbuffer(RAZPTR<RazVertexBuffer> vertex_buffer)
+	{		
 		UINT offset = 0;
-		m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &vertex_buffer->stride, &offset);
-		m_device_context->IASetInputLayout(vertex_buffer->m_layout);
+		ID3D11Buffer* buff = vertex_buffer->m_buffer.get();
+		m_device_context->IASetVertexBuffers(0, 1, &buff, &vertex_buffer->stride, &offset);
+		m_device_context->IASetInputLayout(vertex_buffer->m_layout.get());
 	}
 
-	void DX11DeviceContext::setindexbuffer(RazIndexBuffer* index_buffer)
+	void DX11DeviceContext::setindexbuffer(RAZPTR<RazIndexBuffer> index_buffer)
 	{
 		m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0);
 		m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -264,24 +268,28 @@ namespace DX11Raz
 		m_device_context->DrawIndexed(index_count, start_vertex_index, base_vertex_location);
 	}
 
-	void DX11DeviceContext::setshadertexture(UINT slot, ID3D11ShaderResourceView* texture)
+	void DX11DeviceContext::setshadertexture(UINT slot, RAZPTR<ID3D11ShaderResourceView> texture)
 	{
-		m_device_context->PSSetShaderResources(slot, 1, &texture);
+		ID3D11ShaderResourceView* rview = texture.get();
+		m_device_context->PSSetShaderResources(slot, 1, &rview);
 	}
 
-	void DX11DeviceContext::setshadertexture(ID3D11ShaderResourceView* texture)
+	void DX11DeviceContext::setshadertexture(RAZPTR<ID3D11ShaderResourceView> texture)
 	{
-		m_device_context->PSSetShaderResources(0, 1, &texture);
+		ID3D11ShaderResourceView* rview = texture.get();
+		m_device_context->PSSetShaderResources(0, 1, &rview);
 	}
 
-	void DX11DeviceContext::setshadertextures(ID3D11ShaderResourceView* texture, UINT arraysize)
+	void DX11DeviceContext::setshadertextures(RAZPTR<ID3D11ShaderResourceView> texture, UINT arraysize)
 	{
-		m_device_context->PSSetShaderResources(0, arraysize, &texture);
+		ID3D11ShaderResourceView* rview = texture.get();
+		m_device_context->PSSetShaderResources(0, arraysize, &rview);
 	}
 
-	void DX11DeviceContext::setshadertextures(UINT slot, ID3D11ShaderResourceView* texture, UINT arraysize)
+	void DX11DeviceContext::setshadertextures(UINT slot, RAZPTR<ID3D11ShaderResourceView> texture, UINT arraysize)
 	{
-		m_device_context->PSSetShaderResources(slot, arraysize, &texture);
+		ID3D11ShaderResourceView* rview = texture.get();
+		m_device_context->PSSetShaderResources(slot, arraysize, &rview);
 	}
 
 
@@ -314,12 +322,12 @@ namespace DX11Raz
 		return true;
 	}
 
-	DX11SwapChain* DX11DeviceContext::GetSwapChain()
+	RAZPTR<DX11SwapChain> DX11DeviceContext::GetSwapChain()
 	{
 		return m_contextswapchain;
 	}
 
-	ID3D11DeviceContext* DX11DeviceContext::GetContext()
+	RAZPTR<ID3D11DeviceContext> DX11DeviceContext::GetContext()
 	{
 		return m_device_context;
 	}

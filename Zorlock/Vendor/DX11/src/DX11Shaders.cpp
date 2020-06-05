@@ -7,7 +7,7 @@
 
 DX11Raz::RazShader::RazShader() : mv_buffer(0), mp_buffer(0), m_ps(0), m_vs(0), pc_buffer(0), vc_buffer(0)
 {
-	DX11GraphicsEngine::Get()->AddShader(this);
+	DX11GraphicsEngine::Get()->AddShader(RAZPTR<RazShader>(this));
 }
 
 DX11Raz::RazShader::~RazShader()
@@ -42,18 +42,22 @@ void DX11Raz::RazShader::Release()
 bool DX11Raz::RazShader::InitVertex(const wchar_t* filename)
 {
 	ID3DBlob* error_blob = nullptr;
-	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "vsmain", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mv_buffer, &error_blob);
+	ID3D10Blob * bbuffer = nullptr;
+	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "vsmain", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &bbuffer, &error_blob);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Compile Vertex Shader from file \n");
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &this->m_vs);
+	mv_buffer = RAZPTR<ID3D10Blob>(bbuffer);
+	ID3D11VertexShader* bvs;
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &bvs);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Vertex Shader from file \n");
 		return false;
 	}
+	m_vs = RAZPTR<ID3D11VertexShader>(bvs);
 	return true;
 }
 
@@ -61,7 +65,8 @@ bool DX11Raz::RazShader::InitVertex(const std::string shadertext)
 {
 	ID3DBlob* error_blob = nullptr;
 	LPCSTR shader = shadertext.c_str();
-	HRESULT hr = D3DCompile(shader, shadertext.size(), "VertexShader", NULL, NULL, "main", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mv_buffer, &error_blob);
+	ID3D10Blob* bbuffer = nullptr;
+	HRESULT hr = D3DCompile(shader, shadertext.size(), "VertexShader", NULL, NULL, "main", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &bbuffer, &error_blob);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Compile Vertex Shader from text \n");
@@ -73,42 +78,50 @@ bool DX11Raz::RazShader::InitVertex(const std::string shadertext)
 		);
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &this->m_vs);
+	mv_buffer = RAZPTR<ID3D10Blob>(bbuffer);
+	ID3D11VertexShader* bvs;
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(this->mv_buffer->GetBufferPointer(), this->mv_buffer->GetBufferSize(), NULL, &bvs);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Vertex Shader \n");
 		return false;
 	}
+	m_vs = RAZPTR<ID3D11VertexShader>(bvs);
 	return true;
 }
 
 bool DX11Raz::RazShader::InitVertex(const void* shader_byte_code, size_t byte_code_size)
 {
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(shader_byte_code, byte_code_size, nullptr, &this->m_vs);
+	ID3D11VertexShader* bvs;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateVertexShader(shader_byte_code, byte_code_size, nullptr, &bvs);
 	if (!SUCCEEDED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Vertex Shader from void* \n");
 		return false;
 	}
-
+	m_vs = RAZPTR<ID3D11VertexShader>(bvs);
 	return true;
 }
 
 bool DX11Raz::RazShader::InitPixel(const wchar_t* filename)
 {
 	ID3DBlob* error_blob = nullptr;
-	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mp_buffer, &error_blob);
+	ID3D10Blob* bbuffer = nullptr;
+	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &bbuffer, &error_blob);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Compile Pixel Shader from file \n");
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &m_ps);
+	mp_buffer = RAZPTR<ID3D10Blob>(bbuffer);
+	ID3D11PixelShader* bps;
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &bps);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Pixel Shader");
 		return false;
 	}
+	m_ps = RAZPTR<ID3D11PixelShader>(bps);
 	return true;
 }
 
@@ -116,8 +129,8 @@ bool DX11Raz::RazShader::InitPixel(const std::string shadertext)
 {
 	ID3DBlob* error_blob = nullptr;
 	LPCSTR shader = shadertext.c_str();
-
-	HRESULT hr = D3DCompile(shader, shadertext.size(), "PixelShader", NULL, NULL, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &this->mp_buffer, &error_blob);
+	ID3D10Blob* bbuffer = nullptr;
+	HRESULT hr = D3DCompile(shader, shadertext.size(), "PixelShader", NULL, NULL, "main", "ps_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &bbuffer, &error_blob);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Compile Pixel Shader from text \n");
@@ -129,23 +142,28 @@ bool DX11Raz::RazShader::InitPixel(const std::string shadertext)
 		);
 		return false;
 	}
-	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &m_ps);
+	mp_buffer = RAZPTR<ID3D10Blob>(bbuffer);
+	ID3D11PixelShader* bps;
+	hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(this->mp_buffer->GetBufferPointer(), this->mp_buffer->GetBufferSize(), NULL, &bps);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Pixel Shader \n");
 		return false;
 	}
+	m_ps = RAZPTR<ID3D11PixelShader>(bps);
 	return true;
 }
 
 bool DX11Raz::RazShader::InitPixel(const void* shader_byte_code, size_t byte_code_size)
 {
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &m_ps);
+	ID3D11PixelShader* bps;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreatePixelShader(shader_byte_code, byte_code_size, nullptr, &bps);
 	if (!SUCCEEDED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Pixel Shader \n");
 		return false;
 	}
+	m_ps = RAZPTR<ID3D11PixelShader>(bps);
 	return true;
 }
 
@@ -161,19 +179,21 @@ UINT DX11Raz::RazShader::CreateVertexCB(std::string cbname, UINT slot, void* buf
 	buff_desc.MiscFlags = 0;
 	buff_desc.StructureByteStride = 0;
 
-	RazConstantBuffer* cbuffer = new RazConstantBuffer();
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &cbuffer->buffer);
+	RAZPTR<RazConstantBuffer> cbuffer = CreateZRef<RazConstantBuffer>();
+	ID3D11Buffer* buff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &buff);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Vertex Constant Buffer \n");
 		return -1;
 	}
+	cbuffer->buffer = RAZPTR<ID3D11Buffer>(buff);
 	cbuffer->varname = cbname;
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
 	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
 	cbuffer->data = bufferdata;
-	vc_buffer.push_back(cbuffer);
+	vc_buffer.push_back(RAZPTR<RazConstantBuffer>(cbuffer));
 	return 1;
 }
 
@@ -190,19 +210,21 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	buff_desc.MiscFlags = 0;
 	buff_desc.StructureByteStride = 0;
 	//ID3D11Buffer* p; 
-	RazConstantBuffer * cbuffer = new RazConstantBuffer();
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &cbuffer->buffer);
+	RAZPTR<RazConstantBuffer> cbuffer = CreateZRef<RazConstantBuffer>();
+	ID3D11Buffer* buff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, 0, &buff);
 	if (FAILED(hr))
 	{
 		OutputDebugStringW(L"Failed to Create Pixel Constant Buffer \n");
 		return -1;
 	}
+	cbuffer->buffer = RAZPTR<ID3D11Buffer>(buff);
 	cbuffer->varname = cbname;
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
 	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
 	cbuffer->data = bufferdata;
-	pc_buffer.push_back(cbuffer);
+	pc_buffer.push_back(RAZPTR<RazConstantBuffer>(cbuffer));
 	return 1;
 }
 
@@ -213,11 +235,11 @@ bool DX11Raz::RazShader::CreateTextureBuffer(std::string cbname, UINT slot, UINT
 	sampler->buffersize = buffersize;
 	sampler->slot = slot;
 	sampler->isArray = isarray;
-	tx_buffer.push_back(sampler);
+	tx_buffer.push_back(RAZPTR<RazSamplerBuffer>(sampler));
 	return true;
 }
 
-bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* tex, ID3D11ShaderResourceView* texturev)
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RAZPTR<ID3D11Resource> tex, RAZPTR<ID3D11ShaderResourceView> texturev)
 {
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -232,7 +254,7 @@ bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* 
 	return true;
 }
 
-bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* tex)
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RAZPTR<ID3D11Resource> tex)
 {
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -246,7 +268,7 @@ bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11Resource* 
 	return true;
 }
 
-bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11ShaderResourceView* texturev)
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RAZPTR<ID3D11ShaderResourceView> texturev)
 {
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -260,7 +282,7 @@ bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, ID3D11ShaderReso
 	return true;
 }
 
-bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RazTexture* texture)
+bool DX11Raz::RazShader::UpdateTextureBuffer(std::string tname, RAZPTR<RazTexture> texture)
 {
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -339,7 +361,7 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 
 bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 {
-	RazConstantBuffer* buffer = nullptr;
+	RAZPTR<RazConstantBuffer> buffer = nullptr;
 
 	for (size_t i = 0; i < vc_buffer.size(); i++)
 	{
@@ -361,7 +383,7 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 	D3D11_MAPPED_SUBRESOURCE init_data = {};
 	//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	HRESULT hr;
-	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer, 0, 0, buffer->data, 0, 0);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer.get(), 0, 0, buffer->data, 0, 0);
 	/*
 	hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 	if (FAILED(hr))
@@ -376,15 +398,15 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
 	
 	*/
-
-	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
+	ID3D11Buffer* buff = buffer->buffer.get();
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buff);
 	
 	return true;
 }
 
 bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 {
-	RazConstantBuffer* buffer = 0;
+	RAZPTR<RazConstantBuffer> buffer = 0;
 
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
@@ -406,7 +428,7 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 	D3D11_MAPPED_SUBRESOURCE init_data = {};
 	//ZeroMemory(&init_data, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	HRESULT hr;
-	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer, 0, 0, buffer->data, 0, 0);
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->UpdateSubresource(buffer->buffer.get(), 0, 0, buffer->data, 0, 0);
 	/*
 	hr = DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Map(buffer->buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &init_data);
 	if (FAILED(hr))
@@ -421,20 +443,20 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
 	*/
-
-	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
+	ID3D11Buffer* buff = buffer->buffer.get();
+	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(buffer->slot, 1, &buff);
 
 	return true;
 }
 
 void* DX11Raz::RazShader::GetPixelCBData(UINT index)
 {
-	return pc_buffer[index];
+	return pc_buffer[index].get();
 }
 
 void* DX11Raz::RazShader::GetVertexCBData(UINT index)
 {
-	return vc_buffer[index];
+	return vc_buffer[index].get();
 }
 
 bool DX11Raz::RazShader::ApplyAllVertexCB()
@@ -521,7 +543,7 @@ bool DX11Raz::RazShader::ApplyAllPixelCB()
 
 void DX11Raz::RazShader::ApplyTexture(std::string cbname)
 {
-	RazSamplerBuffer* buffer = 0;
+	RAZPTR<RazSamplerBuffer> buffer = 0;
 
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -546,7 +568,7 @@ void DX11Raz::RazShader::ApplyTexture(std::string cbname)
 
 void DX11Raz::RazShader::ApplyTextureArray(std::string cbname)
 {
-	RazSamplerBuffer* buffer = 0;
+	RAZPTR<RazSamplerBuffer> buffer = 0;
 
 	for (size_t i = 0; i < tx_buffer.size(); i++)
 	{
@@ -562,19 +584,18 @@ void DX11Raz::RazShader::ApplyTextureArray(std::string cbname)
 		OutputDebugStringW(L"Texture Buffer Pointer was Null");
 		return;
 	}
-	
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->setshadertexture(buffer->slot, buffer->textureview);
 
 }
 
 
 
-ID3D10Blob* DX11Raz::RazShader::GetBuffer()
+RAZPTR<ID3D10Blob> DX11Raz::RazShader::GetBuffer()
 {
 	return mv_buffer;
 }
 
-ID3D10Blob* DX11Raz::RazShader::GetPBuffer()
+RAZPTR<ID3D10Blob> DX11Raz::RazShader::GetPBuffer()
 {
 	return mp_buffer;
 }

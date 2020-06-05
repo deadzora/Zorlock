@@ -55,7 +55,7 @@ namespace Zorlock {
 		void UploadUniformMat3(const std::string& name, const MATRIX3& matrix);
 		void UploadUniformMat4(const std::string& name, const MATRIX4& matrix);
 		void UploadUniformBuffer(const std::string& name, const void* buffer, uint32_t size, uint32_t count);
-		DX11Raz::RazShader* GetShader()
+		Ref<DX11Raz::RazShader> GetShader()
 		{
 			return m_RendererID;
 		}
@@ -64,7 +64,7 @@ namespace Zorlock {
 
 	private:
 
-		DX11Raz::RazShader * m_RendererID;
+		Ref<DX11Raz::RazShader> m_RendererID;
 		std::string m_Name;
 	};
 

@@ -92,7 +92,7 @@ namespace Zorlock {
 				
 				DX11Raz::ZWindow* window = static_cast<DX11Raz::ZWindow*>(app.GetWindow().GetNativeWindow());
 				ImGui_ImplWin32_Init(window->GetHWND());
-				ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice(), window->GetDeviceContext()->GetContext());
+				ImGui_ImplDX11_Init(DX11Raz::DX11GraphicsEngine::Get()->GetDevice().get(), window->GetDeviceContext()->GetContext().get());
 
 			}
 		}

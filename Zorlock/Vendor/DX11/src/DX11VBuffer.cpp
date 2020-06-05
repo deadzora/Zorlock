@@ -6,7 +6,7 @@
 
 DX11Raz::RazVertexBuffer::RazVertexBuffer() :m_layout(0), m_buffer(0), m_size_vertex(0), m_size_list(0), stride(0)
 {
-	DX11GraphicsEngine::Get()->AddVertexBuffer(this);
+	DX11GraphicsEngine::Get()->AddVertexBuffer(RAZPTR<RazVertexBuffer>(this));
 
 }
 
@@ -22,8 +22,8 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 	*/
 	
 
-
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(),vlayout.size(), NULL, 0, &this->m_layout);
+	ID3D11InputLayout* ilayout;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(),vlayout.size(), NULL, 0, &ilayout);
 	if (FAILED(hr))
 	{
 		OutputDebugString(L"Failed to Create Input Layout\r\n");
@@ -31,10 +31,11 @@ bool DX11Raz::RazVertexBuffer::SetLayout()
 		this->m_layout = 0;
 		return false;
 	}
+	m_layout = RAZPTR<ID3D11InputLayout>(ilayout);
 	return true;
 }
 
-bool DX11Raz::RazVertexBuffer::SetLayout(ID3D10Blob* vshader)
+bool DX11Raz::RazVertexBuffer::SetLayout(RAZPTR<ID3D10Blob> vshader)
 {
 	
 	size_t size_layout = vlayout.size();
@@ -49,15 +50,16 @@ bool DX11Raz::RazVertexBuffer::SetLayout(ID3D10Blob* vshader)
 	
 	
 	*/
-
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), vlayout.size(), vshader->GetBufferPointer(), vshader->GetBufferSize(), &this->m_layout);
+	ID3D11InputLayout* ilayout;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateInputLayout(vlayout.data(), vlayout.size(), vshader->GetBufferPointer(), vshader->GetBufferSize(), &ilayout);
 	if (FAILED(hr))
 	{
 		OutputDebugString(L"Failed to Create Input Layout\r\n");
 		ZL_CORE_ASSERT(true, "Failed to Create Input Layout");
-		this->m_layout = 0;
+		m_layout = nullptr;
 		return false;
 	}
+	m_layout = RAZPTR<ID3D11InputLayout>(ilayout);
 	return true;
 }
 
@@ -126,13 +128,15 @@ void DX11Raz::RazVertexBuffer::SetVertices(float* vertices, UINT size)
 	this->m_size_vertex = sizeof(float);
 
 	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	ID3D11Buffer* ibuff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &ibuff);
 	if (FAILED(hr))
 	{
-		m_buffer = 0;
+		m_buffer = nullptr;
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
+	m_buffer = RAZPTR<ID3D11Buffer>(ibuff);
 
 }
 
@@ -154,15 +158,15 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT bytewidth, UINT 
 	this->m_size_list = size;
 	this->m_size_vertex = bytewidth;
 
-	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	ID3D11Buffer* ibuff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &ibuff);
 	if (FAILED(hr))
 	{
-		m_buffer = 0;
+		m_buffer = nullptr;
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
-
+	m_buffer = RAZPTR<ID3D11Buffer>(ibuff);
 }
 
 
@@ -185,16 +189,17 @@ void DX11Raz::RazVertexBuffer::SetVertices(void* vertices, UINT size)
 	this->m_size_vertex = stride;
 	//printf("Vertices size: %u list size %u byte width: %u \n",size, this->m_size_list, this->m_size_vertex);
 	//printf("Stride is actually %u and size is %u !!", m_size_vertex, size);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	ID3D11Buffer* ibuff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &ibuff);
 	if (FAILED(hr))
 	{
-		m_buffer = 0;
+		m_buffer = nullptr;
 		printf("Failed to Create Vertex Buffer !!");
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
 
-
+	m_buffer = RAZPTR<ID3D11Buffer>(ibuff);
 }
 
 void DX11Raz::RazVertexBuffer::SetVertices(std::vector<RazVertex>& v)
@@ -215,14 +220,15 @@ void DX11Raz::RazVertexBuffer::SetVertices(std::vector<RazVertex>& v)
 	this->m_size_list = (UINT)v.size();
 	this->m_size_vertex = sizeof(RazVertex);
 
-	//printf("Stride is actually %u and size is %u !!", m_size_vertex, this->m_size_list);
-	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &this->m_buffer);
+	ID3D11Buffer* ibuff;
+	HRESULT hr = DX11GraphicsEngine::Get()->GetDevice()->CreateBuffer(&buff_desc, &init_data, &ibuff);
 	if (FAILED(hr))
 	{
-		m_buffer = 0;
+		m_buffer = nullptr;
 		OutputDebugStringW(L"Failed to Create Vertex Buffer");
 		return;
 	}
+	m_buffer = RAZPTR<ID3D11Buffer>(ibuff);
 }
 
 D3D11_INPUT_ELEMENT_DESC& DX11Raz::RazVertexBuffer::GetLayoutPointer(UINT index)

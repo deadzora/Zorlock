@@ -7,7 +7,7 @@ namespace Zorlock
 {
 	
 
-	DX11Context::DX11Context(DX11Raz::ZWindow* windowHandle) : m_WindowHandle(windowHandle)
+	DX11Context::DX11Context(Ref<DX11Raz::ZWindow> windowHandle) : m_WindowHandle(windowHandle)
 	{
 		ZL_CORE_ASSERT(windowHandle, "Window handle is null!");
 

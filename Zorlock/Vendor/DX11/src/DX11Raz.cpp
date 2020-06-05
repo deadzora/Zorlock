@@ -11,8 +11,8 @@
 namespace DX11Raz
 {
 
-	
 	DX11GraphicsEngine engine;
+	RAZPTR<DX11GraphicsEngine> m_engine;
 	
 
 	DX11GraphicsEngine::~DX11GraphicsEngine()
@@ -39,15 +39,16 @@ namespace DX11Raz
 		HRESULT res = 0;
 
 		OutputDebugString(L"Initializing DX11 3D Device\r\n");
-
+		ID3D11Device* d3ddevice;
+		ID3D11DeviceContext* d3ddevicecontext;
 		for (UINT driver_type_index = 0; driver_type_index < num_driver_types;)
 		{
 			//NO IMMEDIATE CONTEXT!
 #ifdef ZL_DEBUG_DX11
 			
-			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, D3D11_DEBUG_FEATURE_FINISH_PER_RENDER_OP, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
+			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, D3D11_DEBUG_FEATURE_FINISH_PER_RENDER_OP, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &d3ddevice, &feature_level, &d3ddevicecontext);
 #else
-			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &m_d3d_device, &feature_level, &m_imm_context);
+			res = D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, num_feature_levels, D3D11_SDK_VERSION, &d3ddevice, &feature_level, &d3ddevicecontext);
 #endif
 			if (SUCCEEDED(res))
 				break;
@@ -59,20 +60,28 @@ namespace DX11Raz
 			OutputDebugString(L"Failed to Create DX11 3D Device\r\n");
 			ZL_CORE_ASSERT(1,"Failed to Create DX11 3D Device");
 			//m_imm_context->Release();
-			m_d3d_device->Release();
+			d3ddevice->Release();
 			return false;
 		}
 		else {
 			OutputDebugString(L"Created DX11 3D Device\r\n");
 		}
 		//create main shared context
-		m_imm_device_context = new DX11DeviceContext(m_imm_context);
-
-		m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device);
-		m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
-		m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgi_factory);
+		m_d3d_device = RAZPTR<ID3D11Device>(d3ddevice);
+		m_imm_context = RAZPTR<ID3D11DeviceContext>(d3ddevicecontext);
+		m_imm_device_context = RAZPTR<DX11DeviceContext>(new DX11DeviceContext(m_imm_context));
+		IDXGIDevice* idxgidev;
+		m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&idxgidev);
+		m_dxgi_device = RAZPTR<IDXGIDevice>(idxgidev);
+		IDXGIAdapter* idxgiadapter;
+		m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&idxgiadapter);
+		m_dxgi_adapter = RAZPTR<IDXGIAdapter>(idxgiadapter);
+		IDXGIFactory* idxfactory;
+		m_dxgi_adapter->GetParent(__uuidof(IDXGIFactory), (void**)&idxfactory);
+		m_dxgi_factory = RAZPTR<IDXGIFactory>(idxfactory);
 		//m_dxgi_factory->CreateSwapChain
 		intialized = true;
+		
 		return true;
 	}
 
@@ -82,48 +91,60 @@ namespace DX11Raz
 		printf("Graphics Shutdown \n");
 		for (size_t i = 0; i < shaders.size(); i++)
 		{
-			shaders[i]->Release();
+			if(shaders[i]!=nullptr)
+				shaders[i]->Release();
 		}
 		for (size_t i = 0; i < vbuffers.size(); i++)
 		{
-			vbuffers[i]->Release();
+			if (vbuffers[i] != nullptr)
+				vbuffers[i]->Release();
 
 		}
 		for (size_t i = 0; i < ibuffers.size(); i++)
 		{
-			ibuffers[i]->Release();
+			if (ibuffers[i] != nullptr)
+				ibuffers[i]->Release();
 
 		}
 		for (size_t i = 0; i < textures.size(); i++)
 		{
-			textures[i]->Release();
+			if (textures[i] != nullptr)
+				textures[i]->Release();
 
 		}
 		for (size_t i = 0; i < contexts.size(); i++)
 		{
-			contexts[i]->Release();
+			if (contexts[i] != nullptr)
+				contexts[i]->Release();
 
 		}
 		for (size_t i = 0; i < swapchains.size(); i++)
 		{
-			swapchains[i]->Release();
+			if (swapchains[i] != nullptr)
+				swapchains[i]->Release();
 		}
 
-
-		m_d3d_device->Release();
-		m_dxgi_device->Release();
-		m_dxgi_adapter->Release();
-		m_imm_device_context->MainRelease();
+		if (m_d3d_device != nullptr)
+			m_d3d_device->Release();
+		if (m_dxgi_device != nullptr)
+			m_dxgi_device->Release();
+		if (m_dxgi_device != nullptr)
+			m_dxgi_device->Release();
+		if (m_imm_device_context != nullptr)
+			m_imm_device_context->MainRelease();
 		//m_imm_context->Release();
 
 	}
 
 
-	DX11GraphicsEngine* DX11GraphicsEngine::Get()
+	RAZPTR<DX11GraphicsEngine> DX11GraphicsEngine::Get()
 	{
-		
-		engine.enabled = true;
-		return &engine;
+		if (m_engine == nullptr)
+		{
+			m_engine = CreateZRef<DX11GraphicsEngine>();
+		}
+		m_engine->enabled = true;
+		return m_engine;
 	}
 
 	void DX11GraphicsEngine::Cls()
@@ -164,32 +185,32 @@ namespace DX11Raz
 
 	}
 
-	ID3D11Device* DX11GraphicsEngine::GetDevice()
+	RAZPTR<ID3D11Device> DX11GraphicsEngine::GetDevice()
 	{
-		return m_d3d_device;
+		return this->m_d3d_device;
 	}
 
-	IDXGIFactory* DX11GraphicsEngine::GetFactory()
+	RAZPTR<IDXGIFactory> DX11GraphicsEngine::GetFactory()
 	{
-		return m_dxgi_factory;
+		return this->m_dxgi_factory;
 	}
 
-	RazShader* DX11GraphicsEngine::GetCurrentShader()
+	RAZPTR<RazShader> DX11GraphicsEngine::GetCurrentShader()
 	{
-		return currentShader;
+		return this->currentShader;
 	}
 
-	void DX11GraphicsEngine::SetCurrentShader(RazShader* shader)
+	void DX11GraphicsEngine::SetCurrentShader(RAZPTR<RazShader> shader)
 	{
 		currentShader = shader;
 	}
 
-	void DX11GraphicsEngine::AddShader(RazShader* shader)
+	void DX11GraphicsEngine::AddShader(RAZPTR<RazShader> shader)
 	{
 		shaders.push_back(shader);
 	}
 
-	void DX11GraphicsEngine::RemoveShader(RazShader* shader)
+	void DX11GraphicsEngine::RemoveShader(RAZPTR<RazShader> shader)
 	{
 		for (auto it = shaders.begin(); it != shaders.end(); ) {
 			if (*it == shader) {
@@ -204,22 +225,22 @@ namespace DX11Raz
 		shaders.shrink_to_fit();
 	}
 
-	DX11DeviceContext* DX11GraphicsEngine::GetCurrentDeviceContext()
+	RAZPTR<DX11DeviceContext> DX11GraphicsEngine::GetCurrentDeviceContext()
 	{
 		return current_device_context;
 	}
 
-	void DX11GraphicsEngine::SetCurrentDeviceContext(DX11DeviceContext* curcontext)
+	void DX11GraphicsEngine::SetCurrentDeviceContext(RAZPTR<DX11DeviceContext> curcontext)
 	{
 		current_device_context = curcontext;
 	}
 
-	void DX11GraphicsEngine::AddDeviceContext(DX11DeviceContext* curcontext)
+	void DX11GraphicsEngine::AddDeviceContext(RAZPTR<DX11DeviceContext> curcontext)
 	{
 		contexts.push_back(curcontext);
 	}
 
-	void DX11GraphicsEngine::RemoveDeviceContext(DX11DeviceContext* context)
+	void DX11GraphicsEngine::RemoveDeviceContext(RAZPTR<DX11DeviceContext> context)
 	{
 		for (auto it = contexts.begin(); it != contexts.end(); ) {
 			if (*it == context) {
@@ -234,22 +255,22 @@ namespace DX11Raz
 		contexts.shrink_to_fit();
 	}
 
-	RazVertexBuffer* DX11GraphicsEngine::GetCurrentVertexBuffer()
+	RAZPTR<RazVertexBuffer> DX11GraphicsEngine::GetCurrentVertexBuffer()
 	{
 		return currentVertexBuffer;
 	}
 
-	void DX11GraphicsEngine::SetCurrentVertexBuffer(RazVertexBuffer* vbuffer)
+	void DX11GraphicsEngine::SetCurrentVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer)
 	{
 		currentVertexBuffer = vbuffer;
 	}
 
-	void DX11GraphicsEngine::AddVertexBuffer(RazVertexBuffer* vbuffer)
+	void DX11GraphicsEngine::AddVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer)
 	{
 		vbuffers.push_back(vbuffer);
 	}
 
-	void DX11GraphicsEngine::RemoveVertexBuffer(RazVertexBuffer* vbuffer)
+	void DX11GraphicsEngine::RemoveVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer)
 	{
 		for (auto it = vbuffers.begin(); it != vbuffers.end(); ) {
 			if (*it == vbuffer) {
@@ -264,22 +285,22 @@ namespace DX11Raz
 		vbuffers.shrink_to_fit();
 	}
 
-	RazIndexBuffer* DX11GraphicsEngine::GetCurrentIndexBuffer()
+	RAZPTR<RazIndexBuffer> DX11GraphicsEngine::GetCurrentIndexBuffer()
 	{
 		return currentIndexBuffer;
 	}
 
-	void DX11GraphicsEngine::SetCurrentIndexBuffer(RazIndexBuffer* ibuffer)
+	void DX11GraphicsEngine::SetCurrentIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		currentIndexBuffer = ibuffer;
 	}
 
-	void DX11GraphicsEngine::AddIndexBuffer(RazIndexBuffer* ibuffer)
+	void DX11GraphicsEngine::AddIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		ibuffers.push_back(ibuffer);
 	}
 
-	void DX11GraphicsEngine::RemoveIndexBuffer(RazIndexBuffer* ibuffer)
+	void DX11GraphicsEngine::RemoveIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		for (auto it = ibuffers.begin(); it != ibuffers.end(); ) {
 			if (*it == ibuffer) {
@@ -294,22 +315,22 @@ namespace DX11Raz
 		ibuffers.shrink_to_fit();
 	}
 
-	RazTexture* DX11GraphicsEngine::GetCurrentTexture()
+	RAZPTR<RazTexture> DX11GraphicsEngine::GetCurrentTexture()
 	{
 		return currentTexture;
 	}
 
-	void DX11GraphicsEngine::SetCurrentTexture(RazTexture* texture)
+	void DX11GraphicsEngine::SetCurrentTexture(RAZPTR<RazTexture> texture)
 	{
 		currentTexture = texture;
 	}
 
-	void DX11GraphicsEngine::AddTexture(RazTexture* texture)
+	void DX11GraphicsEngine::AddTexture(RAZPTR<RazTexture> texture)
 	{
 		textures.push_back(texture);
 	}
 
-	void DX11GraphicsEngine::RemoveTexture(RazTexture* texture)
+	void DX11GraphicsEngine::RemoveTexture(RAZPTR<RazTexture> texture)
 	{
 		for (auto it = textures.begin(); it != textures.end(); ) {
 			if (*it == texture) {
@@ -324,22 +345,22 @@ namespace DX11Raz
 		textures.shrink_to_fit();
 	}
 
-	DX11DeviceContext* DX11GraphicsEngine::GetImmediateDeviceContext()
+	RAZPTR<DX11DeviceContext> DX11GraphicsEngine::GetImmediateDeviceContext()
 	{
-		return m_imm_device_context;
+		return this->m_imm_device_context;
 	}
 
 
 
-	DX11SwapChain* DX11GraphicsEngine::CreateSwapChain()
+	RAZPTR<DX11SwapChain> DX11GraphicsEngine::CreateSwapChain()
 	{
-		return new DX11SwapChain();
+		return RAZPTR<DX11SwapChain>(new DX11SwapChain());
 	}
-	void DX11GraphicsEngine::AddSwapChain(DX11SwapChain* swapchain)
+	void DX11GraphicsEngine::AddSwapChain(RAZPTR<DX11SwapChain> swapchain)
 	{
 		swapchains.push_back(swapchain);
 	}
-	void DX11GraphicsEngine::RemoveSwapChain(DX11SwapChain* swapchain)
+	void DX11GraphicsEngine::RemoveSwapChain(RAZPTR<DX11SwapChain> swapchain)
 	{
 		for (auto it = swapchains.begin(); it != swapchains.end(); ) {
 			if (*it == swapchain) {
@@ -394,14 +415,16 @@ namespace DX11Raz
 		return true;
 	}
 
-	void RazDX11CreateContext(ZWindow* zhandle)
+	void RazDX11CreateContext(RAZPTR<ZWindow> zhandle)
 	{
 		//ID3D11DeviceContext * newcontext;
 		//HRESULT res = 0;
 		//DX11GraphicsEngine::Get()->GetDevice()->GetImmediateContext(&newcontext); //->CreateDeferredContext(0, &newcontext);
 		//if (SUCCEEDED(res))
 		//{
-		DX11DeviceContext* DXContext = new DX11DeviceContext(DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext());
+		RAZPTR<ID3D11DeviceContext> devcontext = DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->GetContext();
+		DX11DeviceContext* context = new DX11DeviceContext(devcontext);
+		RAZPTR<DX11DeviceContext> DXContext = RAZPTR<DX11DeviceContext>(context);
 
 			zhandle->SetDeviceContext(DXContext);			
 			DXContext->Init(zhandle);
@@ -410,12 +433,12 @@ namespace DX11Raz
 
 	}
 
-	void RazSetCLSColor(DX11DeviceContext* dhandle, float r, float g, float b, float a)
+	void RazSetCLSColor(RAZPTR<DX11DeviceContext> dhandle, float r, float g, float b, float a)
 	{
 		dhandle->clearRenderTargetColor(r, g, b, a);
 	}
 
-	void RazCLS(DX11DeviceContext* dhandle)
+	void RazCLS(RAZPTR<DX11DeviceContext> dhandle)
 	{
 		dhandle->clearRenderTarget();
 	}
@@ -425,132 +448,129 @@ namespace DX11Raz
 		DX11GraphicsEngine::Get()->GetImmediateDeviceContext()->setviewportsize(width, height);
 	}
 
-	RazVertexBuffer* RazCreateVertexBuffer()
+	RAZPTR<RazVertexBuffer> RazCreateVertexBuffer()
 	{
-		return new RazVertexBuffer();
+		return RAZPTR<RazVertexBuffer>(new RazVertexBuffer());
 	}
 
-	void RazDeleteVertexBuffer(RazVertexBuffer* v)
+	void RazDeleteVertexBuffer(RAZPTR<RazVertexBuffer> v)
 	{
 		DX11GraphicsEngine::Get()->RemoveVertexBuffer(v);
 	}
 
-	RazIndexBuffer* RazCreateIndexBuffer()
+	RAZPTR<RazIndexBuffer> RazCreateIndexBuffer()
 	{
-		return new RazIndexBuffer();
+		return RAZPTR<RazIndexBuffer>(new RazIndexBuffer());
 	}
 
-	void RazDeleteIndexBuffer(RazIndexBuffer* i)
+	void RazDeleteIndexBuffer(RAZPTR<RazIndexBuffer> i)
 	{
 		DX11GraphicsEngine::Get()->RemoveIndexBuffer(i);
 	}
 
-	RazShader* RazCreateShader()
+	RAZPTR<RazShader> RazCreateShader()
 	{
-		return new RazShader();
+		return RAZPTR<RazShader>(new RazShader());
 	}
 
-	void RazDeleteShader(RazShader * shader)
+	void RazDeleteShader(RAZPTR<RazShader> shader)
 	{
 		DX11GraphicsEngine::Get()->RemoveShader(shader);
 	}
 
-	void RazSetCurrentShader(RazShader* shader)
+	void RazSetCurrentShader(RAZPTR<RazShader> shader)
 	{
 		return DX11GraphicsEngine::Get()->SetCurrentShader(shader);
 	}
 
-	RazShader* RazGetCurrentShader()
+	RAZPTR<RazShader> RazGetCurrentShader()
 	{
 		return DX11GraphicsEngine::Get()->GetCurrentShader();
 	}
 
-	void RazSetCurrentContext(DX11DeviceContext* dhandle)
+	void RazSetCurrentContext(RAZPTR<DX11DeviceContext> dhandle)
 	{
 		DX11GraphicsEngine::Get()->SetCurrentDeviceContext(dhandle);
 	}
 
-	DX11DeviceContext* RazGetCurrentContext()
+	RAZPTR<DX11DeviceContext> RazGetCurrentContext()
 	{
 		return DX11GraphicsEngine::Get()->GetCurrentDeviceContext();
 	}
 
-	void RazSetCurrentVertexBuffer(RazVertexBuffer* vbuffer)
+	void RazSetCurrentVertexBuffer(RAZPTR<RazVertexBuffer> vbuffer)
 	{
 		DX11GraphicsEngine::Get()->SetCurrentVertexBuffer(vbuffer);
 	}
 
-	RazVertexBuffer* RazGetCurrentVertexBuffer()
+	RAZPTR<RazVertexBuffer> RazGetCurrentVertexBuffer()
 	{
 		return DX11GraphicsEngine::Get()->GetCurrentVertexBuffer();
 	}
 
-	void RazSetCurrentIndexBuffer(RazIndexBuffer* ibuffer)
+	void RazSetCurrentIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		DX11GraphicsEngine::Get()->SetCurrentIndexBuffer(ibuffer);
 	}
 
-	RazIndexBuffer* RazGetCurrentIndexBuffer()
+	RAZPTR<RazIndexBuffer> RazGetCurrentIndexBuffer()
 	{
 		return DX11GraphicsEngine::Get()->GetCurrentIndexBuffer();
 	}
 
-	RazTexture* RazGetCurrentTexture()
+	RAZPTR<RazTexture> RazGetCurrentTexture()
 	{
 		return DX11GraphicsEngine::Get()->GetCurrentTexture();
 	}
 
-	RazTexture* RazCreateTexture(const DX11Color& color, aiTextureType type)
+
+
+	RAZPTR<RazTexture> RazCreateTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, aiTextureType type)
 	{
-		return new RazTexture(color,type);
+		return RAZPTR<RazTexture>(new RazTexture(colorData, width, height, type));
 	}
 
-	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, aiTextureType type)
+	RAZPTR<RazTexture> RazCreateTexture(const RAZPTR<DX11Color> colorData, UINT width, UINT height, UINT size, aiTextureType type)
 	{
-		return new RazTexture(colorData, width, height, type);
+		return RAZPTR<RazTexture>(new RazTexture(colorData, width, height,size, type));
 	}
 
-	RazTexture* RazCreateTexture(const DX11Color* colorData, UINT width, UINT height, UINT size, aiTextureType type)
+	RAZPTR<RazTexture> RazCreateTexture(const wchar_t* filename, aiTextureType type)
 	{
-		return new RazTexture(colorData, width, height,size, type);
+		return RAZPTR<RazTexture>(new RazTexture(filename, type));
 	}
 
-	RazTexture* RazCreateTexture(const wchar_t* filename, aiTextureType type)
+	RAZPTR<RazTexture> RazCreateTexture(std::string filename, aiTextureType type)
 	{
-		return new RazTexture(filename, type);
+		return RAZPTR<RazTexture>(new RazTexture(filename, type));
 	}
 
-	RazTexture* RazCreateTexture(std::string filename, aiTextureType type)
+	RAZPTR<RazTexture> RazCreateTexture(RAZPTR<ID3D11ShaderResourceView> textureView, aiTextureType type)
 	{
-		return new RazTexture(filename, type);
+		return RAZPTR<RazTexture>(new RazTexture(textureView, type));
 	}
 
-	RazTexture* RazCreateTexture(ID3D11ShaderResourceView* textureView, aiTextureType type)
-	{
-		return new RazTexture(textureView, type);
-	}
-
-	void RazSetCurrentTexture(RazTexture* texture)
+	void RazSetCurrentTexture(RAZPTR<RazTexture> texture)
 	{
 		DX11GraphicsEngine::Get()->SetCurrentTexture(texture);
 	}
 
-	void RazSetDeleteTexture(RazTexture* texture)
+	void RazSetDeleteTexture(RAZPTR<RazTexture> texture)
 	{
 		DX11GraphicsEngine::Get()->RemoveTexture(texture);
 	}
 
-	void RazSetLayout(RazVertexBuffer* vbuffer, ID3D10Blob* vertexshader)
+	void RazSetLayout(RAZPTR<RazVertexBuffer> vbuffer, RAZPTR<ID3D10Blob> vertexshader)
 	{
 		vbuffer->SetLayout(vertexshader);
 	}
 
-	void RazSetLayout(ID3D10Blob* vertexshader)
+	void RazSetLayout(RAZPTR<ID3D10Blob> vertexshader)
 	{
 		RazGetCurrentVertexBuffer()->SetLayout(vertexshader);
 	}
 
-	void RazSetLayout(RazVertexBuffer* vbuffer)
+	void RazSetLayout(RAZPTR<RazVertexBuffer> vbuffer)
 	{
 		vbuffer->SetLayout(RazGetCurrentShader()->GetBuffer());
 	}
@@ -560,7 +580,7 @@ namespace DX11Raz
 		RazGetCurrentVertexBuffer()->SetLayout(RazGetCurrentShader()->GetBuffer());
 	}
 
-	void RazBindIndexBuffer(RazIndexBuffer* ibuffer)
+	void RazBindIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		RazGetCurrentContext()->setindexbuffer(ibuffer);
 	}
@@ -570,7 +590,7 @@ namespace DX11Raz
 		RazGetCurrentContext()->setindexbuffer(RazGetCurrentIndexBuffer());
 	}
 
-	void RazBindIndices(RazIndexBuffer* ibuffer, UINT* indices, UINT count)
+	void RazBindIndices(RAZPTR<RazIndexBuffer> ibuffer, UINT* indices, UINT count)
 	{
 		ibuffer->SetIndexes(indices, count);
 	}
@@ -585,17 +605,17 @@ namespace DX11Raz
 		RazGetCurrentIndexBuffer()->SetIndexes(indices);
 	}
 
-	void RazBindVertices(RazVertexBuffer* vbuffer, float* verts, UINT size)
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, float* verts, UINT size)
 	{
 		vbuffer->SetVertices(verts, size);
 	}
 
-	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT size)
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, void* vertices, UINT size)
 	{
 		vbuffer->SetVertices(vertices, size);
 	}
 
-	void RazBindVertices(RazVertexBuffer* vbuffer, void* vertices, UINT bytewidth, UINT size)
+	void RazBindVertices(RAZPTR<RazVertexBuffer> vbuffer, void* vertices, UINT bytewidth, UINT size)
 	{
 		vbuffer->SetVertices(vertices, bytewidth, size);
 	}
@@ -620,12 +640,12 @@ namespace DX11Raz
 		RazGetCurrentContext()->Flip(vsync);
 	}
 
-	void RazApplyVertexShaderConstants(RazShader* shader)
+	void RazApplyVertexShaderConstants(RAZPTR<RazShader> shader)
 	{
 		shader->ApplyAllVertexCB();
 	}
 
-	void RazApplyPixelShaderConstants(RazShader* shader)
+	void RazApplyPixelShaderConstants(RAZPTR<RazShader> shader)
 	{
 		shader->ApplyAllPixelCB();
 	}
@@ -640,33 +660,33 @@ namespace DX11Raz
 		RazGetCurrentShader()->ApplyAllPixelCB();
 	}
 
-	void RazApplyVertexShader(DX11DeviceContext* dhandle, RazShader* shader)
+	void RazApplyVertexShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader)
 	{
 		dhandle->setvertexshader(shader);
 	}
 
-	void RazApplyPixelShader(DX11DeviceContext* dhandle, RazShader* shader)
+	void RazApplyPixelShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader)
 	{
 		dhandle->setpixelshader(shader);
 	}
 
-	void RazApplyShader(DX11DeviceContext* dhandle, RazShader* shader)
+	void RazApplyShader(RAZPTR<DX11DeviceContext> dhandle, RAZPTR<RazShader> shader)
 	{
 		dhandle->setvertexshader(shader);
 		dhandle->setpixelshader(shader);
 	}
 
-	void RazApplyVertexShader(RazShader* shader)
+	void RazApplyVertexShader(RAZPTR<RazShader> shader)
 	{
 		RazGetCurrentContext()->setvertexshader(shader);
 	}
 
-	void RazApplyPixelShader(RazShader* shader)
+	void RazApplyPixelShader(RAZPTR<RazShader> shader)
 	{
 		RazGetCurrentContext()->setpixelshader(shader);
 	}
 
-	void RazApplyShader(RazShader* shader)
+	void RazApplyShader(RAZPTR<RazShader> shader)
 	{
 		RazApplyVertexShader(shader);
 		RazApplyPixelShader(shader);
@@ -688,7 +708,7 @@ namespace DX11Raz
 		RazApplyPixelShader();
 	}
 
-	void RazSetBlendState(DX11DeviceContext* dhandle)
+	void RazSetBlendState(RAZPTR<DX11DeviceContext> dhandle)
 	{
 		dhandle->setblendstate();
 	}
@@ -698,7 +718,7 @@ namespace DX11Raz
 		RazGetCurrentContext()->setblendstate();
 	}
 
-	void RazDrawIndexed(DX11DeviceContext* dhandle, UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
+	void RazDrawIndexed(RAZPTR<DX11DeviceContext> dhandle, UINT index_count, UINT start_vertex_index, UINT base_vertex_location)
 	{
 		dhandle->drawIndexed(index_count, start_vertex_index, base_vertex_location);
 	}
@@ -708,29 +728,29 @@ namespace DX11Raz
 		RazGetCurrentContext()->drawIndexed(index_count, start_vertex_index, base_vertex_location);
 	}
 
-	void RazApplyShaderTexture(RazShader* shader, std::string name, RazTexture* texture)
+	void RazApplyShaderTexture(RAZPTR<RazShader> shader, std::string name, RAZPTR<RazTexture> texture)
 	{
 		shader->UpdateTextureBuffer(name, texture->GetTexture());
 		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
 	}
 
-	void RazApplyShaderTexture(std::string name, RazTexture* texture)
+	void RazApplyShaderTexture(std::string name, RAZPTR<RazTexture> texture)
 	{
 		RazGetCurrentShader()->UpdateTextureBuffer(name, texture->GetTexture());
 		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
 	}
 
-	void RazApplyShaderTexture(RazTexture* texture)
+	void RazApplyShaderTexture(RAZPTR<RazTexture> texture)
 	{
 		RazGetCurrentContext()->setshadertexture(texture->GetTextureView());
 	}
 
-	void RazApplyShaderTexture(RazTexture* texture, UINT slot)
+	void RazApplyShaderTexture(RAZPTR<RazTexture> texture, UINT slot)
 	{
 		RazGetCurrentContext()->setshadertexture( slot,texture->GetTextureView());
 	}
 
-	void RazApplyVertexBuffer(RazVertexBuffer* v)
+	void RazApplyVertexBuffer(RAZPTR<RazVertexBuffer> v)
 	{
 		RazGetCurrentContext()->setvertexbuffer(v);
 	}
@@ -740,7 +760,7 @@ namespace DX11Raz
 		RazGetCurrentContext()->setvertexbuffer(RazGetCurrentVertexBuffer());
 	}
 
-	void RazApplyIndexBuffer(RazIndexBuffer* ibuffer)
+	void RazApplyIndexBuffer(RAZPTR<RazIndexBuffer> ibuffer)
 	{
 		RazGetCurrentContext()->setindexbuffer(ibuffer);
 	}

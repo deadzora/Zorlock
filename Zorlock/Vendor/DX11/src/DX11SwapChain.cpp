@@ -5,12 +5,12 @@ namespace DX11Raz
 {
 	DX11SwapChain::DX11SwapChain() : m_rtv(0), m_swapchain(0)
 	{
-		DX11GraphicsEngine::Get()->AddSwapChain(this);
+		DX11GraphicsEngine::Get()->AddSwapChain(RAZPTR<DX11SwapChain>(this));
 	}
 
 	bool DX11SwapChain::init(HWND hwnd, UINT width, UINT height)
 	{
-		ID3D11Device* device = DX11GraphicsEngine::Get()->GetDevice();
+		ID3D11Device* device = DX11GraphicsEngine::Get()->GetDevice().get();
 		UINT samples;
 		HRESULT hr = device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT, &samples);
 
@@ -31,7 +31,8 @@ namespace DX11Raz
 		desc.Windowed = TRUE;
 		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		//desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-		hr = DX11GraphicsEngine::Get()->GetFactory()->CreateSwapChain(device, &desc, &m_swapchain);
+		IDXGISwapChain* sc;
+		hr = DX11GraphicsEngine::Get()->GetFactory()->CreateSwapChain(device, &desc, &sc);
 
 		if (FAILED(hr))
 		{
@@ -39,6 +40,7 @@ namespace DX11Raz
 			ZL_CORE_ASSERT(1,"Failed to Create Swap Chain. Possible missing context");
 			return false;
 		}
+		m_swapchain = RAZPTR<IDXGISwapChain>(sc);
 		ID3D11Texture2D* buffer = NULL;
 		hr = m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
 		if (FAILED(hr))
@@ -47,8 +49,8 @@ namespace DX11Raz
 			ZL_CORE_ASSERT(1, "Failed to Create Swap Chain Buffer");
 			return false;
 		}
-
-		hr = device->CreateRenderTargetView(buffer, NULL, &m_rtv);
+		ID3D11RenderTargetView* rtv;
+		hr = device->CreateRenderTargetView(buffer, NULL, &rtv);
 		buffer->Release();
 
 
@@ -58,7 +60,7 @@ namespace DX11Raz
 			ZL_CORE_ASSERT(1, "Swap Chain Buffer Invalid");
 			return false;
 		}
-
+		m_rtv = RAZPTR<ID3D11RenderTargetView>(rtv);
 		return true;
 	}
 
@@ -105,7 +107,7 @@ namespace DX11Raz
 	}
 
 
-	ID3D11RenderTargetView* DX11SwapChain::GetRenderTargetView()
+	RAZPTR<ID3D11RenderTargetView> DX11SwapChain::GetRenderTargetView()
 	{
 		return m_rtv;
 	}

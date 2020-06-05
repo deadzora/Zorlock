@@ -168,7 +168,7 @@ namespace Zorlock
 
 	void* DX11Shader::GetShaderID() const
 	{
-		return (void*)m_RendererID;
+		return (void*)m_RendererID.get();
 	}
 
 	void DX11Shader::Compile(std::string vertexshadersource, std::string pixelshadersource)
