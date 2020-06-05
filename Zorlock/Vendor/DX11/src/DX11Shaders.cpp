@@ -339,7 +339,7 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 
 bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 {
-	RazConstantBuffer* buffer = 0;
+	RazConstantBuffer* buffer = nullptr;
 
 	for (size_t i = 0; i < vc_buffer.size(); i++)
 	{
@@ -376,6 +376,7 @@ bool DX11Raz::RazShader::ApplyVertexCB(std::string cbname)
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
 	
 	*/
+
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->VSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
 	
 	return true;
@@ -420,6 +421,7 @@ bool DX11Raz::RazShader::ApplyPixelCB(std::string cbname)
 
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->Unmap(buffer->buffer, 0);
 	*/
+
 	DX11GraphicsEngine::Get()->GetCurrentDeviceContext()->GetContext()->PSSetConstantBuffers(buffer->slot, 1, &buffer->buffer);
 
 	return true;

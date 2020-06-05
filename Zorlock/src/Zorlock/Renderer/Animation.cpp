@@ -5,7 +5,7 @@
 namespace Zorlock
 {
 
-	Animation::Animation(std::string name) : name(name), m_duration(0), m_animid(0), m_currentTime(0)
+	Animation::Animation(std::string name) : name(name), m_duration(0), m_animid(0), m_currentTime(0), m_animspeed(0.5f)
 	{
 	}
 
@@ -42,6 +42,16 @@ namespace Zorlock
 	float Animation::GetCurrentAnimTime()
 	{
 		return m_currentTime;
+	}
+
+	void Animation::SetAnimationSpeed(float s)
+	{
+		m_animspeed = s;
+	}
+
+	float Animation::GetAnimationSpeed()
+	{
+		return m_animspeed;
 	}
 
 	Ref<AnimationChannel> Animation::CreateChannel(std::string boneName)

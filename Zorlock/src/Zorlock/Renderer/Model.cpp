@@ -848,7 +848,7 @@ namespace Zorlock
 		{
 			aiAnimation* anim = scene->mAnimations[i];
 			Ref<Animation> animation = CreateAnimation(anim->mName.data);
-			printf("animation: %s duration: %f \n", anim->mName.C_Str(), (float)anim->mDuration);
+			//printf("animation: %s duration: %f \n", anim->mName.C_Str(), (float)anim->mDuration);
 
 			animation->SetDuration((float)anim->mDuration);
 			
@@ -1021,7 +1021,7 @@ namespace Zorlock
 						(float)mesh->mBones[b]->mOffsetMatrix.c1, (float)mesh->mBones[b]->mOffsetMatrix.c2, (float)mesh->mBones[b]->mOffsetMatrix.c3, (float)mesh->mBones[b]->mOffsetMatrix.c4,
 						(float)mesh->mBones[b]->mOffsetMatrix.d1, (float)mesh->mBones[b]->mOffsetMatrix.d2, (float)mesh->mBones[b]->mOffsetMatrix.d3, (float)mesh->mBones[b]->mOffsetMatrix.d4
 					);
-					printf(" Setting bone offset for %u", quadmesh->GetMeshID());
+					//printf(" Setting bone offset for %u", quadmesh->GetMeshID());
 					bone->SetOffset(nodeMatrix, quadmesh->GetMeshID());
 					//printf("Submesh: %u %s Bone ID: %u %s  \n", quadmesh->GetMeshID(),quadmesh->name.c_str(), bone->GetBoneID(), mesh->mBones[b]->mName.C_Str());
 					/*

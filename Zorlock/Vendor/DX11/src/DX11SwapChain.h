@@ -14,6 +14,8 @@ namespace DX11Raz
 		bool init(HWND hwnd, UINT width, UINT height);
 		bool flip(bool vsync);
 		bool Release();
+		bool SetViewport(HWND hwnd, UINT width, UINT height);
+
 		ID3D11RenderTargetView* GetRenderTargetView();
 		~DX11SwapChain();
 	private:

@@ -98,8 +98,8 @@ namespace DX11Raz
 			Errorcallback(1,"Could Not Create a Raz Window!");
 			return false;
 		}
-		::ShowWindow(m_hwnd, SW_SHOW);
-		::UpdateWindow(m_hwnd);
+		ShowWindow(m_hwnd, SW_SHOW);
+		UpdateWindow(m_hwnd);
 
 
 		m_is_running = true;
@@ -345,6 +345,7 @@ namespace DX11Raz
 			RECT rc = this->getClientWindowRect();
 			int w = static_cast<int>((rc.right - rc.left));
 			int h = static_cast<int>((rc.bottom - rc.top));
+
 			WSCallback(this, w, h);
 			return 0;
 			break;

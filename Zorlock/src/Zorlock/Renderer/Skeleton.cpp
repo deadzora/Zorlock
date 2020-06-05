@@ -3,6 +3,7 @@
 #include "Bone.h"
 #include "Animation.h"
 #include "Zorlock/Core/Math.h"
+#include "RendererAPI.h"
 
 namespace Zorlock
 {
@@ -54,38 +55,15 @@ namespace Zorlock
 		{
 			if (m_currentanimation == nullptr)
 			{
-				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse.inverse() * m_bones[i]->GetParentMat() * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset(submesh)));
+				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_globalInverse.inverse() * m_bones[i]->GetParentMat() * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset(submesh)));
 			}
 			else {
-
-				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse.inverse() * m_globalInverse * m_bones[i]->GetParentAnimMat() * m_bones[i]->GetAnimationMat() * m_bones[i]->GetOffset(submesh)));
+				//Matrix4 rot = Matrix4::rotation(Quaternion::EulerAngles(Vector3(0, 180, 0)));
+				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_globalInverse.inverse() * m_bones[i]->GetParentAnimMat() * m_bones[i]->GetAnimationMat() * m_bones[i]->GetOffset(submesh)));
 			}
 		}
 		return mats.data();
 	}
-
-	float* Skeleton::GetBoneMatricesArray()
-	{
-		static std::vector<float> matsf;
-		matsf.clear();
-		for (size_t i = 0; i < m_bones.size(); i++)
-		{
-			Matrix4 m = Matrix::IDENTITY();
-			if (m_currentanimation == nullptr)
-			{
-				Matrix4 m = Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetFinalTransform()); //->GetParentMat() * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset());
-			}				
-			float* f = m.To4x4PtrArray();
-			for (size_t i = 0; i < 16; i++)
-			{
-				matsf.push_back(*f);
-				++f;
-			}
-			
-		}
-		return matsf.data();
-	}
-
 
 
 	int Skeleton::BoneID(std::string name)
@@ -122,7 +100,7 @@ namespace Zorlock
 		Ref<AnimationChannel> achannel = m_currentanimation->GetChannel(Bone->name);
 		Bone->SetAnimationChannel(achannel);
 		//Next get Interpolated TRS
-		Matrix4 aTransform = Bone->GetBaseMat();
+		Matrix4 aTransform = Matrix4::IDENTITY(); //Bone->GetBaseMat();
 
 		if (achannel != nullptr)
 		{
@@ -154,13 +132,28 @@ namespace Zorlock
 			{
 				
 				float mtime = m_currentanimation->GetCurrentAnimTime();
-				mtime += 0.1f * ts.GetSeconds();
+				mtime += m_currentanimation->GetAnimationSpeed() * ts.GetSeconds();
 				float dur = m_currentanimation->GetDuration();
 				if (mtime >= dur)
 					mtime = 0;
 				m_currentanimation->SetCurrentAnimTime(mtime);
 				//printf("Updating anim: current %f duration %f \n", mtime,dur);
-				UpdateAnimation(root, m_globalInverse);				
+				switch (RendererAPI::GetAPI())
+				{
+				case RendererAPI::API::DX11:
+				{
+					UpdateAnimation(root, Matrix4::rotation(Quaternion::EulerAngles(Vector3(0, 180, 0))) * m_globalInverse);
+					break;
+				}
+				case RendererAPI::API::OpenGL:
+				{
+					UpdateAnimation(root, m_globalInverse);
+					break;
+				}
+				}
+				
+
+
 			}
 		}
 

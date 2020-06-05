@@ -23,6 +23,7 @@ namespace DX11Raz
 		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.BufferDesc.RefreshRate.Numerator = 144;
 		desc.BufferDesc.RefreshRate.Denominator = 1;
+		desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		desc.OutputWindow = hwnd;
 		desc.SampleDesc.Count = 1;
@@ -79,6 +80,27 @@ namespace DX11Raz
 		}
 		//m_swapchain->Release();
 		//delete this;
+		return true;
+	}
+
+	bool DX11SwapChain::SetViewport(HWND hwnd, UINT width, UINT height)
+	{
+		DXGI_MODE_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = width;
+		desc.Height = height;
+		desc.RefreshRate.Denominator = 1;
+		desc.RefreshRate.Numerator = 144;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		HRESULT hr = m_swapchain->ResizeTarget(&desc);
+		if (FAILED(hr))
+		{
+			OutputDebugString(L"Failed to Resize Swap Chain. Possible missing context\r\n");
+			ZL_CORE_ASSERT(1, "Failed to Resize Swap Chain. Possible missing context");
+			return false;
+		}
 		return true;
 	}
 

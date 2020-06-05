@@ -234,6 +234,9 @@
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h">
       <Filter>src\Zorlock\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Renderer\Animation.h">
+      <Filter>src\Zorlock\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Bone.h">
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
@@ -2805,7 +2808,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Renderer\Animation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2912,6 +2914,9 @@
     </ClCompile>
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp">
       <Filter>src\Zorlock\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Renderer\Animation.cpp">
+      <Filter>src\Zorlock\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Bone.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
@@ -3021,7 +3026,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Renderer\Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

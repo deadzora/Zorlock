@@ -56,11 +56,14 @@ namespace Zorlock
 		float GetDuration();
 		void SetCurrentAnimTime(float t);
 		float GetCurrentAnimTime();
+		void SetAnimationSpeed(float s);
+		float GetAnimationSpeed();
 		Ref<AnimationChannel> CreateChannel(std::string boneName = "");
 		Ref<AnimationChannel> GetChannel(std::string bonename);
 		Ref<AnimationChannel> GetChannel(uint32_t boneid);
 		std::string name;
 	protected:
+		float m_animspeed;
 		float m_currentTime;
 		float m_duration;
 		uint32_t m_animid;

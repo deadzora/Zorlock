@@ -29,30 +29,30 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	ZLREF<ZLCAMERA> camera = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateCamera(FOV, AspectRatio, nearZ, farZ);
 	mainCam = camera;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->SetMainCamera(mainCam);
-	mainCam->transform->position.z = -10.0f;
+	mainCam->transform->position.z = -20.0f;
 	mainCam->transform->position.y = 5.0f;
 
 	///////LIGHTA
 	lightA = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightA->transform->position = VECTOR3(5, 10, 10);
-	lightA->SetColor(COLOR4(0, 1, 0, 1));
+	lightA->transform->position = VECTOR3(3, 10, 10);
+	lightA->SetColor(COLOR4(1, 1, 1, 1));
 	lightA->SetStrength(1.15);
-	lightA->SetRadius(100);
+	lightA->SetRadius(800);
 
 
 	///////LIGHTB
 	lightB = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightB->transform->position = VECTOR3(-5, 10, 10);
+	lightB->transform->position = VECTOR3(0, 10, 10);
 	lightB->SetColor(COLOR4(1, 0, 0, 1));
 	lightB->SetStrength(1.65);
-	lightB->SetRadius(100);
+	lightB->SetRadius(800);
 
 	///////LIGHTC
 	lightC = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
-	lightC->transform->position = VECTOR3(0, 5,5);
+	lightC->transform->position = VECTOR3(0, 10, 10);
 	lightC->SetColor(COLOR4(0, 0, 1, 1));
 	lightC->SetStrength(3.75);
-	lightC->SetRadius(100);
+	lightC->SetRadius(800);
 
 	//////MAIN GAME OBJECT
 	mainmodel = m_mainScene->CreateGameObject("Model");
@@ -66,19 +66,20 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	//meshrenderer->CreateSphere(32);
 	//meshrenderer->CreateCube();
 	//meshrenderer->AddModel("Spaceship","assets/models/MK6_OBJ.obj",0.1f);
-	meshrenderer->AddModel("Player", "assets/models/humanrun.dae",1.0f);
+	meshrenderer->AddModel("Player", "assets/models/humanjog.dae",1.0f);
 	m_meshrenderer = meshrenderer;
 	//m_meshrenderer->AppendAnimation("assets/models/humanidlelook.dae");
 	mainmodel->transform->position.z = 10.0f;
 	mainmodel->transform->position.y = 10.0f;
-	mainmodel->transform->scale = VECTOR3(0.1f, 0.1f, 0.1f);
+	//mainmodel->transform->position.x = -10.0f;
+	mainmodel->transform->scale = VECTOR3(0.01f, 0.01f, 0.01f);
 	///////MATERIAL SETTINGS
 	std::vector<ZLREF<ZLMATERIAL>>& mats = meshrenderer->GetMaterials();
 	for (size_t i = 0; i < mats.size(); i++)
 	{
 		mats[i]->sharedTexture = m_Texture;
-		mats[i]->SetShininess(32);
-		mats[i]->SetSpecular(0.1f);
+		mats[i]->SetShininess(8);
+		mats[i]->SetSpecular(0.5f);
 	}
 
 	///////SEND AWAKE METHOD TO CHILDREN
