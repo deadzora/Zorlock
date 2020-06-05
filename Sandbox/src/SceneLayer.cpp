@@ -30,7 +30,7 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	mainCam = camera;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->SetMainCamera(mainCam);
 	mainCam->transform->position.z = -10.0f;
-	mainCam->transform->position.y = -0.0f;
+	mainCam->transform->position.y = 5.0f;
 
 	///////LIGHTA
 	lightA = ZLSCENEMANAGER::GetInstance()->GetActiveScene()->CreateLight();
@@ -66,8 +66,9 @@ SceneLayer::SceneLayer() : Layer("Scene Layer"), m_CameraController(1280.0f / 72
 	//meshrenderer->CreateSphere(32);
 	//meshrenderer->CreateCube();
 	//meshrenderer->AddModel("Spaceship","assets/models/MK6_OBJ.obj",0.1f);
-	meshrenderer->AddModel("Player", "assets/models/AnimeBoy.DAE",1.0f);
+	meshrenderer->AddModel("Player", "assets/models/humanrun.dae",1.0f);
 	m_meshrenderer = meshrenderer;
+	//m_meshrenderer->AppendAnimation("assets/models/humanidlelook.dae");
 	mainmodel->transform->position.z = 10.0f;
 	mainmodel->transform->position.y = 10.0f;
 	mainmodel->transform->scale = VECTOR3(0.1f, 0.1f, 0.1f);
@@ -98,14 +99,15 @@ void SceneLayer::OnDetach()
 }
 void SceneLayer::OnUpdate(ZLTIME ts)
 {
+	//printf("Update time %f \n", ts.GetSeconds());
 	ZL_PROFILE_FUNCTION();
 	ZLRENDERCOMMAND::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });	
 	ZLRENDERCOMMAND::Clear();
 	ZLRENDERER::BeginScene();
 
 	static float rotation = 0.0f;
-	rotation += ts * 50.0f;
-	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, rotation, 180));
+	rotation += ts.GetSeconds() * 50.0f;
+	mainmodel->transform->rotation = QUATERNION::EulerAngles(VECTOR3(0, 180, 180));
 
 	
 	

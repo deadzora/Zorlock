@@ -12,6 +12,7 @@ namespace Zorlock
 	class MeshRenderer;
 	class Skeleton;
 	class Bone;
+	class Animation;
 
 	enum class AssimpTextureStorageType
 	{
@@ -46,6 +47,7 @@ namespace Zorlock
 		virtual void Update(Timestep ts);
 		virtual void Draw();
 		virtual void Destroy();
+		void AppendAnimation(const std::string& modelfile);
 		void SetMeshRenderer(Ref<MeshRenderer> m);
 		void CreateCube();
 		void CreateQuad();
@@ -56,6 +58,9 @@ namespace Zorlock
 		void AddMesh(Ref<Mesh> mesh);
 		void RemoveMesh(Ref<Mesh> mesh);
 		Ref<Mesh> GetMesh(uint32_t index);
+		Ref<Animation> CreateAnimation(std::string name = "Track");
+		Ref<Animation> GetAnimation(uint32_t i);
+		Ref<Animation> GetAnimation(std::string name);
 		Ref<Bone> AddBone(std::string name = "Bone", Ref<Transform> parent = nullptr);
 		Ref<Bone> GetBone(uint32_t i);
 		Ref<Bone> GetBone(std::string name);
@@ -66,8 +71,9 @@ namespace Zorlock
 		Ref<MeshRenderer> meshRenderer;
 		std::vector<Ref<Mesh>> m_meshes;
 		Ref<Skeleton> m_skeleton;
-
-
+		std::vector<Ref<Animation>> m_animations;
+		uint32_t current_animation;
+		void ProcessAnimations(const aiScene* scene);
 		void ProcessMeshes(aiNode* node, const aiScene* scene);
 		void NodeChild(aiNode* node, uint32_t& meshoffset, const aiScene* scene);
 		void ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent = nullptr);

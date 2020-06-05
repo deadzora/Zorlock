@@ -1,19 +1,21 @@
 #include "ZLpch.h"
 #include "Model.h"
-#include "Zorlock/Renderer/Renderer.h"
+#include "Renderer.h"
 #include "Zorlock/Components/MeshRenderer.h"
-#include "Zorlock/Renderer/RendererAPI.h"
-#include "Zorlock/Renderer/Skeleton.h"
-#include "Zorlock/Renderer/Bone.h"
+#include "RendererAPI.h"
+#include "Skeleton.h"
+#include "Bone.h"
+#include "Animation.h"
+
 namespace Zorlock
 {
 	ZModel::~ZModel()
 	{
 	}
-	ZModel::ZModel() : m_skeleton(nullptr), loadscale(1.0f)
+	ZModel::ZModel() : m_skeleton(nullptr), loadscale(1.0f), current_animation(0)
 	{
 	}
-	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments) : loadscale(1.0f), m_skeleton(nullptr)
+	ZModel::ZModel(ZorlockPrimitiveType primitive, Ref<MeshRenderer> renderer, uint32_t segments) : loadscale(1.0f), m_skeleton(nullptr), current_animation(0)
 	{
 		meshRenderer = renderer;
 		switch (primitive)
@@ -49,7 +51,7 @@ namespace Zorlock
 		}
 		}
 	}
-	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f), m_skeleton(nullptr)
+	ZModel::ZModel(const std::string& name,const std::string& modelfile) : name(name), loadscale(1.0f), m_skeleton(nullptr), current_animation(0)
 	{
 		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate : aiProcess_Triangulate | aiProcess_ConvertToLeftHanded;
 
@@ -70,10 +72,11 @@ namespace Zorlock
 			this->ProcessNode(pScene->mRootNode, pScene, rootMatrix);
 			this->ProcessMeshes(pScene->mRootNode, pScene);
 			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
+			this->ProcessAnimations(pScene);
 		}
 
 	}
-	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer, float scale) : name(name), loadscale(scale)
+	ZModel::ZModel(const std::string& name, const std::string& modelfile, Ref<MeshRenderer> renderer, float scale) : name(name), loadscale(scale), current_animation(0)
 	{
 		meshRenderer = renderer;
 		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate : aiProcess_Triangulate | aiProcess_ConvertToLeftHanded;
@@ -96,6 +99,7 @@ namespace Zorlock
 			this->ProcessNode(pScene->mRootNode, pScene, rootMatrix);
 			this->ProcessMeshes(pScene->mRootNode, pScene);
 			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
+			this->ProcessAnimations(pScene);
 		}
 
 	}
@@ -106,6 +110,14 @@ namespace Zorlock
 			if (meshRenderer != nullptr)
 			{
 				m_meshes[i]->SetDrawMatrix(m_meshes[i]->GetMatrix() * meshRenderer->parent->transform->GetDrawMatrix());
+			}
+		}
+		if (m_skeleton != nullptr)
+		{
+			if (current_animation < m_animations.size())
+			{
+				m_skeleton->SetCurrentAnimation(m_animations[current_animation]);
+				m_skeleton->Update(ts);
 			}
 		}
 	}
@@ -122,12 +134,12 @@ namespace Zorlock
 				{ 
 				case RendererAPI::API::DX11:
 				{
-					mat->GetShader()->SetBuffer("u_Bones", m_skeleton->GetBoneMatrices(), sizeof(Matrix4) * m_skeleton->GetBonesSize(), m_skeleton->GetBonesSize());
+					mat->GetShader()->SetBuffer("u_Bones", m_skeleton->GetBoneMatrices(i), sizeof(Matrix4) * m_skeleton->GetBonesSize(), m_skeleton->GetBonesSize());
 					break;
 				}
 				case RendererAPI::API::OpenGL:
 				{
-					Matrix4* matx = m_skeleton->GetBoneMatrices();
+					Matrix4* matx = m_skeleton->GetBoneMatrices(i);
 					for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
 					{
 						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);						
@@ -147,6 +159,18 @@ namespace Zorlock
 		for (size_t i = 0; i < m_meshes.size(); i++)
 		{
 			m_meshes[i]->Destroy();
+		}
+	}
+
+	void ZModel::AppendAnimation(const std::string& modelfile)
+	{
+		UINT flags = (RendererAPI::GetAPI() == RendererAPI::API::OpenGL) ? aiProcess_Triangulate : aiProcess_Triangulate | aiProcess_ConvertToLeftHanded;
+
+		Assimp::Importer importer;
+		const aiScene* pScene = importer.ReadFile(modelfile, flags); // | aiProcess_ConvertToLeftHanded
+		if (pScene != NULL)
+		{
+			this->ProcessAnimations(pScene);
 		}
 	}
 
@@ -442,7 +466,7 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)sizeof(vertices.data()));
+		//printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)sizeof(vertices.data()));
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex)*vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
@@ -476,7 +500,7 @@ namespace Zorlock
 			};		
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = 6;
-		printf("Setting Mesh Data vertices: %u indices %d \n", 24, 6);		
+		//printf("Setting Mesh Data vertices: %u indices %d \n", 24, 6);		
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(squareVertices, sizeof(squareVertices));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
 		varray->AddVertexBuffer(vbuffer);
@@ -560,7 +584,7 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
+		//printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
@@ -636,7 +660,7 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
+		//printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
@@ -703,7 +727,7 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
+		//printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)vertices.size(), (uint32_t)vertices.size());
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)(sizeof(Vertex) * vertices.size()));
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
@@ -757,6 +781,35 @@ namespace Zorlock
 		return nullptr;
 	}
 
+	Ref<Animation> ZModel::CreateAnimation(std::string name)
+	{
+		Ref<Animation> animation = Ref<Animation>(new Animation(name));
+		if (animation != nullptr)
+		{
+			printf("Created Animation \n");
+			m_animations.push_back(animation);
+			animation->SetAnimationID(m_animations.size() - 1);
+			current_animation = m_animations.size() - 1;
+			return animation;
+		}
+		return nullptr;
+	}
+
+	Ref<Animation> ZModel::GetAnimation(uint32_t i)
+	{
+		return m_animations[i];
+	}
+
+	Ref<Animation> ZModel::GetAnimation(std::string name)
+	{
+		for (size_t i = 0; i < m_animations.size(); i++)
+		{
+			if (m_animations[i]->name.compare(name) == 0)
+				return m_animations[i];
+		}
+		return nullptr;
+	}
+
 	Ref<Bone> ZModel::AddBone(std::string name, Ref<Transform> parent)
 	{
 		if (m_skeleton != nullptr)
@@ -787,6 +840,43 @@ namespace Zorlock
 	size_t ZModel::GetSkeletonSize()
 	{
 		return m_skeleton->GetBonesSize();
+	}
+
+	void ZModel::ProcessAnimations(const aiScene* scene)
+	{
+		for (size_t i = 0; i < scene->mNumAnimations; i++)
+		{
+			aiAnimation* anim = scene->mAnimations[i];
+			Ref<Animation> animation = CreateAnimation(anim->mName.data);
+			printf("animation: %s duration: %f \n", anim->mName.C_Str(), (float)anim->mDuration);
+
+			animation->SetDuration((float)anim->mDuration);
+			
+			for (size_t c = 0; c < anim->mNumChannels; c++)
+			{
+				aiNodeAnim* achannel = anim->mChannels[c];
+				Ref<AnimationChannel> animchannel = animation->CreateChannel(achannel->mNodeName.data);
+				animchannel->m_boneID = m_skeleton->GetBone(achannel->mNodeName.data)->GetBoneID();
+
+				for (size_t p = 0; p < achannel->mNumPositionKeys; p++)
+				{
+					aiVectorKey vkey = achannel->mPositionKeys[p];
+					animchannel->AddPositionKey((float)vkey.mTime, Vector3((float)vkey.mValue.x, (float)vkey.mValue.y, (float)vkey.mValue.z));
+				}
+
+				for (size_t q = 0; q < achannel->mNumRotationKeys; q++)
+				{
+					aiQuatKey qkey = achannel->mRotationKeys[q];
+					animchannel->AddRotationKey((float)qkey.mTime, Quaternion((float)qkey.mValue.x, (float)qkey.mValue.y, (float)qkey.mValue.z, (float)qkey.mValue.w));
+				}
+
+				for (size_t s = 0; s < achannel->mNumScalingKeys; s++)
+				{
+					aiVectorKey vkey = achannel->mScalingKeys[s];
+					animchannel->AddScalingKey((float)vkey.mTime, Vector3((float)vkey.mValue.x, (float)vkey.mValue.y, (float)vkey.mValue.z));
+				}
+			}
+		}
 	}
 
 	void ZModel::ProcessMeshes(aiNode* node, const aiScene* scene)
@@ -826,7 +916,6 @@ namespace Zorlock
 
 	void ZModel::ProcessNode(aiNode* node, const aiScene* scene, const MATRIX4& parentTransformMatrix, Ref<Bone> parent)
 	{
-		
 		MATRIX4 nodeMatrix = MATRIX4(
 			(float)node->mTransformation.a1, (float)node->mTransformation.a2, (float)node->mTransformation.a3, (float)node->mTransformation.a4,
 			(float)node->mTransformation.b1, (float)node->mTransformation.b2, (float)node->mTransformation.b3, (float)node->mTransformation.b4,
@@ -838,37 +927,19 @@ namespace Zorlock
 		if (parent == nullptr)
 		{
 			bone = AddBone(node->mName.data, m_skeleton->transform);
-			bone->SetBaseMat(nodeTransformMatrix);
+			bone->SetParent(parent);
+			bone->SetBaseMat(nodeMatrix);
+			bone->SetParentMat(parentTransformMatrix);
 		}
 		else {
 			bone = AddBone(node->mName.data, parent->transform);
-			bone->SetBaseMat(nodeTransformMatrix);
+			bone->SetParent(parent);
+			bone->SetBaseMat(nodeMatrix);
+			bone->SetParentMat(parentTransformMatrix);
+			parent->AddChildBone(bone);
 		}
-		/*
-				
-		Vector3 pos;
-		Quaternion rot;
-		Vector3 scale;
-		nodeMatrix.decomposition(pos, rot, scale);
-		if (parent == nullptr)
-		{
-			bone = AddBone(node->mName.data, m_skeleton->transform);
-			bone->transform->position = pos;
-			bone->transform->rotation = rot;
-			bone->transform->scale = scale;
-			bone->transform->UpdateTransformationMatrix();
-
-
-		}
-		else {
-			bone = AddBone(node->mName.data, parent->transform);
-			//printf(" Bone pos: x %f y %f z %f \n", scale.x, scale.y, scale.z);
-			bone->transform->position = pos;
-			bone->transform->rotation = rot;
-			bone->transform->scale = scale;
-			bone->transform->UpdateTransformationMatrix();
-		}
-		*/
+		
+		
 
 		for (UINT i = 0; i < node->mNumChildren; i++)
 		{
@@ -950,8 +1021,8 @@ namespace Zorlock
 						(float)mesh->mBones[b]->mOffsetMatrix.c1, (float)mesh->mBones[b]->mOffsetMatrix.c2, (float)mesh->mBones[b]->mOffsetMatrix.c3, (float)mesh->mBones[b]->mOffsetMatrix.c4,
 						(float)mesh->mBones[b]->mOffsetMatrix.d1, (float)mesh->mBones[b]->mOffsetMatrix.d2, (float)mesh->mBones[b]->mOffsetMatrix.d3, (float)mesh->mBones[b]->mOffsetMatrix.d4
 					);
-
-					bone->SetOffset(nodeMatrix);
+					printf(" Setting bone offset for %u", quadmesh->GetMeshID());
+					bone->SetOffset(nodeMatrix, quadmesh->GetMeshID());
 					//printf("Submesh: %u %s Bone ID: %u %s  \n", quadmesh->GetMeshID(),quadmesh->name.c_str(), bone->GetBoneID(), mesh->mBones[b]->mName.C_Str());
 					/*
 					Vector3 pos;
@@ -1026,7 +1097,7 @@ namespace Zorlock
 		Ref<VertexArray> varray = quadmesh->CreateVertexArray();
 		quadmesh->SetMatrix(MATRIX4::TRS(VECTOR3(0.0f, 0.0f, 0.0f), QUATERNION::EulerAngles(VECTOR3(0, 0, 0)), VECTOR3(1.0f, 1.0f, 1.0f)));
 		quadmesh->vcount = (uint32_t)indices.size();
-		printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)nv, (uint32_t)((sizeof(float)*12)*nv));
+		//printf("Setting Mesh Data vertices: %u size %u \n", (uint32_t)nv, (uint32_t)((sizeof(float)*12)*nv));
 		//Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(verts, (uint32_t)((sizeof(float) * 12) * nv));
 		Ref<VertexBuffer> vbuffer = quadmesh->CreateVertexBuffer(vertices.data(), (uint32_t)sizeof(Vertex)*nv);
 		vbuffer->SetLayout(zmaterial->GetShader()->GetLayout(), zmaterial->GetShader().get());
@@ -1042,7 +1113,7 @@ namespace Zorlock
 
 		AssimpTextureStorageType storetype = AssimpTextureStorageType::Invalid;
 		unsigned int textureCount = pMaterial->GetTextureCount(textype);
-		printf("Texture Count: %u \n", textureCount);
+		//printf("Texture Count: %u \n", textureCount);
 		if (textureCount == 0)
 		{
 			storetype = AssimpTextureStorageType::None;
@@ -1054,11 +1125,11 @@ namespace Zorlock
 				if (aiColor.IsBlack())
 				{
 					//material->LoadTexture(1, 1, COLOR4(1, 0, 1).ToColor());
-					printf("Creating black color texture \n");
+					//printf("Creating black color texture \n");
 					return;
 				}
 				//material->LoadTexture(1, 1, COLOR4(aiColor.r, aiColor.g, aiColor.b).ToColor());
-				printf("Creating rgb color texture \n");
+				//printf("Creating rgb color texture \n");
 				return;
 
 
@@ -1075,7 +1146,7 @@ namespace Zorlock
 				{
 				case AssimpTextureStorageType::EmbeddedIndexCompressed:
 				{
-					printf("Embedded Indexed Compressed Texture \n");
+					//printf("Embedded Indexed Compressed Texture \n");
 					//int index = GetTextureIndex(&path);
 					//Texture embeddedIndexTexture(reinterpret_cast<uint8_t*>(pscene->mTextures[index]->pcData), pscene->mTextures[index]->mWidth, textype);
 					//materialTextures.push_back(embeddedIndexTexture);
@@ -1083,7 +1154,7 @@ namespace Zorlock
 				}
 				case AssimpTextureStorageType::EmbeddedCompressed:
 				{
-					printf("Embedded Texture \n");
+					//printf("Embedded Texture \n");
 					//const aiTexture* pTexture = pscene->GetEmbeddedTexture(path.C_Str());
 					//Texture embeddedTexture(reinterpret_cast<uint8_t*>(pTexture->pcData), pTexture->mWidth, textype);
 					//materialTextures.push_back(embeddedTexture);
@@ -1092,7 +1163,7 @@ namespace Zorlock
 				case AssimpTextureStorageType::Disk:
 				{
 					std::string filename = "assets/textures/" + std::string(path.C_Str());
-					printf(" Texture file: %s \n", filename.c_str());
+					//printf(" Texture file: %s \n", filename.c_str());
 					material->LoadTexture(filename);
 					break;
 				}
@@ -1112,7 +1183,7 @@ namespace Zorlock
 		aiString path;
 		
 		pmaterial->GetTexture(textype, index, &path);
-		printf("Texture Path: %s \n", path.C_Str());
+		//printf("Texture Path: %s \n", path.C_Str());
 		std::string texpath = path.C_Str();
 
 		if (texpath[0] == '*')
@@ -1125,7 +1196,7 @@ namespace Zorlock
 			else
 			{
 				ZL_ASSERT(0,"NO SUPPORT FOR INDEX NON COMPRESSED TEXTURES!\n");
-				printf("Embedded Indexed Texture\n");
+				//printf("Embedded Indexed Texture\n");
 				return AssimpTextureStorageType::EmbeddedIndexNonCompressed;
 			}
 		}
@@ -1133,12 +1204,12 @@ namespace Zorlock
 		{
 			if (pTex->mHeight == 0)
 			{
-				printf("Embedded Compressed Texture\n");
+				//printf("Embedded Compressed Texture\n");
 				return AssimpTextureStorageType::EmbeddedCompressed;
 			}
 			else
 			{
-				printf("Embedded Texture\n");
+				//printf("Embedded Texture\n");
 				ZL_ASSERT(0, "NO SUPPORT FOR EMBEDDED NON COMPRESSED TEXTURES!");
 				return AssimpTextureStorageType::EmbeddedNonCompressed;
 			}
@@ -1146,10 +1217,10 @@ namespace Zorlock
 
 		if (texpath.find('.') != std::string::npos)
 		{
-			printf("Disk %s \n",texpath.c_str());
+			//printf("Disk %s \n",texpath.c_str());
 			return AssimpTextureStorageType::Disk;
 		}
-		printf("No Texture\n");
+		//printf("No Texture\n");
 		return AssimpTextureStorageType::None;
 	}
 

@@ -1,11 +1,13 @@
 #include "ZLpch.h"
 #include "Skeleton.h"
 #include "Bone.h"
+#include "Animation.h"
+#include "Zorlock/Core/Math.h"
 
 namespace Zorlock
 {
 
-	Skeleton::Skeleton(std::string name, Ref<Transform> parent) : GameObject(name,parent)
+	Skeleton::Skeleton(std::string name, Ref<Transform> parent) : GameObject(name,parent), root(nullptr), m_currentanimation(nullptr)
 	{
 		m_bone_id[""] = -1;
 	}
@@ -17,6 +19,10 @@ namespace Zorlock
 		m_transforms.push_back(mbone->transform);
 		m_bones[m_bones.size() - 1]->SetBoneID((uint32_t)(m_bones.size() - 1));
 		m_bone_id[name] = (int)m_bones.size() - 1;
+		if (m_bone_id[name] == 0)
+		{
+			root = mbone;
+		}
 		return mbone;
 	}
 
@@ -35,14 +41,25 @@ namespace Zorlock
 		return m_bones[m_bone_id[name]];
 	}
 
-	Matrix4* Skeleton::GetBoneMatrices()
+	Ref<Bone> Skeleton::GetRoot()
+	{
+		return root;
+	}
+
+	Matrix4* Skeleton::GetBoneMatrices(uint32_t submesh)
 	{
 		static std::vector<Matrix4> mats;
 		mats.clear();
 		for (size_t i = 0; i < m_bones.size(); i++)
 		{
-			mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset()));
+			if (m_currentanimation == nullptr)
+			{
+				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse.inverse() * m_bones[i]->GetParentMat() * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset(submesh)));
+			}
+			else {
 
+				mats.push_back(Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse.inverse() * m_globalInverse * m_bones[i]->GetParentAnimMat() * m_bones[i]->GetAnimationMat() * m_bones[i]->GetOffset(submesh)));
+			}
 		}
 		return mats.data();
 	}
@@ -53,7 +70,11 @@ namespace Zorlock
 		matsf.clear();
 		for (size_t i = 0; i < m_bones.size(); i++)
 		{
-			Matrix4 m = Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset());
+			Matrix4 m = Matrix::IDENTITY();
+			if (m_currentanimation == nullptr)
+			{
+				Matrix4 m = Matrix4(transform->parent->GetDrawMatrix() * m_globalInverse * m_bones[i]->GetFinalTransform()); //->GetParentMat() * m_bones[i]->GetBaseMat() * m_bones[i]->GetOffset());
+			}				
 			float* f = m.To4x4PtrArray();
 			for (size_t i = 0; i < 16; i++)
 			{
@@ -86,6 +107,63 @@ namespace Zorlock
 	{
 		
 		return m_globalInverse;
+	}
+
+	void Skeleton::SetCurrentAnimation(Ref<Animation> a)
+	{
+		m_currentanimation = a;
+	}
+
+	void Skeleton::UpdateAnimation(Ref<Bone> Bone, Matrix4 parentmat)
+	{
+		float t = m_currentanimation->GetCurrentAnimTime();
+		Bone->SetParentAnimMat(parentmat);
+		Bone->SetAnimationTime(m_currentanimation->GetCurrentAnimTime());
+		Ref<AnimationChannel> achannel = m_currentanimation->GetChannel(Bone->name);
+		Bone->SetAnimationChannel(achannel);
+		//Next get Interpolated TRS
+		Matrix4 aTransform = Bone->GetBaseMat();
+
+		if (achannel != nullptr)
+		{
+			Vector3 pos = achannel->InterpolatedPosition(t);
+			Quaternion rot = achannel->InterpolatedRotation(t);
+			Vector3 scale = achannel->InterpolatedScale(t);
+			aTransform = Matrix4::TRS(pos, rot, scale);
+		}
+
+		Matrix4 parentTransform = parentmat * aTransform;
+		Bone->SetAnimationMat(aTransform);
+
+		for (size_t i = 0; i < Bone->m_bones.size(); i++)
+		{
+			UpdateAnimation(Bone->m_bones[i], parentTransform);
+		}
+
+
+		
+	}
+
+	void Skeleton::Update(Timestep ts)
+	{
+		GameObject::Update(ts);
+		
+		if (root != nullptr)
+		{
+			if (m_currentanimation != nullptr)
+			{
+				
+				float mtime = m_currentanimation->GetCurrentAnimTime();
+				mtime += 0.1f * ts.GetSeconds();
+				float dur = m_currentanimation->GetDuration();
+				if (mtime >= dur)
+					mtime = 0;
+				m_currentanimation->SetCurrentAnimTime(mtime);
+				//printf("Updating anim: current %f duration %f \n", mtime,dur);
+				UpdateAnimation(root, m_globalInverse);				
+			}
+		}
+
 	}
 
 

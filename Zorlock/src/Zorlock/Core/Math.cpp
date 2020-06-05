@@ -11,6 +11,12 @@ namespace Zorlock
 	{
 	}
 
+	Vector3 Vector3::lerp(float t, const Vector3& a, const Vector3& b)
+	{
+		t = MathF::clamp(t, 0, 1);
+		return (1.0f - t) * a + t * b;
+	}
+
 	Vector4::Vector4(ColorRGB& c) : x(c.x), y(c.y), z(c.z), w(1.0f)
 	{
 	}
@@ -65,6 +71,56 @@ namespace Zorlock
 		}
 
 		normalize();
+	}
+
+	Quaternion Quaternion::normalize(const Quaternion& q, float tolerance)
+	{
+		float sqrdLen = dot(q, q);
+		if (sqrdLen > tolerance)
+			return q * MathF::invSqrt(sqrdLen);
+
+		return q;
+	}
+
+	Quaternion Quaternion::slerp(float t, const Quaternion& p, const Quaternion& q, bool shortestPath)
+	{
+		float cos = p.dot(q);
+		Quaternion quat;
+
+		if (cos < 0.0f && shortestPath)
+		{
+			cos = -cos;
+			quat = -q;
+		}
+		else
+		{
+			quat = q;
+		}
+
+		if (abs(cos) < 1 - EPSILON)
+		{
+			// Standard case (slerp)
+			float sin = sqrtf(1 - MathF::sqr(cos));
+			float angle = MathF::RadiansFromDegrees(atan2(sin, cos));
+			float invSin = 1.0f / sin;
+			float coeff0 = sinf((1.0f - t) * angle) * invSin;
+			float coeff1 = sinf(t * angle) * invSin;
+			return coeff0 * p + coeff1 * quat;
+		}
+		else
+		{
+			// There are two situations:
+			// 1. "p" and "q" are very close (fCos ~= +1), so we can do a linear
+			//    interpolation safely.
+			// 2. "p" and "q" are almost inverse of each other (fCos ~= -1), there
+			//    are an infinite number of possibilities interpolation. but we haven't
+			//    have method to fix this case, so just use linear interpolation here.
+			Quaternion ret = (1.0f - t) * p + t * quat;
+
+			// Taking the complement requires renormalization
+			ret.normalize();
+			return ret;
+		}
 	}
 
 	void Matrix::QDUDecomposition(Matrix& matQ, Vector3& vecD, Vector3& vecU) const

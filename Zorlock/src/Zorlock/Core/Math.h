@@ -98,7 +98,6 @@ namespace Zorlock {
 	{
 	public:
 		float x,y,z;
-
 		float distance(const Vector3* vec)
 		{
 			float d = sqrt(pow(vec->x - this->x, 2) +
@@ -108,8 +107,10 @@ namespace Zorlock {
 		}
 		Vector3() : x(0), y(0), z(0)
 		{};
-
-		Vector3(Vector2& v) : x(v.x), y(v.y), z(0) {
+		Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z)
+		{
+		}
+		Vector3(const Vector2& v) : x(v.x), y(v.y), z(0) {
 
 		}
 		Vector3(float x, float y, float z) : x(x), y(y), z(z) 
@@ -203,6 +204,7 @@ namespace Zorlock {
 			x = q[0]; y = q[1]; z = q[2]; return *this;
 		}
 
+
 		bool operator<(const Vector3& q)const {
 			if (fabs(x - q.x) > EPSILON) return x < q.x ? true : false;
 			if (fabs(y - q.y) > EPSILON) return y < q.y ? true : false;
@@ -269,6 +271,35 @@ namespace Zorlock {
 		{
 			return Vector3(0, 0, 0);
 		}
+		friend Vector3 operator* (float lhs, const Vector3& rhs)
+		{
+			return Vector3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+		}
+		friend Vector3 operator/ (float lhs, const Vector3& rhs)
+		{
+			return Vector3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
+		}
+
+		friend Vector3 operator+ (const Vector3& lhs, float rhs)
+		{
+			return Vector3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
+		}
+
+		friend Vector3 operator+ (float lhs, const Vector3& rhs)
+		{
+			return Vector3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
+		}
+
+		friend Vector3 operator- (const Vector3& lhs, float rhs)
+		{
+			return Vector3(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs);
+		}
+
+		friend Vector3 operator- (float lhs, const Vector3& rhs)
+		{
+			return Vector3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
+		}
+		static Vector3 lerp(float t, const Vector3& a, const Vector3& b);
 	};
 
 	struct IVector4
@@ -637,6 +668,9 @@ namespace Zorlock {
 		{
 			fromRotationMatrix(m);
 		}
+		Quaternion(const Quaternion& q) : x(q.x), y(q.y), z(q.z), w(q.w)
+		{
+		}
 		Quaternion operator=(const Quaternion& q) {
 			x = q.x; y = q.y; z = q.z; w = q.w; return *this;
 		}
@@ -721,8 +755,18 @@ namespace Zorlock {
 		float length()const {
 			return sqrtf(w * w + x * x + y * y + z * z);
 		}
+		/*
 		void normalize() {
 			*this = *this / length();
+		}
+		*/
+		float normalize(float tolerance = 1e-04f)
+		{
+			float len = length();//sqrt(dot(*this, *this));
+			if (len > (tolerance * tolerance))
+				*this = *this * (1.0f / len);
+
+			return len;
 		}
 		Quaternion normalized()const {
 			return *this / length();
@@ -784,6 +828,56 @@ namespace Zorlock {
 		}
 
 		void fromRotationMatrix(const Matrix& mata);
+		friend Quaternion operator* (float lhs, const Quaternion& rhs)
+		{
+			return Quaternion(lhs * rhs.w, lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+		}
+		static float dot(const Quaternion& lhs, const Quaternion& rhs)
+		{
+			return lhs.w * rhs.w + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+		}
+
+		static Quaternion normalize(const Quaternion& q, float tolerance = 1e-04f);
+
+		static Quaternion slerp(float t, const Quaternion& p, const Quaternion& q, bool shortestPath = true);
+
+		static Quaternion lerp(float t, const Quaternion& a, const Quaternion& b)
+		{
+			float d = dot(a, b);
+			float flip = d >= 0.0f ? 1.0f : -1.0f;
+
+			Quaternion output = flip * (1.0f - t) * a + t * b;
+			return normalize(output);
+		}
+
+		static Quaternion lerpB(Quaternion& quaternion1, Quaternion& quaternion2, float amount)
+		{
+			float num = amount;
+			float num2 = 1.0f - num;
+			Quaternion quaternion = Quaternion::IDENTITY();
+			float num5 = (((quaternion1.x * quaternion2.x) + (quaternion1.y * quaternion2.y)) + (quaternion1.z * quaternion2.z)) + (quaternion1.w * quaternion2.w);
+			if (num5 >= 0.0f)
+			{
+				quaternion.x = (num2 * quaternion1.x) + (num * quaternion2.x);
+				quaternion.y = (num2 * quaternion1.y) + (num * quaternion2.y);
+				quaternion.z = (num2 * quaternion1.z) + (num * quaternion2.z);
+				quaternion.w = (num2 * quaternion1.w) + (num * quaternion2.w);
+			}
+			else
+			{
+				quaternion.x = (num2 * quaternion1.x) - (num * quaternion2.x);
+				quaternion.y = (num2 * quaternion1.y) - (num * quaternion2.y);
+				quaternion.z = (num2 * quaternion1.z) - (num * quaternion2.z);
+				quaternion.w = (num2 * quaternion1.w) - (num * quaternion2.w);
+			}
+			float num4 = (((quaternion.x * quaternion.x) + (quaternion.y * quaternion.y)) + (quaternion.z * quaternion.z)) + (quaternion.w * quaternion.w);
+			float num3 = 1.0f / ((float)sqrtf((float)num4));
+			quaternion.x *= num3;
+			quaternion.y *= num3;
+			quaternion.z *= num3;
+			quaternion.w *= num3;
+			return quaternion;
+		}
 
 	};
 
@@ -1039,6 +1133,9 @@ namespace Zorlock {
 			float lx, float ly, float lz, float lw) : i(Vector4(ix,iy,iz,iw)), j(Vector4(jx, jy, jz, jw)), k(Vector4(kx, ky, kz, kw)), l(Vector4(lx, ly, lz, lw))
 		{
 
+		}
+		Matrix4(const Matrix4& mat) : i(mat.i), j(mat.j), k(mat.k), l(mat.l)
+		{
 		}
 
 		MATRIX4ARRAY& ToArray()
@@ -1957,6 +2054,31 @@ namespace Zorlock {
 
 		template<class T>
 		static constexpr T divideAndRoundUp(T n, T d) { return (n + d - 1) / d; }
+
+		static double clamp(double value, double min, double max)
+		{
+			// First we check to see if we're greater than the max
+			value = (value > max) ? max : value;
+
+			// Then we check to see if we're less than the min.
+			value = (value < min) ? min : value;
+
+			// There's no check to see if min > max.
+			return value;
+		}
+		static float clamp(float value, float min, float max)
+		{
+			// First we check to see if we're greater than the max
+			value = (value > max) ? max : value;
+
+			// Then we check to see if we're less than the min.
+			value = (value < min) ? min : value;
+
+			// There's no check to see if min > max.
+			return value;
+		}
+
+		static float sqr(float val) { return val * val; }
 
 		static float DegreesFromRadians(float r)
 		{

@@ -191,6 +191,7 @@
     <ClInclude Include="src\Zorlock\Game\SceneManager.h" />
     <ClInclude Include="src\Zorlock\Game\Transform.h" />
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Zorlock\Renderer\Animation.h" />
     <ClInclude Include="src\Zorlock\Renderer\Bone.h" />
     <ClInclude Include="src\Zorlock\Renderer\Buffer.h" />
     <ClInclude Include="src\Zorlock\Renderer\Camera.h" />
@@ -1087,6 +1088,7 @@
     <ClCompile Include="src\Zorlock\Game\Transform.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Zorlock\Renderer\Animation.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Bone.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Zorlock\Renderer\Camera.cpp" />

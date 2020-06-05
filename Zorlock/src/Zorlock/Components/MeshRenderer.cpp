@@ -120,6 +120,11 @@ namespace Zorlock
 
 	}
 
+	void MeshRenderer::AppendAnimation(const std::string& filename, uint32_t modelindex)
+	{
+		m_models[modelindex]->AppendAnimation(filename);
+	}
+
 	void MeshRenderer::RemoveModel(std::string name)
 	{
 		for (size_t i = 0; i < m_models.size(); i++)
