@@ -18,7 +18,7 @@ namespace Zorlock {
 		void Inspector();
 		void ToolBarTop();
 		void ToolBarBottom();
-
+		void GameObjectBlock();
 		void TransformBlock();
 
 		static EditorUI* Get();

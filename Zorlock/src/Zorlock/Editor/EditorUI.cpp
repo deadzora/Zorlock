@@ -10,6 +10,9 @@
 #include "Zorlock/ImGui/ImGuiSkins.h"
 #include "Zorlock/ImGui/IconsForkAwesome.h"
 #include <map>
+#include "EditorObjectBase.h"
+#include "EditorGameObject.h"
+#include "EditorCamera.h"
 
 namespace Zorlock
 {
@@ -290,7 +293,7 @@ namespace Zorlock
 						selectedObject->name = NameInputBuf;
 					}
 					TransformBlock();
-
+					GameObjectBlock();
 				}
 				ImGui::EndTabItem();
 			}
@@ -322,17 +325,17 @@ namespace Zorlock
 		{
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Editor Cam"))
+		if (ImGui::Button(ICON_FK_VIDEO_CAMERA" Editor"))
 		{
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Scene Cam"))
+		if (ImGui::Button(ICON_FK_VIDEO_CAMERA" Scene"))
 		{
 		}
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x-(ImGui::CalcTextSize(skins[0]).x*3));
-		
-		if (ImGui::BeginCombo("Skin", skin_current,ImGuiComboFlags_::ImGuiComboFlags_PopupAlignLeft))
+		ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x-((ImGui::CalcTextSize(ICON_FK_TINT" Skin").x)+(ImGui::CalcTextSize(skins[0]).x*3)));
+		ImGui::SetNextItemWidth(ImGui::CalcTextSize(skins[0]).x*2);
+		if (ImGui::BeginCombo(ICON_FK_TINT" Skin", skin_current,ImGuiComboFlags_::ImGuiComboFlags_PopupAlignLeft))
 		{
 			for (size_t n = 0; n < IM_ARRAYSIZE(skins); n++)
 			{
@@ -363,27 +366,54 @@ namespace Zorlock
 		ImGui::End();
 	}
 
+	void EditorUI::GameObjectBlock()
+	{
+		if (selectedObject != nullptr)
+		{
+			if (selectedObject->GetType().compare("GameObject")==0)
+			{
+				EditorObjectBase::Draw<EditorGameObject, GameObject>(selectedObject);
+			}
+			if (selectedObject->GetType().compare("Camera")==0)
+			{
+				EditorObjectBase::Draw<EditorCamera, GameObject>(selectedObject);
+			}
+		}
+	}
+
 	void EditorUI::TransformBlock()
 	{
 		if (selectedObject != nullptr)
 		{
+			Vector3 pos = selectedObject->transform->position;
+			Quaternion rot = selectedObject->transform->rotation;
+			Vector3 scale = selectedObject->transform->scale;
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
 			ImGui::Text(ICON_FK_DOT_CIRCLE_O" Transform");	
 			ImGui::Separator();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
 			ImGui::Text(ICON_FK_ARROWS" Position");
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
-			ImGui::InputFloat3("", &selectedObject->transform->position.x);
+			if (ImGui::InputFloat3("Position", &pos.x))
+			{
+				selectedObject->transform->position = pos;
+			}
 			ImGui::Separator();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
 			ImGui::Text(ICON_FK_REPEAT" Rotation");
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
-			ImGui::InputFloat4("", &selectedObject->transform->rotation.x);
+			if (ImGui::InputFloat4("Rotation", &rot.x))
+			{
+				selectedObject->transform->rotation = rot;
+			}
 			ImGui::Separator();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
 			ImGui::Text(ICON_FK_ARROWS_ALT" Scale");
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
-			ImGui::InputFloat3("", &selectedObject->transform->scale.x);
+			if (ImGui::InputFloat3("Scale", &scale.x))
+			{
+				selectedObject->transform->scale = scale;
+			}
 			ImGui::Separator();
 		}
 	}

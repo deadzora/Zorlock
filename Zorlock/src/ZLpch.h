@@ -50,13 +50,14 @@ struct TypeName
 	}
 };
 
-static std::unordered_map<std::string, std::optional<std::type_index>> Assettype_names;
+
 static std::unordered_map<TypeInfoRef, std::string, Hasher, EqualTo> AssetTypes;
 //So this cool define let's me generate a string from the typename, then i can pass that to the asset manager
 //this way i know what kind of asset i'm saving and loading.
 //USAGE:
 //put ZL_ENABLE_TYPENAME(MyClass) after your class declare in your header.
 
-#define ZL_ENABLE_TYPENAME(A) template <> struct TypeName<A> { static const char *Get() { Assettype_names[#A] = std::type_index(typeid(A)); AssetTypes[typeid(A)] = #A; return #A; }};
+#define ZL_ENABLE_TYPENAME(A) template <> struct TypeName<A> { static const char *Get() {  AssetTypes[typeid(A)] = #A; return #A; }};
 #define ZL_GETTYPENAME(A) TypeName<A>::Get();
-#define ZL_GETTYPEID(S) Assettype_names[S]
+#define ZL_GETTYPEID(S) Assettype_names[S]->hash_code()
+

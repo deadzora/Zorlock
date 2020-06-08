@@ -132,6 +132,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WinChange.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowNative.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -201,6 +204,9 @@
     <ClInclude Include="src\Zorlock\Debug\Instrumentor.h">
       <Filter>src\Zorlock\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\Assets.h">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Editor\EditorUI.h">
       <Filter>src\Zorlock\Editor</Filter>
     </ClInclude>
@@ -242,6 +248,12 @@
     </ClInclude>
     <ClInclude Include="src\Zorlock\Game\Transform.h">
       <Filter>src\Zorlock\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\ImGui\IconsFontAwesome5.h">
+      <Filter>src\Zorlock\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\ImGui\IconsForkAwesome.h">
+      <Filter>src\Zorlock\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h">
       <Filter>src\Zorlock\ImGui</Filter>
@@ -2832,10 +2844,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Editor\Assets.h" />
-    <ClInclude Include="src\Platform\Windows\WinChange.h" />
-    <ClInclude Include="src\Zorlock\ImGui\IconsFontAwesome5.h" />
-    <ClInclude Include="src\Zorlock\ImGui\IconsForkAwesome.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorCamera.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorGameObject.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorObjectBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2921,6 +2932,9 @@
     </ClCompile>
     <ClCompile Include="src\Zorlock\Core\Window.cpp">
       <Filter>src\Zorlock\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\Assets.cpp">
+      <Filter>src\Zorlock\Editor</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Editor\EditorUI.cpp">
       <Filter>src\Zorlock\Editor</Filter>
@@ -3069,7 +3083,8 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Editor\Assets.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorGameObject.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">
