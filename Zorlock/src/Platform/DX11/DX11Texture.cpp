@@ -32,11 +32,7 @@ namespace Zorlock
 		m_RendererID = DX11Raz::RazCreateTexture(path, aiTextureType::aiTextureType_DIFFUSE);
 	}
 
-	DX11Texture2D::~DX11Texture2D()
-	{
-		DX11Raz::RazSetDeleteTexture(m_RendererID);
-		ZL_PROFILE_FUNCTION();
-	}
+
 
 	void DX11Texture2D::SetData(void* data, uint32_t size)
 	{

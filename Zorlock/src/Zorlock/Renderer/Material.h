@@ -73,7 +73,7 @@ namespace Zorlock {
 		std::vector<Ref<Material>> m_materials;
 	};
 
-
+	ZL_ENABLE_TYPENAME(Material)
 
 }
 

@@ -25,6 +25,7 @@ IncludeDir["glm"] = "Zorlock/vendor/glm"
 IncludeDir["stb_image"] = "Zorlock/vendor/stb_image"
 IncludeDir["DX11"] = "Zorlock/vendor/DX11/src"
 IncludeDir["ZLSL"] = "Zorlock/vendor/ZLSL"
+IncludeDir["RapidJSON"] = "Zorlock/vendor/rapidjson/include"
 IncludeDir["Assimp"] = "Zorlock/vendor/assimp/include"
 IncludeDir["Cal3D"] = "Zorlock/vendor/cal3d"
 
@@ -61,7 +62,7 @@ project "Zorlock"
 		"%{prj.name}/vendor/DX11/src/**.cpp",
 		"%{prj.name}/vendor/ZLSL/**.hpp",
 		"%{prj.name}/vendor/ZLSL/**.cpp",
-		"%{prj.name}/vendor/ZLSL/**.h"
+		"%{prj.name}/vendor/ZLSL/**.h",
 	}
 
 	defines
@@ -81,6 +82,7 @@ project "Zorlock"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.DX11}",
 		"%{IncludeDir.ZLSL}",
+		"%{IncludeDir.RapidJSON}",
 		"%{IncludeDir.Assimp}",
 
 	}

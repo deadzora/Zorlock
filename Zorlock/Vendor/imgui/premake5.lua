@@ -21,7 +21,8 @@ project "ImGui"
 		"imgui_impl_win32.h",
 		"imgui_impl_win32.cpp",
 		"imgui_impl_dx11.h",
-		"imgui_impl_dx11.cpp"
+		"imgui_impl_dx11.cpp",
+
     }
     
     filter "system:windows"

@@ -8,17 +8,18 @@ namespace DX11Raz
 	struct RazConstantBuffer
 	{
 	public:
-		RazConstantBuffer() = default;
-		~RazConstantBuffer() = default;
+		RazConstantBuffer() : data(nullptr) {};
+		
 		std::string varname;
 		UINT slot;
 		RAZPTR<ID3D11Buffer> buffer;
 		UINT buffersize;
 		void* data;
+
 		void Release()
 		{
-			buffer->Release();
-			//delete data;
+			if(buffer!=nullptr)
+			buffer->Release();		
 		}
 	};
 
@@ -27,7 +28,7 @@ namespace DX11Raz
 	public:
 		RazSamplerBuffer() : isuploaded(false), slot(0), buffersize(0), texture(nullptr), textureview(nullptr), varname(""), isArray(false)
 		{};
-		~RazSamplerBuffer() = default;
+		
 		RAZPTR<ID3D11ShaderResourceView> textureview;
 		RAZPTR<ID3D11Resource> texture;
 		std::string varname;

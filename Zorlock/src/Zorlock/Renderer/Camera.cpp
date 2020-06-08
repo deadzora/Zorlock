@@ -7,16 +7,17 @@ namespace Zorlock {
 
 	Camera::Camera(std::string name, Ref<Transform> parent) : GameObject(name, parent), viewMatrix(MATRIX4::IDENTITY()), projectionMatrix(MATRIX4::IDENTITY())
 	{
-
+		type = ZL_GETTYPENAME(Camera)
 	}
 	Camera::Camera(float fovDegrees, float aspectRatio, float nearZ, float farZ, std::string name, Ref<Transform> parent) : GameObject(name,parent)
 	{
 		name = "Camera";
 		SetProjectionValues(fovDegrees, aspectRatio, nearZ, farZ);
+		type = ZL_GETTYPENAME(Camera)
 	}
 	Camera::Camera(MATRIX4 proj, MATRIX4 view, std::string name, Ref<Transform> parent) : GameObject(name, parent), viewMatrix(view), projectionMatrix(proj)
 	{
-		
+		type = ZL_GETTYPENAME(Camera)
 	}
 	void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 	{

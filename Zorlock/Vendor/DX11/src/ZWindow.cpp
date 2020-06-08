@@ -68,8 +68,7 @@ namespace DX11Raz
 
 	bool ZWindow::init(UINT w, UINT h, LPCWSTR windowname)
 	{
-		width = w;
-		height = h;
+
 		this->WindowName = windowname;
 		WNDCLASSEX wc;
 		wc.cbClsExtra = NULL;
@@ -100,8 +99,9 @@ namespace DX11Raz
 		}
 		ShowWindow(m_hwnd, SW_SHOW);
 		UpdateWindow(m_hwnd);
-
-
+		RECT rc = getClientWindowRect();
+		width = (rc.right - rc.left);
+		height = (rc.bottom - rc.top);
 		m_is_running = true;
 
 		return true;

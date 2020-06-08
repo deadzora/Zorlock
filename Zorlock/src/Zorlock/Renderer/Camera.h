@@ -34,7 +34,7 @@ namespace Zorlock {
 
 	};
 
-
+	ZL_ENABLE_TYPENAME(Camera)
 }
 
 #define ZLCAMERA Zorlock::Camera

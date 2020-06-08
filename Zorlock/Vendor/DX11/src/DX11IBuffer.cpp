@@ -9,13 +9,13 @@ DX11Raz::RazIndexBuffer::RazIndexBuffer() : m_buffer(0)
 
 void DX11Raz::RazIndexBuffer::Release()
 {
-	if(m_buffer!=0)m_buffer->Release();
-	m_buffer = 0;
+	if(m_buffer!=nullptr)m_buffer->Release();
+	
 }
 
 void DX11Raz::RazIndexBuffer::SetIndexes(UINT* indices, UINT count)
 {
-	if (this->m_buffer!=0)this->m_buffer->Release();
+	if (this->m_buffer!=nullptr)this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -42,7 +42,7 @@ void DX11Raz::RazIndexBuffer::SetIndexes(UINT* indices, UINT count)
 
 void DX11Raz::RazIndexBuffer::SetIndexes(std::vector<DWORD> indices)
 {
-	if (this->m_buffer)this->m_buffer->Release();
+	if (this->m_buffer!=nullptr)this->m_buffer->Release();
 
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;

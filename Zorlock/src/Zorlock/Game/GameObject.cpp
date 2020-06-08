@@ -4,11 +4,12 @@
 
 namespace Zorlock
 {
-
+	
 	GameObject::GameObject() : Object()
 	{
 		transform->gameObject = Ref<GameObject>(this);
 		name = "GameObject";
+		type = ZL_GETTYPENAME(GameObject);
 	}
 
 	GameObject::GameObject(std::string name) : Object(name)

@@ -128,7 +128,7 @@ namespace DX11Raz
 		ID3D11ShaderResourceView** GetTextureAddress();
 		void InsertTexture(RAZPTR<RazTexture> rtexture, UINT index);
 		void Release();
-		~RazTexture();
+		
 	private:
 		UINT GetByteSize(DXGI_FORMAT format);
 		void Init1x1ColorTexture(const DX11Color& color, aiTextureType type);

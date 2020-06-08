@@ -110,7 +110,7 @@ namespace DX11Raz
 	class DX11GraphicsEngine
 	{
 	public:
-		DX11GraphicsEngine() 
+		DX11GraphicsEngine()
 		{};
 		~DX11GraphicsEngine();
 		bool Initialize();
@@ -118,7 +118,7 @@ namespace DX11Raz
 		void Release();
 		//bool SetContext(HWND hwnd, RECT rect);
 	public:
-		static RAZPTR<DX11GraphicsEngine> Get();
+		static DX11GraphicsEngine* Get();
 	public:
 		void Cls();
 		void Cls(float r, float g, float b, float a);

@@ -36,6 +36,10 @@ namespace Zorlock {
 		Ref<Light> CreateLight(LightType light);
 		std::vector<Ref<Light>>* GetLights();
 		Ref<Environment> GetEnvironment();
+		std::vector<Ref<GameObject>>& GetChildren()
+		{
+			return m_scene_Objects;
+		}
 	protected:
 		Ref<Camera> m_mainCamera;
 		Ref<Environment> m_environment;
@@ -43,7 +47,7 @@ namespace Zorlock {
 		std::vector<Ref<Light>> m_scene_Lights;
 	};
 
-
+	ZL_ENABLE_TYPENAME(Scene)
 }
 
 #define ZLSCENE Zorlock::Scene

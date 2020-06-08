@@ -46,7 +46,7 @@ namespace Zorlock {
 	};
 
 
-
+	ZL_ENABLE_TYPENAME(Light)
 }
 
 #define ZLLIGHT Zorlock::Light

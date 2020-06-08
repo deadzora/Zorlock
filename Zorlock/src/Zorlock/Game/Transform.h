@@ -20,6 +20,10 @@ namespace Zorlock {
 		VECTOR3 scale;
 		void AddChild(ZLREF<Transform> child);
 		void RemoveChild(ZLREF<Transform> child);
+		std::vector<Ref<Transform>>& GetChildren()
+		{
+			return children;
+		}
 		virtual VECTOR3 GetPosition();
 		virtual void SetPosition(const VECTOR3& pos);
 		virtual void SetPosition(float x, float y, float z);

@@ -40,6 +40,9 @@
     <Filter Include="src\Zorlock\ImGui">
       <UniqueIdentifier>{0ABCE79B-76D2-E531-BF49-71532B9FB6B9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Zorlock\Json">
+      <UniqueIdentifier>{89F61E98-75EF-3DEA-9E21-236F8A791DF6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Zorlock\Renderer">
       <UniqueIdentifier>{869EE70D-722D-71D7-1B4C-85D207BA817D}</UniqueIdentifier>
     </Filter>
@@ -198,6 +201,15 @@
     <ClInclude Include="src\Zorlock\Debug\Instrumentor.h">
       <Filter>src\Zorlock\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\EditorUI.h">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\ProjectManager.h">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\Projects.h">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Events\ApplicationEvent.h">
       <Filter>src\Zorlock\Events</Filter>
     </ClInclude>
@@ -233,6 +245,15 @@
     </ClInclude>
     <ClInclude Include="src\Zorlock\ImGui\ImGuiLayer.h">
       <Filter>src\Zorlock\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\ImGui\ImGuiSkins.h">
+      <Filter>src\Zorlock\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Json\JSONIncludes.h">
+      <Filter>src\Zorlock\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Zorlock\Json\ZJSONBase.h">
+      <Filter>src\Zorlock\Json</Filter>
     </ClInclude>
     <ClInclude Include="src\Zorlock\Renderer\Animation.h">
       <Filter>src\Zorlock\Renderer</Filter>
@@ -304,6 +325,9 @@
       <Filter>src\Zorlock\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\DDSTextureLoader.h">
+      <Filter>vendor\DX11\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\DX11\src\DX11Defs.h">
       <Filter>vendor\DX11\src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\DX11\src\DX11DeviceContext.h">
@@ -2808,7 +2832,10 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\DX11\src\DX11Defs.h" />
+    <ClInclude Include="src\Zorlock\Editor\Assets.h" />
+    <ClInclude Include="src\Platform\Windows\WinChange.h" />
+    <ClInclude Include="src\Zorlock\ImGui\IconsFontAwesome5.h" />
+    <ClInclude Include="src\Zorlock\ImGui\IconsForkAwesome.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2895,6 +2922,15 @@
     <ClCompile Include="src\Zorlock\Core\Window.cpp">
       <Filter>src\Zorlock\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\EditorUI.cpp">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\ProjectManager.cpp">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\Projects.cpp">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClCompile>
     <ClCompile Include="src\Zorlock\Game\GameObject.cpp">
       <Filter>src\Zorlock\Game</Filter>
     </ClCompile>
@@ -2915,6 +2951,12 @@
     </ClCompile>
     <ClCompile Include="src\Zorlock\ImGui\ImGuiLayer.cpp">
       <Filter>src\Zorlock\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\ImGui\ImGuiSkins.cpp">
+      <Filter>src\Zorlock\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Json\ZJSONBase.cpp">
+      <Filter>src\Zorlock\Json</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Renderer\Animation.cpp">
       <Filter>src\Zorlock\Renderer</Filter>
@@ -3027,6 +3069,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\Assets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

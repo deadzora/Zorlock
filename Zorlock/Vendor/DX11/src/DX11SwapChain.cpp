@@ -72,13 +72,13 @@ namespace DX11Raz
 
 	bool DX11SwapChain::Release()
 	{
-		if (&m_rtv != NULL)
+		if (m_rtv != nullptr)
 		{
-			//m_rtv->Release();
+			m_rtv->Release();
 		}
-		if (m_swapchain != NULL)
+		if (m_swapchain != nullptr)
 		{
-			//m_swapchain->Release();
+			m_swapchain->Release();
 		}
 		//m_swapchain->Release();
 		//delete this;

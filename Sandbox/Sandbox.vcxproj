@@ -140,6 +140,7 @@
     <ClInclude Include="src\GraphicsTestLayer.h" />
     <ClInclude Include="src\Sandbox2D.h" />
     <ClInclude Include="src\SceneLayer.h" />
+    <ClInclude Include="src\ZorlockEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DX11Layer.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\SceneLayer.cpp" />
+    <ClCompile Include="src\ZorlockEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zorlock\Zorlock.vcxproj">

@@ -1,15 +1,16 @@
 project "Assimp"
 	kind "StaticLib"
 	language "C++"
-		
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	IncludeDir["RapidJSONAssimp"] = "../rapidjson/include"
 	
 	includedirs {
 		"include",
 		"contrib/irrXML",
 		"contrib/zlib",
-		"contrib/rapidjson/include",
+		"%{IncludeDir.RapidJSONAssimp}",
 	}
 	
 	defines {

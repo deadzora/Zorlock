@@ -395,6 +395,19 @@ namespace Zorlock {
 				pow(vec->w - this->w, 2) * 1.0f);
 			return d;
 		}
+
+		VECTOR4ARRAY& ToArray()
+		{
+			VECTOR4ARRAY vec4;
+			vec4[0] = x;
+			vec4[1] = y;
+			vec4[2] = z;
+			vec4[3] = w;
+
+			return vec4;
+
+		}
+
 		static Vector4 Zero()
 		{
 			return Vector4(0, 0, 0, 0);
@@ -817,6 +830,17 @@ namespace Zorlock {
 			float yz = y * z, wx = w * x;
 			float xx = x * x, yy = y * y;
 			return Vector3(2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy));
+		}
+		VECTOR4ARRAY& ToArray()
+		{
+			VECTOR4ARRAY vec4;
+			vec4[0] = x;
+			vec4[1] = y;
+			vec4[2] = z;
+			vec4[3] = w;
+
+			return vec4;
+
 		}
 
 		Vector3 ToEulerAngles()const {

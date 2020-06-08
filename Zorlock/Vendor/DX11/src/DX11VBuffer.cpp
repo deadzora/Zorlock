@@ -67,16 +67,16 @@ bool DX11Raz::RazVertexBuffer::SetLayout(RAZPTR<ID3D10Blob> vshader)
 
 void DX11Raz::RazVertexBuffer::Release()
 {
-	if (&this->m_buffer!=0)
+	if (this->m_buffer!=nullptr)
 	{
-		//this->m_buffer->Release();
+		this->m_buffer->Release();
 	}
-	m_buffer = 0;
-	if (&this->m_layout!=0)
+	//m_buffer = 0;
+	if (this->m_layout!=nullptr)
 	{
-		//this->m_layout->Release();
+		this->m_layout->Release();
 	}
-	m_layout = 0;
+	//m_layout = 0;
 	//delete this;
 }
 

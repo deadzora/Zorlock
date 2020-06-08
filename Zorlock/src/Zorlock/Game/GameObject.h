@@ -95,13 +95,17 @@ namespace Zorlock {
 		virtual void Update(Timestep ts) override;
 		virtual void Render() override;
 		virtual void Destroy() override;
-
+		std::string GetType()
+		{
+			return type;
+		}
 		
 	protected:
+		std::string type;
 		std::vector<Ref<Component>> components;
 	};
 
-
+	ZL_ENABLE_TYPENAME(GameObject)
 }
 
 #define ZLGAMEOBJECT Zorlock::GameObject

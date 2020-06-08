@@ -16,27 +16,38 @@ DX11Raz::RazShader::~RazShader()
 
 void DX11Raz::RazShader::Release()
 {
-	//if (mv_buffer != 0)mv_buffer->Release();
-	//if (mp_buffer != 0)mp_buffer->Release();
-	//if (m_ps != 0)m_ps->Release();
-	//if (m_vs != 0)m_vs->Release();
+	if (mv_buffer != nullptr)
+	{
+		mv_buffer->Release();
+	}
+	if (mp_buffer != nullptr)
+	{
+		mp_buffer->Release();
+	}
+	if (m_ps != nullptr)
+	{
+		m_ps->Release();
+	}
+	if (m_vs != nullptr)
+	{
+		m_vs->Release();
+	}
 	for (size_t i = 0; i < pc_buffer.size(); i++)
 	{
 		
 		pc_buffer[i]->Release();
+
 		
 	}
-	pc_buffer.clear();
-	if (&vc_buffer != NULL)
-	{
-		for (size_t i = 0; i < vc_buffer.size(); i++)
-		{
+	//pc_buffer.clear();
 
-			vc_buffer[i]->Release();
-		}
-		vc_buffer.clear();
+	for (size_t i = 0; i < vc_buffer.size(); i++)
+	{
+		vc_buffer[i]->Release();
+
 	}
-	//delete this;
+	//vc_buffer.clear();
+
 }
 
 bool DX11Raz::RazShader::InitVertex(const wchar_t* filename)
@@ -46,6 +57,7 @@ bool DX11Raz::RazShader::InitVertex(const wchar_t* filename)
 	HRESULT hr = D3DCompileFromFile(filename, nullptr, nullptr, "vsmain", "vs_5_0", D3DCOMPILE_PACK_MATRIX_ROW_MAJOR, 0, &bbuffer, &error_blob);
 	if (FAILED(hr))
 	{
+		error_blob->Release();
 		OutputDebugStringW(L"Failed to Compile Vertex Shader from file \n");
 		return false;
 	}
@@ -192,6 +204,7 @@ UINT DX11Raz::RazShader::CreateVertexCB(std::string cbname, UINT slot, void* buf
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
 	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
+	//cbuffer->Copy(static_cast<char*>(bufferdata), cbuffer->buffersize);
 	cbuffer->data = bufferdata;
 	vc_buffer.push_back(RAZPTR<RazConstantBuffer>(cbuffer));
 	return 1;
@@ -223,6 +236,7 @@ UINT DX11Raz::RazShader::CreatePixelCB(std::string cbname, UINT slot, void* buff
 	cbuffer->buffersize = buffersize;
 	cbuffer->slot = slot;
 	//printf("Created Buffer: %s at slot %u size: %u \n", cbuffer->varname.c_str(), cbuffer->slot, cbuffer->buffersize);
+	//cbuffer->Copy(static_cast<char*>(bufferdata), cbuffer->buffersize);
 	cbuffer->data = bufferdata;
 	pc_buffer.push_back(RAZPTR<RazConstantBuffer>(cbuffer));
 	return 1;
@@ -331,6 +345,7 @@ bool DX11Raz::RazShader::UpdateVertexCB(void* bufferdata, std::string cbname)
 		if (cbname.compare(vc_buffer[i]->varname) == 0)
 		{
 			//delete vc_buffer[i]->data;
+			//vc_buffer[i]->Copy(static_cast<char*>(bufferdata), vc_buffer[i]->buffersize);
 			vc_buffer[i]->data = bufferdata;
 			//ApplyVertexCB(cbname);
 			break;
@@ -351,6 +366,7 @@ bool DX11Raz::RazShader::UpdatePixelCB(void* bufferdata, std::string cbname)
 		{
 			//delete vc_buffer[i]->data;
 			//printf("Updating %s \n",pc_buffer[i]->varname.c_str());
+			//pc_buffer[i]->Copy(static_cast<char*>(bufferdata), pc_buffer[i]->buffersize);
 			pc_buffer[i]->data = bufferdata;
 			//ApplyPixelCB(cbname);
 			break;
@@ -599,5 +615,3 @@ RAZPTR<ID3D10Blob> DX11Raz::RazShader::GetPBuffer()
 {
 	return mp_buffer;
 }
-
-

@@ -7,7 +7,7 @@
 
 namespace Zorlock {
 
-	ShaderLibrary shaderLibrary;
+	static ShaderLibrary*  shaderLibrary = nullptr;
 	Ref<ShaderLibrary> m_shaderLibrary;
 
 	void Shader::Process()
@@ -275,7 +275,7 @@ namespace Zorlock {
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
 		ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
 		ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
-		shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
+		ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
 		ismapped = true;
 
 		
@@ -336,28 +336,30 @@ namespace Zorlock {
 
 	Ref<ShaderLibrary> ShaderLibrary::GetInstance()
 	{
-		if (shaderLibrary.ismapped == false)
-		{
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::VAR_NONE] = ShaderDataType::None;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::FLOAT] = ShaderDataType::Float;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::INT] = ShaderDataType::Int;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::BOOL] = ShaderDataType::Bool;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::VEC2] = ShaderDataType::Float2;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::VEC3] = ShaderDataType::Float3;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::VEC4] = ShaderDataType::Float4;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::IVEC2] = ShaderDataType::Int2;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::IVEC3] = ShaderDataType::Int3;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::IVEC4] = ShaderDataType::Int4;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
-			shaderLibrary.ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
-			shaderLibrary.ismapped = true;
-		}
 		if (m_shaderLibrary == nullptr)
 		{
-			m_shaderLibrary = CreateRef <ShaderLibrary>(shaderLibrary);
+			m_shaderLibrary = CreateRef <ShaderLibrary>();
+			shaderLibrary = m_shaderLibrary.get();
 		}
+		if (shaderLibrary->ismapped == false)
+		{
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::VAR_NONE] = ShaderDataType::None;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::FLOAT] = ShaderDataType::Float;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::INT] = ShaderDataType::Int;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::BOOL] = ShaderDataType::Bool;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::VEC2] = ShaderDataType::Float2;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::VEC3] = ShaderDataType::Float3;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::VEC4] = ShaderDataType::Float4;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::IVEC2] = ShaderDataType::Int2;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::IVEC3] = ShaderDataType::Int3;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::IVEC4] = ShaderDataType::Int4;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::MAT3] = ShaderDataType::Mat3;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::MAT4] = ShaderDataType::Mat4;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::SAMPLER2D] = ShaderDataType::Sampler2D;
+			shaderLibrary->ShaderVarMap[ZLSLParser::VariableTypes::LIGHTBASE] = ShaderDataType::LightBase;
+			shaderLibrary->ismapped = true;
+		}
+
 		return m_shaderLibrary;
 	}
 

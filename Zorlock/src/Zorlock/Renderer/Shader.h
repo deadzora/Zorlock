@@ -185,11 +185,11 @@ namespace Zorlock {
 	*/
 
 
-
+	
 	class Shader
 	{
 	public:
-
+		
 		virtual ~Shader() {
 		};
 
@@ -249,7 +249,7 @@ namespace Zorlock {
 		std::vector<ShaderVariable> m_FSamplerVars;
 		BufferLayout ShaderLayout;
 	};
-
+	ZL_ENABLE_TYPENAME(Shader)
 
 	
 

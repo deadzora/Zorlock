@@ -11,10 +11,9 @@
 namespace DX11Raz
 {
 
-	DX11GraphicsEngine engine;
-	RAZPTR<DX11GraphicsEngine> m_engine;
+	static DX11GraphicsEngine * engine = nullptr;
 	
-
+	
 	DX11GraphicsEngine::~DX11GraphicsEngine()
 	{
 		//release stuff
@@ -137,14 +136,15 @@ namespace DX11Raz
 	}
 
 
-	RAZPTR<DX11GraphicsEngine> DX11GraphicsEngine::Get()
+	DX11GraphicsEngine* DX11GraphicsEngine::Get()
 	{
-		if (m_engine == nullptr)
+		if (engine == nullptr)
 		{
-			m_engine = CreateZRef<DX11GraphicsEngine>();
+			engine = new DX11GraphicsEngine();
+			engine->enabled = true;
 		}
-		m_engine->enabled = true;
-		return m_engine;
+		
+		return engine;
 	}
 
 	void DX11GraphicsEngine::Cls()

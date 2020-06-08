@@ -195,13 +195,13 @@ namespace DX11Raz
 
 	void RazTexture::Release()
 	{
-		//if(textureView != 0) textureView->Release();
-		//if (texture != 0) texture->Release();
+		if(textureView != nullptr) 
+			textureView->Release();
+		if (texture != nullptr) 
+			texture->Release();
 	}
 
-	RazTexture::~RazTexture()
-	{
-	}
+
 
 	UINT RazTexture::GetByteSize(DXGI_FORMAT format)
 	{

@@ -70,26 +70,37 @@ namespace DX11Raz
 		this->width = width;
 		this->height = height;
 		m_device_context->RSSetViewports(1, &vp);
-
-		if (!setrasterizer())
+		if (m_pRasterState == nullptr)
 		{
-			//log the error
+			if (!setrasterizer())
+			{
+				//log the error
+			}
 		}
-
-		if (!setstencilbuffer())
+		if (m_depth_stecil_buffer == nullptr)
 		{
-			//log the error
+			if (!setstencilbuffer())
+			{
+				//log the error
+			}
 		}
+		else {
 
-		if (!setstencilstate())
-		{
-			//log the error
 		}
-		if (!setsamplerstate())
+		if (m_depth_stencilstate == nullptr)
 		{
-			//log the error
+			if (!setstencilstate())
+			{
+				//log the error
+			}
 		}
-
+		if (m_sampler_state == nullptr)
+		{
+			if (!setsamplerstate())
+			{
+				//log the error
+			}
+		}
 		
 	}
 
@@ -298,27 +309,23 @@ namespace DX11Raz
 	bool DX11DeviceContext::Release()
 	{
 		
-		m_bs->Release();
-		m_depth_stencilview->Release();
-		m_depth_stecil_buffer->Release();
-		m_depth_stencilstate->Release();
-		m_sampler_state->Release();
-		m_contextswapchain->Release();
-		delete this;
+		if(m_bs!=nullptr) m_bs->Release();
+		if(m_depth_stencilview!=nullptr) m_depth_stencilview->Release();
+		if(m_depth_stecil_buffer!=nullptr) m_depth_stecil_buffer->Release();
+		if(m_depth_stencilstate!=nullptr) m_depth_stencilstate->Release();
+		if(m_sampler_state!=nullptr) m_sampler_state->Release();
+		if(m_contextswapchain!=nullptr) m_contextswapchain->Release();
 		return true;
 	}
 
 	bool DX11DeviceContext::MainRelease()
-	{
-
-		
+	{	
 		if (m_bs!=nullptr)m_bs->Release();
 		if (m_depth_stencilview != nullptr)m_depth_stencilview->Release();
 		if (m_depth_stecil_buffer != nullptr)m_depth_stecil_buffer->Release();
 		if (m_depth_stencilstate != nullptr)m_depth_stencilstate->Release();
 		if (m_sampler_state != nullptr)m_sampler_state->Release();
-		m_device_context->Release();
-		delete this;
+		if(m_device_context!=nullptr) m_device_context->Release();
 		return true;
 	}
 

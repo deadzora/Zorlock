@@ -73,6 +73,8 @@ namespace Zorlock
 			this->ProcessMeshes(pScene->mRootNode, pScene);
 			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
 			this->ProcessAnimations(pScene);
+		
+			importer.FreeScene();
 		}
 
 	}
@@ -100,6 +102,8 @@ namespace Zorlock
 			this->ProcessMeshes(pScene->mRootNode, pScene);
 			this->m_skeleton->SetGlobalInverse(rootMatrix.inverse());
 			this->ProcessAnimations(pScene);
+
+			importer.FreeScene();
 		}
 
 	}
