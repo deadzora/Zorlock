@@ -5,9 +5,9 @@ namespace Zorlock {
 
 
 
-	Environment::Environment() : m_ambient(ColorRGBA::BLACK())
+	Environment::Environment() : GameObject("Environment",nullptr), m_ambient(ColorRGBA::BLACK())
 	{
-
+		type = ZL_GETTYPENAME(Environment)
 	}
 
 	Environment::~Environment()

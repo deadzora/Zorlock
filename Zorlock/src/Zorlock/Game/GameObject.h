@@ -99,6 +99,10 @@ namespace Zorlock {
 		{
 			return type;
 		}
+		std::vector<Ref<Component>>& GetComponents()
+		{
+			return components;
+		}
 		
 	protected:
 		std::string type;

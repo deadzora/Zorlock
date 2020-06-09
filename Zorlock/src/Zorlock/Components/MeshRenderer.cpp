@@ -8,11 +8,13 @@ namespace Zorlock
 
 	MeshRenderer::MeshRenderer()
 	{
+		type = ZL_GETTYPENAME(MeshRenderer)
 	}
 
 	MeshRenderer::MeshRenderer(std::string name)
 	{
 		this->name = name;
+		type = ZL_GETTYPENAME(MeshRenderer)
 	}
 
 	MeshRenderer::~MeshRenderer()

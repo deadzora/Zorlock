@@ -1,10 +1,11 @@
 #pragma once
 #include "Color.h"
+#include "Zorlock/Game/GameObject.h"
 
 namespace Zorlock {
 
 
-	class Environment
+	class Environment : public GameObject
 	{
 	public:
 		Environment();
@@ -15,5 +16,5 @@ namespace Zorlock {
 	protected:
 		ColorRGBA m_ambient;
 	};
-
+	ZL_ENABLE_TYPENAME(Environment)
 }

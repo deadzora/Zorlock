@@ -37,7 +37,7 @@ namespace Zorlock {
 		std::vector<Ref<ZModel>> m_models;
 	};
 	
-	
+	ZL_ENABLE_TYPENAME(MeshRenderer)
 }
 
 #define ZLMESHRENDERER Zorlock::MeshRenderer

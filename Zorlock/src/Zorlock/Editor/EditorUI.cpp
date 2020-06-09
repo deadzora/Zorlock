@@ -4,6 +4,7 @@
 #include "Zorlock/ImGui/ImGuiSkins.h"
 #include "Zorlock/Core/Application.h"
 #include "Zorlock/Game/SceneManager.h"
+#include "Zorlock/Renderer/Environment.h"
 #include "ProjectManager.h"
 #include "Projects.h"
 #include "Assets.h"
@@ -13,6 +14,7 @@
 #include "EditorObjectBase.h"
 #include "EditorGameObject.h"
 #include "EditorCamera.h"
+#include "EditorEnvironment.h"
 
 namespace Zorlock
 {
@@ -23,6 +25,7 @@ namespace Zorlock
 	static size_t current_theme = 0;
 	static EditorUI* editorUI = nullptr;
 	static GameObject* selectedObject = nullptr;
+
 
 	EditorUI::EditorUI()
 	{
@@ -249,13 +252,23 @@ namespace Zorlock
 					sname = ICON_FK_CUBES + sname;
 					if (ImGui::TreeNode(sname.c_str()))
 					{
+						
+						Environment* env = SceneManager::GetInstance()->GetActiveScene()->GetEnvironment().get();
+						std::string envtext = ICON_FK_SUN_O" " + env->name;
+						
+						if (ImGui::Selectable(envtext.c_str(), (selectedObject == env)))
+						{
+							selectedObject = env;
+							
+						}
 						std::vector<Ref<GameObject>>& gameobjs = SceneManager::GetInstance()->GetActiveScene()->GetChildren();
 						for (size_t i = 0; i < gameobjs.size(); i++)
 						{
 							std::string buttontext = ImGuiSkin::GetTypeIcon(gameobjs[i]->GetType()) + " " + gameobjs[i]->name;
-							if (ImGui::Button(buttontext.c_str()))
+							if (ImGui::Selectable(buttontext.c_str(),(selectedObject== gameobjs[i].get())))
 							{
 								selectedObject = gameobjs[i].get();
+					
 							}
 						}
 						ImGui::TreePop();
@@ -377,6 +390,10 @@ namespace Zorlock
 			if (selectedObject->GetType().compare("Camera")==0)
 			{
 				EditorObjectBase::Draw<EditorCamera, GameObject>(selectedObject);
+			}
+			if (selectedObject->GetType().compare("Environment") == 0)
+			{
+				EditorObjectBase::Draw<EditorEnvironment, GameObject>(selectedObject);
 			}
 		}
 	}

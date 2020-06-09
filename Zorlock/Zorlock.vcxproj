@@ -185,6 +185,7 @@
     <ClInclude Include="src\Zorlock\Editor\EditorGameObject.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorObjectBase.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorUI.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h" />
     <ClInclude Include="src\Zorlock\Editor\ProjectManager.h" />
     <ClInclude Include="src\Zorlock\Editor\Projects.h" />
     <ClInclude Include="src\Zorlock\Events\ApplicationEvent.h" />
@@ -1097,6 +1098,7 @@
     <ClCompile Include="src\Zorlock\Core\Window.cpp" />
     <ClCompile Include="src\Zorlock\Editor\Assets.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorCamera.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorEnvironment.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorGameObject.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorUI.cpp" />
     <ClCompile Include="src\Zorlock\Editor\ProjectManager.cpp" />

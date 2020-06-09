@@ -16,8 +16,16 @@ namespace Zorlock
 	{
 		ImGui::Separator();
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
-		ImGui::Text(ICON_FK_DOT_CIRCLE_O" Test Game Object yo");
+		ImGui::Text(ICON_FK_DOT_CIRCLE_O" Components");
 		ImGui::Separator();
+		std::vector<Ref<Component>>& components = go->GetComponents();
+		for (size_t i = 0; i < components.size(); i++)
+		{
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
+			std::string componenttype = ICON_FK_DOT_CIRCLE_O+components[i]->GetType();
+			ImGui::Text(componenttype.c_str());
+			ImGui::Separator();
+		}
 	}
 
 }

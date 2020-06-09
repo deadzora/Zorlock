@@ -24,11 +24,9 @@ namespace Zorlock {
 		Ref<Material> GetMaterial(std::string matname);
 		std::vector<Ref<Material>>& GetMaterials();
 
-
-
 	protected:
 		std::vector<Ref<Material>> m_materials;
 	};
 
-
+	ZL_ENABLE_TYPENAME(ObjectRenderer)
 }

@@ -21,10 +21,17 @@ namespace Zorlock {
 		{
 			name = n;
 		}
+		std::string GetType()
+		{
+			return type;
+		}
 		std::string name;
 		Ref<GameObject> parent;
+	protected:
+		std::string type;
 	};
 
+	ZL_ENABLE_TYPENAME(Component)
 }
 
 #define ZLCOMPONENT Zorlock::Component

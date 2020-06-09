@@ -7,11 +7,13 @@ namespace Zorlock
 
 	ObjectRenderer::ObjectRenderer()
 	{
+		type = ZL_GETTYPENAME(ObjectRenderer)
 	}
 
 	ObjectRenderer::ObjectRenderer(std::string name)
 	{
 		this->name = name;
+		type = ZL_GETTYPENAME(ObjectRenderer)
 	}
 
 	ObjectRenderer::~ObjectRenderer()
