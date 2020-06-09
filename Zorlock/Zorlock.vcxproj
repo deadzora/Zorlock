@@ -182,10 +182,10 @@
     <ClInclude Include="src\Zorlock\Debug\Instrumentor.h" />
     <ClInclude Include="src\Zorlock\Editor\Assets.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorCamera.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorGameObject.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorObjectBase.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorUI.h" />
-    <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h" />
     <ClInclude Include="src\Zorlock\Editor\ProjectManager.h" />
     <ClInclude Include="src\Zorlock\Editor\Projects.h" />
     <ClInclude Include="src\Zorlock\Events\ApplicationEvent.h" />

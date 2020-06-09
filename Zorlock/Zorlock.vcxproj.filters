@@ -210,6 +210,9 @@
     <ClInclude Include="src\Zorlock\Editor\EditorCamera.h">
       <Filter>src\Zorlock\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\Zorlock\Editor\EditorGameObject.h">
       <Filter>src\Zorlock\Editor</Filter>
     </ClInclude>
@@ -2853,7 +2856,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -2944,6 +2946,9 @@
       <Filter>src\Zorlock\Editor</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Editor\EditorCamera.cpp">
+      <Filter>src\Zorlock\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\EditorEnvironment.cpp">
       <Filter>src\Zorlock\Editor</Filter>
     </ClCompile>
     <ClCompile Include="src\Zorlock\Editor\EditorGameObject.cpp">
@@ -3096,7 +3101,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Zorlock\Editor\EditorEnvironment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

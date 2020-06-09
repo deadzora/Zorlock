@@ -182,7 +182,21 @@ namespace Zorlock
 				if (ImGui::MenuItem(ICON_FK_PAPERCLIP" Paste", "CTRL+V")) {}
 				ImGui::EndMenu();
 			}
-			
+			if (ImGui::BeginMenu("Object"))
+			{
+				if (ImGui::MenuItem(ICON_FK_CIRCLE_THIN" Create Empty", "CTRL+SHIFT+N")) {}
+				ImGui::Separator();
+				if (ImGui::BeginMenu(ICON_FK_CUBE" 3D")) {
+					if (ImGui::MenuItem(ICON_FK_CUBE" Cube")) {}
+					if (ImGui::MenuItem(ICON_FK_CIRCLE_O" Sphere")) {}
+					if (ImGui::MenuItem(ICON_FK_SQUARE_O" Cylinder")) {}
+					if (ImGui::MenuItem(ICON_FK_GLASS" Cone")) {}
+					if (ImGui::MenuItem(ICON_FK_TH_LARGE" Quad")) {}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMainMenuBar();
 
 		}
