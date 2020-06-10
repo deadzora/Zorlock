@@ -21,7 +21,7 @@ ZorlockEditor::ZorlockEditor() : Layer("Scene Layer"), m_CameraController(1280.0
 	mainCam = camera;
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->SetMainCamera(mainCam);
 	mainCam->transform->position.z = -20.0f;
-	mainCam->transform->position.y = 5.0f;
+	mainCam->transform->position.y = -5.0f;
 
 	ZLSCENEMANAGER::GetInstance()->GetActiveScene()->Awake();
 

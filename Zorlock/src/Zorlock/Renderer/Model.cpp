@@ -143,10 +143,13 @@ namespace Zorlock
 				}
 				case RendererAPI::API::OpenGL:
 				{
-					Matrix4* matx = m_skeleton->GetBoneMatrices(i);
-					for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
+					if (m_skeleton != nullptr)
 					{
-						mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);						
+						Matrix4* matx = m_skeleton->GetBoneMatrices(i);
+						for (size_t i = 0; i < m_skeleton->GetBonesSize(); i++)
+						{
+							mat->GetShader()->SetMat4("u_Bones[" + std::to_string(i) + "]", matx[i]);
+						}
 					}
 					break;
 				}

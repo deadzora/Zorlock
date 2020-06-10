@@ -15,7 +15,7 @@
 #include "EditorGameObject.h"
 #include "EditorCamera.h"
 #include "EditorEnvironment.h"
-
+#include "EditorFunctions.h"
 namespace Zorlock
 {
 	
@@ -187,14 +187,25 @@ namespace Zorlock
 				if (ImGui::MenuItem(ICON_FK_CIRCLE_THIN" Create Empty", "CTRL+SHIFT+N")) {}
 				ImGui::Separator();
 				if (ImGui::BeginMenu(ICON_FK_CUBE" 3D")) {
-					if (ImGui::MenuItem(ICON_FK_CUBE" Cube")) {}
+					if (ImGui::MenuItem(ICON_FK_CUBE" Cube")) 
+					{
+						EditorFunctions::CreateCube("Cube");
+					}
 					if (ImGui::MenuItem(ICON_FK_CIRCLE_O" Sphere")) {}
 					if (ImGui::MenuItem(ICON_FK_SQUARE_O" Cylinder")) {}
 					if (ImGui::MenuItem(ICON_FK_GLASS" Cone")) {}
 					if (ImGui::MenuItem(ICON_FK_TH_LARGE" Quad")) {}
+					ImGui::Separator();
+					if (ImGui::MenuItem(ICON_FK_AREA_CHART" Terrain")) {}
 					ImGui::EndMenu();
 				}
+				ImGui::Separator();
+				if (ImGui::MenuItem(ICON_FK_LIGHTBULB_O" Light", "CTRL+V"))
+				{
+					EditorFunctions::CreateLight("Light");
+				}
 				ImGui::EndMenu();
+
 			}
 
 			ImGui::EndMainMenuBar();
