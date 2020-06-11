@@ -14,6 +14,7 @@
 #include "EditorObjectBase.h"
 #include "EditorGameObject.h"
 #include "EditorCamera.h"
+#include "EditorLight.h"
 #include "EditorEnvironment.h"
 #include "EditorFunctions.h"
 namespace Zorlock
@@ -281,6 +282,21 @@ namespace Zorlock
 						Environment* env = SceneManager::GetInstance()->GetActiveScene()->GetEnvironment().get();
 						std::string envtext = ICON_FK_SUN_O" " + env->name;
 						
+						if (ImGui::TreeNode("Lights"))
+						{
+							std::vector<Ref<Light>>& lights = SceneManager::GetInstance()->GetActiveScene()->GetSceneLights();
+							for (size_t l = 0; l < lights.size(); l++)
+							{
+								std::string lighttext = ICON_FK_LIGHTBULB_O" " + lights[l]->name;
+								if (ImGui::Selectable(lighttext.c_str(), (selectedObject == lights[l].get())))
+								{
+									selectedObject = lights[l].get();
+
+								}
+							}
+							ImGui::TreePop();
+						}
+
 						if (ImGui::Selectable(envtext.c_str(), (selectedObject == env)))
 						{
 							selectedObject = env;
@@ -419,6 +435,10 @@ namespace Zorlock
 			if (selectedObject->GetType().compare("Environment") == 0)
 			{
 				EditorObjectBase::Draw<EditorEnvironment, GameObject>(selectedObject);
+			}
+			if (selectedObject->GetType().compare("Light") == 0)
+			{
+				EditorObjectBase::Draw<EditorLight, GameObject>(selectedObject);
 			}
 		}
 	}

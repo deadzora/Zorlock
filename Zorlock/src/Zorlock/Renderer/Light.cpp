@@ -7,7 +7,7 @@ namespace Zorlock {
 
 	Light::Light(std::string name, Ref<Transform> parent) : GameObject(name,parent)
 	{
-
+		type = ZL_GETTYPENAME(Light);
 	}
 
 	Light::~Light()

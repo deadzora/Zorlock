@@ -15,6 +15,7 @@ namespace Zorlock
 	GameObject::GameObject(std::string name) : Object(name)
 	{
 		transform->gameObject = Ref<GameObject>(this);
+		type = ZL_GETTYPENAME(GameObject);
 	}
 
 	GameObject::GameObject(Ref<Transform> parent) : Object("GameObject")
@@ -25,6 +26,7 @@ namespace Zorlock
 			transform->parent = parent;
 			parent->AddChild(transform);
 		}
+		type = ZL_GETTYPENAME(GameObject);
 
 	}
 
@@ -36,6 +38,7 @@ namespace Zorlock
 			transform->parent = parent;
 			parent->AddChild(transform);
 		}
+		type = ZL_GETTYPENAME(GameObject);
 	}
 
 	GameObject::~GameObject()

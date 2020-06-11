@@ -40,6 +40,10 @@ namespace Zorlock {
 		{
 			return m_scene_Objects;
 		}
+		std::vector<Ref<Light>>& GetSceneLights()
+		{
+			return m_scene_Lights;
+		}
 	protected:
 		Ref<Camera> m_mainCamera;
 		Ref<Environment> m_environment;
