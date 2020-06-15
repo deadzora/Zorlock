@@ -14,7 +14,7 @@ namespace Zorlock
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionMax().x);
 		ImGui::Text(ICON_FK_SUN_O" Ambient Light");
 		ColorRGBA col = env->GetAmbient();
-		if (ImGui::ColorEdit4("AMBColor", &col.x,ImGuiColorEditFlags_::ImGuiColorEditFlags_Float))
+		if (ImGui::ColorEdit4("Ambient Color", &col.x, ImGuiColorEditFlags_::ImGuiColorEditFlags_Float))
 		{
 			
 			env->SetAmbient(col);

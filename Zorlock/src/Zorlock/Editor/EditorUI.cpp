@@ -192,10 +192,22 @@ namespace Zorlock
 					{
 						EditorFunctions::CreateCube("Cube");
 					}
-					if (ImGui::MenuItem(ICON_FK_CIRCLE_O" Sphere")) {}
-					if (ImGui::MenuItem(ICON_FK_SQUARE_O" Cylinder")) {}
-					if (ImGui::MenuItem(ICON_FK_GLASS" Cone")) {}
-					if (ImGui::MenuItem(ICON_FK_TH_LARGE" Quad")) {}
+					if (ImGui::MenuItem(ICON_FK_CIRCLE_O" Sphere")) 
+					{
+						EditorFunctions::CreateSphere("Sphere");
+					}
+					if (ImGui::MenuItem(ICON_FK_SQUARE_O" Cylinder")) 
+					{
+						EditorFunctions::CreateCylinder("Cylinder");
+					}
+					if (ImGui::MenuItem(ICON_FK_GLASS" Cone")) 
+					{
+						EditorFunctions::CreateCone("Cone");
+					}
+					if (ImGui::MenuItem(ICON_FK_TH_LARGE" Quad")) 
+					{
+						EditorFunctions::CreateQuad("Quad");
+					}
 					ImGui::Separator();
 					if (ImGui::MenuItem(ICON_FK_AREA_CHART" Terrain")) {}
 					ImGui::EndMenu();
