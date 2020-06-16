@@ -2862,6 +2862,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Zorlock\Editor\EditorComponent.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorMeshRenderer.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorCameraControl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DX11\DX11Buffer.cpp">
@@ -3113,6 +3116,9 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Zorlock\Editor\EditorComponent.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorMeshRenderer.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorCameraControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Zorlock\Editor\readme.md">

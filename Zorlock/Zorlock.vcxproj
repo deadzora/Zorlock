@@ -182,10 +182,13 @@
     <ClInclude Include="src\Zorlock\Debug\Instrumentor.h" />
     <ClInclude Include="src\Zorlock\Editor\Assets.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorCamera.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorCameraControl.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorComponent.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorEnvironment.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorFunctions.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorGameObject.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorLight.h" />
+    <ClInclude Include="src\Zorlock\Editor\EditorMeshRenderer.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorObjectBase.h" />
     <ClInclude Include="src\Zorlock\Editor\EditorUI.h" />
     <ClInclude Include="src\Zorlock\Editor\ProjectManager.h" />
@@ -1100,10 +1103,13 @@
     <ClCompile Include="src\Zorlock\Core\Window.cpp" />
     <ClCompile Include="src\Zorlock\Editor\Assets.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorCamera.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorCameraControl.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorComponent.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorEnvironment.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorFunctions.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorGameObject.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorLight.cpp" />
+    <ClCompile Include="src\Zorlock\Editor\EditorMeshRenderer.cpp" />
     <ClCompile Include="src\Zorlock\Editor\EditorUI.cpp" />
     <ClCompile Include="src\Zorlock\Editor\ProjectManager.cpp" />
     <ClCompile Include="src\Zorlock\Editor\Projects.cpp" />
@@ -1175,4 +1181,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>
